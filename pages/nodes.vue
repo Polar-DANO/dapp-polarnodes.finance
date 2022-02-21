@@ -130,7 +130,7 @@ export default class Nodes extends Vue {
         let tmp      
         if(WalletModule.walletaddress){
           tmp = await pnode.calculateAllClaimableRewards(WalletModule.walletaddress);        
-          this.nodeStation[0].price = this.getFromattedNb(ethers.utils.formatEther(tmp._hex));
+          this.nodeStation[0].price = this.getFromattedNb(ethers.utils.formatEther(tmp._hex)*1.4);
           
           tmp = await pnode.getTotalCreatedNodesOf(WalletModule.walletaddress);
           this.nodeStation[1].price = parseInt(tmp._hex, 16).toString();        

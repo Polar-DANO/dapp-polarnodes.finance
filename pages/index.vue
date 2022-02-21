@@ -214,7 +214,7 @@ export default class IndexVue extends Vue {
       
       //pendingrewards
       tmp = await pnode.calculateAllClaimableRewards(WalletModule.walletaddress);
-      this.personalStats[3].price = this.getFromattedNb(ethers.utils.formatEther(tmp._hex));
+      this.personalStats[3].price = this.getFromattedNb(ethers.utils.formatEther(tmp._hex) * 1.4) ;
     }
   }
 

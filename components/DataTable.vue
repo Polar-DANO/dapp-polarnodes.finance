@@ -92,7 +92,7 @@
           <div class="text-[24px] text-[#FFFFFF] mr-[16px]">
             {{ price }} POLAR
           </div>
-          <span class="text-[12px] text-[#FFFFFF]">(including ROI tax)</span>
+          <!-- <span class="text-[12px] text-[#FFFFFF]">(including ROI tax)</span> -->
         </div>
       </div>
 
