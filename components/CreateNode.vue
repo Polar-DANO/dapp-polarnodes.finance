@@ -278,6 +278,14 @@ export default class CreateNode extends Vue {
           (this.$root.$refs.alert as Defalut).NoEnoughSent();
           return;
         }
+        if (err.data.message.indexOf("Node level up not authorized yet") >= 0) {
+          (this.$root.$refs.alert as Defalut).NotAuthorized();
+          return;
+        }
+        if (err.data.message.indexOf("Max already reached") >= 0) {
+            (this.$root.$refs.alert as Defalut).MaxAlreadyReached();
+            return;
+          }
       } else {
         console.log(err)
       }
@@ -376,12 +384,24 @@ export default class CreateNode extends Vue {
             (this.$root.$refs.alert as Defalut).NodesBlacklist();
             return;
           }
-          if (err.data.message.indexOf("INSUFFICIENT_LIQUIDITY") >= 0) {
+          if (err.data.message.indexOf("fInsufficient Pending") >= 0) {
             (this.$root.$refs.alert as Defalut).noLiquidity();
             return;
           }
-          if (err.data.message.indexOf("NODE CREATION: Balance too low for creation") >= 0) {
+          if (err.data.message.indexOf("Balance too low for creation.") >= 0) {
             (this.$root.$refs.alert as Defalut).NeedBalance();
+            return;
+          }
+          if (err.data.message.indexOf("Node creation not authorized yet") >= 0) {
+            (this.$root.$refs.alert as Defalut).NotAuthorized();
+            return;
+          }
+          if (err.data.message.indexOf("futur and rewardsPool cannot create node") >= 0) {
+            (this.$root.$refs.alert as Defalut).NotFutur();
+            return;
+          }
+          if (err.data.message.indexOf("Max already reached") >= 0) {
+            (this.$root.$refs.alert as Defalut).MaxReached();
             return;
           }
         } else {
@@ -402,7 +422,7 @@ export default class CreateNode extends Vue {
       console.log(nodeData)
       this.polarPerNode = ethers.utils.formatEther(nodeData[0]._hex);
       this.polarPerDay = ethers.utils.formatEther(nodeData[2]._hex);
-      this.claimTaxBeforeTime = parseInt(nodeData[3]._hex, 16);
+      this.claimTaxBeforeTime = parseInt(nodeData[6]._hex, 16);
       this.maxLevelUpGlobal = parseInt(nodeData[7]._hex, 16);
       this.maxLevelUpUser = parseInt(nodeData[8]._hex, 16);
       this.maxCreationPendingGlobal = parseInt(nodeData[9]._hex, 16);

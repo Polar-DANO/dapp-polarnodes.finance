@@ -2,9 +2,13 @@
 <div class="bg-black">
   <v-app>
     <div class="bg-[#17171b] h-full">
+      
       <LeftSideBar></LeftSideBar>
+      
       <v-app-bar-nav-icon class="text-[#FFFFFF] md:hidden" @click="$root.$refs.draw.Draw()"></v-app-bar-nav-icon>   
+      
       <v-main class="md:py-[28px] md:mr-[28px] md:ml-[0px] h-full ">
+              <span class="text-[16px] text-[#FF0000]">We have just updated the protocol. If you lost your node, don't worry, use the "migrate my old nodes" button. For more information please join the discord: https://discord.com/invite/polarnodes</span>
         <div class= "flex justify-end items-center">
           <v-alert        
             type="info"
@@ -133,7 +137,7 @@
             position="relative"
             transition="scale-transition"
           >
-            Inssuficient Liquidity
+            Insufficient Pending
           </v-alert>
           <v-alert
             class="mx-5 mb-0 h-[64px]"
@@ -355,6 +359,41 @@
             >
             Too many nodes requested
           </v-alert>
+          <v-alert
+              class="mx-5 mb-0 h-[64px]"
+              type="info"
+              color="red"
+              :value="alertNotAuthorized"
+              dismissible
+              position="relative"
+              transition="scale-transition"
+            >
+          Not authorized yet
+          </v-alert>
+
+          <v-alert
+              class="mx-5 mb-0 h-[64px]"
+              type="info"
+              color="red"
+              :value="alertNotFutur"
+              dismissible
+              position="relative"
+              transition="scale-transition"
+            >
+          futur and rewardsPool cannot create node
+          </v-alert>
+
+          <v-alert
+              class="mx-5 mb-0 h-[64px]"
+              type="info"
+              color="red"
+              :value="alertMaxAlreadyReached"
+              dismissible
+              position="relative"
+              transition="scale-transition"
+            >
+          Max already reached
+          </v-alert>
           <div class="hidden md:flex">
             <ConnectionBtn/>
           </div>
@@ -411,6 +450,9 @@ export default class Defalut extends Vue {
   public alertUserMaxReached = false
   public alertLevelUpReached = false
   public alertNoOneLevelup = false
+  public alertNotAuthorized = false
+  public alertMaxAlreadyReached = false
+  public alertNotFutur = false
 
   created() {    
     (this.$root.$refs.alert as Defalut) = this
@@ -503,7 +545,7 @@ export default class Defalut extends Vue {
 
   public async noLiquidity() : Promise<void> {
     this.alertnoLiquidity = true;
-    await this.sleep(1500);
+    await this.sleep(3000);
     this.alertnoLiquidity = false;    
   }
 
@@ -607,6 +649,24 @@ export default class Defalut extends Vue {
     this.acceptMetamask = true;
     await this.sleep(3000);
     this.acceptMetamask = false;    
+  }
+
+  public async NotAuthorized() : Promise<void> {    
+    this.alertNotAuthorized = true;
+    await this.sleep(3000);
+    this.alertNotAuthorized = false;    
+  }
+
+  public async MaxAlreadyReached() : Promise<void> {    
+    this.alertMaxAlreadyReached = true;
+    await this.sleep(3000);
+    this.alertMaxAlreadyReached = false;    
+  }
+
+  public async NotFutur() : Promise<void> {    
+    this.alertNotFutur = true;
+    await this.sleep(3000);
+    this.alertNotFutur = false;    
   }
 }
 </script>
