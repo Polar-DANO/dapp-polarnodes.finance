@@ -402,7 +402,7 @@ export default class CreateNode extends Vue {
       console.log(nodeData)
       this.polarPerNode = ethers.utils.formatEther(nodeData[0]._hex);
       this.polarPerDay = ethers.utils.formatEther(nodeData[2]._hex);
-      this.claimTaxBeforeTime = parseInt(nodeData[3]._hex, 16);
+      this.claimTaxBeforeTime = parseInt(nodeData[6]._hex, 16);
       this.maxLevelUpGlobal = parseInt(nodeData[7]._hex, 16);
       this.maxLevelUpUser = parseInt(nodeData[8]._hex, 16);
       this.maxCreationPendingGlobal = parseInt(nodeData[9]._hex, 16);
