@@ -41,7 +41,7 @@
           </a>
       </div>
       <div class="ml-[24px] mb-[28px]">
-          <a  href="https://discord.com/invite/polarnodes" target="_blank">
+          <a  href="https://discord.gg/AQ3MzBYngZ" target="_blank">
             <div class="flex flex-row mx-[41.5px]">
               <img class="mr-[10px]" :src="require('../assets/img/discord.svg')" alt="">
               <span class="text-white text-[14px]">Join Discord</span>

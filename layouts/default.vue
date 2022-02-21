@@ -8,7 +8,7 @@
       <v-app-bar-nav-icon class="text-[#FFFFFF] md:hidden" @click="$root.$refs.draw.Draw()"></v-app-bar-nav-icon>   
       
       <v-main class="md:py-[28px] md:mr-[28px] md:ml-[0px] h-full ">
-              <span class="text-[16px] text-[#FF0000]">We have just updated the protocol. If you lost your node, don't worry, use the "migrate my old nodes" button. For more information please join the discord: https://discord.com/invite/polarnodes</span>
+        <span class="text-[16px] text-[#FF0000]">We have just updated the protocol. If you lost your node, don't worry, use the "migrate my old nodes" button. For more information please join the discord: https://discord.com/invite/polarnodes</span>
         <div class= "flex justify-end items-center">
           <v-alert        
             type="info"
