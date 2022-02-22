@@ -129,10 +129,12 @@ export default class IndexVue extends Vue {
       .then(
         (response : any) => {
             var keyArray = Object.keys(response.data)            
+            console.log(response.data,"marketcap")
             this.protocolStats[0].price = this.getFromattedNb(response.data[keyArray[0]].usd)
             this.protocolStats[0].percentage = this.getFromattedNb (response.data[keyArray[0]].usd_24h_change) 
-            let tempPrice = response.data[keyArray[0]].usd * 1000000
-            this.protocolStats[1].price = tempPrice.toString()
+            let tempPrice = this.getFromattedNb(response.data[keyArray[0]].usd  * 1000000)
+            console.log(tempPrice,"tempPrice")
+            this.protocolStats[1].price = tempPrice
         }
       );
     } catch {
