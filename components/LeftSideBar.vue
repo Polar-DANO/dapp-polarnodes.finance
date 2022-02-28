@@ -13,7 +13,7 @@
           <img class="w-[64px] h-[63.7px] mt-[44px] mb-[30px] md:mb-[100.3px] mx-[90px] " :src="require('../assets/img/logo.svg')" alt="">
           <v-list-item
             active-class="bg-[#00c6ed]"
-            class="hover:bg-[#00c6ed] w-[188px] h-[46px] rounded-[10px] mx-[28px]  mb-[30px] active:bg-[#00c6ed]"
+            class="hover:bg-[#00c6ed] w-[188px] h-[46px] rounded-[10px] mx-[28px] mb-[14px] md:mb-[30px] active:bg-[#00c6ed]"
             v-for="(item, i) in core"
             :key="i"
             :to="item.to"
@@ -32,7 +32,7 @@
         </div>
       </div>
     <div class="mb-6">
-      <div class="ml-[24px] mb-[28px]">
+      <div class="ml-[24px] mb-[14px] md:mb-[28px]">
           <a  href="https://twitter.com/polar_nodes" target="_blank">
             <div class="flex flex-row mx-[41.5px]">
               <img class="mr-[10px]" :src="require('../assets/img/contact.svg')" alt="">
@@ -40,7 +40,7 @@
             </div>
           </a>
       </div>
-      <div class="ml-[24px] mb-[28px]">
+      <div class="ml-[24px] mb-[14px] md:mb-[28px]">
           <a  href="https://discord.gg/AQ3MzBYngZ" target="_blank">
             <div class="flex flex-row mx-[41.5px]">
               <img class="mr-[10px]" :src="require('../assets/img/discord.svg')" alt="">
@@ -48,7 +48,7 @@
             </div>
           </a>
       </div>
-      <div class="ml-[24px] mb-[28px]">
+      <div class="ml-[24px] mb-[14px] md:mb-[28px]">
           <a  href="https://dexscreener.com/avalanche/0x6c1c0319d8ddcb0ffe1a68c5b3829fd361587db4 " target="_blank">
             <div class="flex flex-row mx-[41.5px]">
               <img class="mr-[10px]" :src="require('../assets/img/polarchart.svg')" alt="">
@@ -56,7 +56,7 @@
             </div>
           </a>
       </div>
-      <div class="ml-[24px] mb-[28px]">
+      <div class="ml-[24px] mb-[14px] md:mb-[28px]">
           <a  href="https://snapshot.org/#/polarnodes.eth" target="_blank">
             <div class="flex flex-row mx-[41.5px]">
               <img class="mr-[10px] w-[24px] h-[24px]" :src="require('../assets/img/governanceIcon.svg')" alt="">
