@@ -56,6 +56,14 @@
             </div>
           </a>
       </div>
+      <div class="ml-[24px] mb-[28px]">
+          <a  href="https://snapshot.org/#/polarnodes.eth" target="_blank">
+            <div class="flex flex-row mx-[41.5px]">
+              <img class="mr-[10px] w-[24px] h-[24px]" :src="require('../assets/img/governanceIcon.svg')" alt="">
+              <span class="text-white text-[14px]">Governance</span>
+            </div>
+          </a>
+      </div>
     </div>
   </v-navigation-drawer>
 </template>
