@@ -1,5 +1,5 @@
 <template>
-<div class="md:flex md:flex-wrap bg-[#17171B] rounded-[12px]  min-h-[172px] border-solid border-[#00C6ED] border-[1px]  divide-white/40 divide-x-[1px] py-[16px] gap-2">
+<div class="md:flex md:flex-wrap bg-[#17171B] rounded-[12px] min-h-[172px] border-solid border-[#00C6ED] border-[1px] divide-white/40 divide-x-[1px] py-[16px] gap-2">
   <div class="flex flex-col md:w-[35%]">
     <span class="text-[16px] text-white ml-[16px]">Create A Node</span>
     <div class="flex align-baseline"> 
@@ -156,6 +156,7 @@ Be careful.</span>
           <span class="text-[12px] text-white mr-[6px]">→</span>
           <span class="text-[#00c6ed] text-[12px]">Rewards Pool = </span>
           <span class="text-[12px] text-white !ml-[4px]"> {{rewardsPool}}%</span>
+        </div>
         <div class="flex ml-[17px]">
           <span class="text-[12px] text-white mr-[6px]">→</span>
           <span class="text-[#00c6ed] text-[12px]">Treasury Fund = </span>
