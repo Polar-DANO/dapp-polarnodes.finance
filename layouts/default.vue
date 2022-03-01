@@ -10,11 +10,11 @@
         ></v-app-bar-nav-icon>
 
         <v-main class="md:py-[28px] md:mr-[28px] md:ml-[0px] h-full">
-          <span class="text-[16px] text-[#FF0000]"
+          <!-- <span class="text-[16px] text-[#FF0000]"
             >If you lost your node, don't worry, use the "migrate my old nodes"
             button. For more information please join the discord:
             https://discord.com/invite/polarnodes
-          </span>
+          </span> -->
 
           <div class="flex justify-end items-center">
             <v-alert
