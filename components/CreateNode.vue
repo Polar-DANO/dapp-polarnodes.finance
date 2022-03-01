@@ -155,28 +155,24 @@ Be careful.</span>
         <div class="flex ml-[17px] mt-[8px]">
           <span class="text-[12px] text-white mr-[6px]">→</span>
           <span class="text-[#00c6ed] text-[12px]">Rewards Pool = </span>
-          <!-- <span class="text-[12px] text-white !ml-[4px]"> {{rewardsPool}}%</span> -->
-                <span class="text-[12px] text-white !ml-[4px]"> 55%</span>        </div>
+          <span class="text-[12px] text-white !ml-[4px]"> {{rewardsPool}}%</span>
         <div class="flex ml-[17px]">
           <span class="text-[12px] text-white mr-[6px]">→</span>
           <span class="text-[#00c6ed] text-[12px]">Treasury Fund = </span>
-          <!-- <span class="text-[12px] text-white !ml-[4px]"> {{treasuryFund}}%</span> -->
-              <span class="text-[12px] text-white !ml-[4px]"> 20%</span>
+          <span class="text-[12px] text-white !ml-[4px]"> {{treasuryFund}}%</span>
 
         </div>
         <div class="flex ml-[17px]">
           <div class="text-[12px] text-white mr-[6px]">→</div>
           <span class="text-[#00c6ed] text-[12px]">Liquidity Pool = </span>
-          <!-- <span class="text-[12px] text-white !ml-[4px]"> {{liquidityPool}}%</span> -->
-              <span class="text-[12px] text-white !ml-[4px]"> 10%</span>
+          <span class="text-[12px] text-white !ml-[4px]"> {{liquidityPool}}%</span>
 
         </div>
 
         <div class="flex ml-[17px]">
           <span class="text-[12px] text-white mr-[6px]">→</span>
           <span class="text-[#00c6ed] text-[12px]">Polar Team = </span>
-          <!-- <span class="text-[12px] text-white !ml-[4px]"> {{polarTeam}}%</span> -->
-                <span class="text-[12px] text-white !ml-[4px]"> 15%</span>
+          <span class="text-[12px] text-white !ml-[4px]"> {{polarTeam}}%</span>
 
         </div>
       </div>
