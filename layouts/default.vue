@@ -11,10 +11,27 @@
 
         <v-main class="md:py-[28px] md:mr-[28px] md:ml-[0px] h-full">
           <span class="text-[16px] text-[#FF0000]"
-            >We have just updated the protocol. If you lost your node, don't
-            worry, use the "migrate my old nodes" button. For more information
-            please join the discord: https://discord.com/invite/polarnodes<br></span
-          >
+            >If you lost your node, don't worry, use the "migrate my old nodes"
+            button. For more information please join the discord:
+            https://discord.com/invite/polarnodes<br />
+
+            In order to fight against the bearish pressure, and the time to
+            finish the update of the NFT, we will pass the claim tax before the
+            ROI to 20%.<br />
+            The idea is to reduce the downward pressure by limiting the number
+            of POLARs that will be claimed.<br />
+            In order to be fair, the team has decided to lower the remuneration
+            tax they take from 15% to 10%, until the chart goes up. It can be
+            lowered further if necessary.<br />
+            Also, we will lower the treasury from 20% to 15% and the Liquidity
+            pool from 10% to 5%.<br />
+            We will increase the redistribution, which
+            will reduce the number of POLAR sold on the market to the purchase
+            of nodes. So we will reduce the downward pressure by 15% on node
+            purchases. On claims, it will be divided by two since it will cost
+            twice as much to claim. In addition, we have removed the tax that
+            was causing downward pressure on claims.
+          </span>
 
           <div class="flex justify-end items-center">
             <v-alert
