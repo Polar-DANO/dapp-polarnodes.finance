@@ -50,7 +50,6 @@ export default class NodeNft extends Vue {
   public claimTax = 1;
 
   public onSelectNode() {
-    console.log(this.$props.name);
     this.$router.push(`/create/${NAME_TO_URL[this.$props.name]}`);
   }
 

@@ -78,7 +78,6 @@ export default class Create extends Vue {
   ];
 
   private created() {
-    console.log(this.$route.params.id);
     const nodeNftName = URL_TO_NAME[this.$route.params.id];
 
     if (nodeNftName) {
