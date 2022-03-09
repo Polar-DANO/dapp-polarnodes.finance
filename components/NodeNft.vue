@@ -1,5 +1,5 @@
 <template>
-  <div class="node-nft">
+  <div class="node-nft" @click="onSelectNode">
     <div class="node-nft__title">{{ name }}</div>
     <div class="node-nft__blue-text my-1">
       Earn {{ dailyEarnings }} $POLAR / day
@@ -25,16 +25,54 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "nuxt-property-decorator";
+import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
+import { NodeNftNames } from "~/models/types";
+
+const ethers = require("ethers");
+const { Token, PolarToken, Owner } = require("~/hardhat/scripts/address.js");
+
+const NAME_TO_URL = {
+  [NodeNftNames.Fuji]: "fuji",
+  [NodeNftNames.MontBlanc]: "mont-blanc",
+  [NodeNftNames.Kilimanjaro]: "kilimanjaro",
+  [NodeNftNames.Ushuaia]: "ushuaia",
+  [NodeNftNames.Everest]: "everest",
+};
 
 @Component({
   props: {
     name: { type: String },
-    dailyEarnings: { type: Number },
-    cost: { type: Number },
-    claimTax: { type: Number },
   },
 })
-export default class NodeNft extends Vue {}
+export default class NodeNft extends Vue {
+  public dailyEarnings = null;
+  public cost = null;
+  public claimTax = 1;
+
+  public onSelectNode() {
+    console.log(this.$props.name);
+    this.$router.push(`/create/${NAME_TO_URL[this.$props.name]}`);
+  }
+
+  private async created() {
+    try {
+      const provider = new ethers.providers.Web3Provider(
+        window.ethereum,
+        "any"
+      );
+      const signer = provider.getSigner();
+      const pnode = new ethers.Contract(Token, NODER, signer);
+      const nodeData = await pnode.getNodeTypeAll(this.$props.name);
+
+      this.cost = ethers.utils.formatEther(nodeData[0]._hex);
+      this.dailyEarnings = parseFloat(
+        ethers.utils.formatEther(nodeData[2]._hex)
+      ).toFixed(3);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -48,6 +86,10 @@ export default class NodeNft extends Vue {}
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+.node-nft:hover {
+  box-shadow: 0 0 14px 14px rgba(0, 198, 237, 0.5);
+}
+
 .node-nft {
   min-width: 180px;
   cursor: pointer;
@@ -57,7 +99,6 @@ export default class NodeNft extends Vue {}
   flex-grow: 1;
   padding: 12px 0;
   border-radius: 14px;
-  box-shadow: 0 0 4px 4px rgba(0, 198, 237, 0.5);
   border: solid 1px #00c6ed;
   background-color: #17171b;
   font-family: WorkSans;

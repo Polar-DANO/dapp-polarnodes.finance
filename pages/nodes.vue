@@ -12,14 +12,14 @@
       />
     </div>
     <span class="mt-[64px] text-[24px] text-white">Create Node 🗻️</span>
-    <div class="md:flex flex-wrap gap-2 md:gap-[28px] mt-[32px]">
+    <div
+      class="md:flex flex-wrap gap-2 md:gap-[24px] mt-[32px]"
+      style="color: white"
+    >
       <NodeNft
-        v-for="(node, i) of nodeNfts"
-        :key="`${name}-${i}`"
-        :name="node.name"
-        :daily-earnings="node.dailyEarnings"
-        :cost="node.cost"
-        :claim-tax="node.claimTax"
+        v-for="(node, i) of nodeNameList"
+        :key="`${node.nodeValue}-${i}`"
+        :name="node.nodeValue"
       />
     </div>
   </div>
@@ -35,8 +35,8 @@ import axios from "axios";
 import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
 import { abi as POLAR } from "~/hardhat/artifacts/contracts/PolarNodes.sol/PolarNodes.json";
 import Defalut from "~/layouts/default.vue";
-
 import { WalletModule } from "~/store";
+import { NodeNftNames } from "~/models/types";
 
 const { Token, PolarToken } = require("~/hardhat/scripts/address.js");
 
@@ -67,14 +67,6 @@ export default class Nodes extends Vue {
     },
   ];
 
-  public nodeNfts = [
-    { name: "Fuji", dailyEarnings: 0.45, cost: 30, claimTax: 1 },
-    { name: "Mont Blanc", dailyEarnings: 0.99, cost: 55, claimTax: 3 },
-    { name: "Killimanjaro", dailyEarnings: 5, cost: 250, claimTax: 5 },
-    { name: "Ushuaia", dailyEarnings: 9.2, cost: 400, claimTax: 8 },
-    { name: "Everest", dailyEarnings: 35, cost: 1000, claimTax: 10 },
-  ];
-
   private nodeData = [
     {
       nodeType: "test1",
@@ -90,12 +82,11 @@ export default class Nodes extends Vue {
     },
   ];
 
-  private nodeName: any = [];
+  private nodeNameList: any = [];
   private nodeCounter: any = [];
   private myNodeData: any = [];
   private counterTemp: any = [];
   private myNodeList: any = [];
-  private nodeNameList: any = [];
   private nodeInst: any;
 
   private getFromattedNb(nb: any): string {
@@ -152,27 +143,27 @@ export default class Nodes extends Vue {
         tmp = await pnode.getNodeTypesSize();
         let nodeSize = parseInt(tmp._hex, 16);
 
-        let tempNodeName = [];
+        let tempNodeNameList = [];
         for (let i = 0; i < nodeSize; i++) {
-          tempNodeName.push(pnode.getNodeTypeNameAtIndex(i));
+          tempNodeNameList.push(pnode.getNodeTypeNameAtIndex(i));
         }
-        await Promise.all(tempNodeName).then(res => {
-          this.nodeName = [];
+        await Promise.all(tempNodeNameList).then(res => {
+          this.nodeNameList = [];
           for (let i = 0; i < res.length; i++) {
             this.nodeInst = {
-              nodeName: res[i] + " (Level " + (i + 1) + ")",
+              nodeNameList: res[i] + " (Level " + (i + 1) + ")",
               nodeValue: res[i].toString(),
             };
-            this.nodeName.push(this.nodeInst);
+            this.nodeNameList.push(this.nodeInst);
           }
         });
 
         let tempCounter = [];
 
-        for (let i = 0; i < this.nodeName.length; i++) {
+        for (let i = 0; i < this.nodeNameList.length; i++) {
           tempCounter.push(
             pnode.getNodeTypeOwnerNumber(
-              this.nodeName[i].nodeValue,
+              this.nodeNameList[i].nodeValue,
               WalletModule.walletaddress
             )
           );
@@ -185,17 +176,17 @@ export default class Nodes extends Vue {
 
         this.myNodeList = [];
         let index = 0;
-        for (let i = 0; i < this.nodeName.length; i++) {
+        for (let i = 0; i < this.nodeNameList.length; i++) {
           if (this.nodeCounter[i] != 0) {
             this.counterTemp = {
               nodeIndex: i + 1,
-              nodeType: this.nodeName[i].nodeValue,
+              nodeType: this.nodeNameList[i].nodeValue,
               nodeCounter: this.nodeCounter[i],
             };
             this.myNodeData.push(this.counterTemp);
             for (let j = 0; j < this.nodeCounter[i]; j++) {
               let temp = {
-                nodeName: this.nodeName[i].nodeValue,
+                nodeNameList: this.nodeNameList[i].nodeValue,
                 index: index++,
               };
               this.myNodeList.push(temp);
