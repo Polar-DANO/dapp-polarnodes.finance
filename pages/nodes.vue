@@ -22,6 +22,9 @@
         :name="node.nodeValue"
       />
     </div>
+    <div class="md:mt-[32px]">
+      <NodeTable :items="myNodeData" />
+    </div>
   </div>
 </template>
 
@@ -129,9 +132,9 @@ export default class Nodes extends Vue {
           tmp = await pnode.calculateAllClaimableRewards(
             WalletModule.walletaddress
           );
-          this.nodeStation[0].price = this.getFromattedNb(
-            ethers.utils.formatEther(tmp._hex)
-          );
+
+          const totalNodes = await pnode.getTotalCreatedNodes();
+          this.nodeStation[0].price = parseInt(totalNodes._hex, 16).toString();
 
           tmp = await pnode.getTotalCreatedNodesOf(WalletModule.walletaddress);
           this.nodeStation[1].price = parseInt(tmp._hex, 16).toString();

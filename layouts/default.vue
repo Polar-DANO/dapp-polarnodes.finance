@@ -401,6 +401,18 @@
             >
               Max already reached
             </v-alert>
+
+            <v-alert
+              class="mx-5 mb-0 h-[64px]"
+              type="info"
+              color="red"
+              :value="alertOtherError"
+              dismissible
+              position="relative"
+              transition="scale-transition"
+            >
+              An error occured
+            </v-alert>
             <div class="hidden md:flex">
               <ConnectionBtn />
             </div>
@@ -460,6 +472,7 @@ export default class Defalut extends Vue {
   public alertNotAuthorized = false;
   public alertMaxAlreadyReached = false;
   public alertNotFutur = false;
+  public alertOtherError = false;
 
   created() {
     (this.$root.$refs.alert as Defalut) = this;
@@ -478,7 +491,7 @@ export default class Defalut extends Vue {
   }
 
   public async sleep(ms: any): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       setTimeout(resolve, ms);
     });
   }
@@ -674,6 +687,12 @@ export default class Defalut extends Vue {
     this.alertNotFutur = true;
     await this.sleep(3000);
     this.alertNotFutur = false;
+  }
+
+  public async OtherError(): Promise<void> {
+    this.alertOtherError = true;
+    await this.sleep(3000);
+    this.alertOtherError = false;
   }
 }
 </script>

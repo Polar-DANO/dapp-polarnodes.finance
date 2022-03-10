@@ -48,7 +48,7 @@ const NAME_TO_URL = {
 export default class NodeNft extends Vue {
   public dailyEarnings: string | null = null;
   public cost: string | null = null;
-  public claimTax = 1;
+  public claimTax: number | null = null;
 
   public onSelectNode() {
     this.$router.push(
@@ -67,9 +67,10 @@ export default class NodeNft extends Vue {
       const nodeData = await pnode.getNodeTypeAll(this.$props.name);
 
       this.cost = ethers.utils.formatEther(nodeData[0]._hex);
-      this.dailyEarnings = parseFloat(
-        ethers.utils.formatEther(nodeData[2]._hex)
-      ).toFixed(3);
+      this.claimTax = parseInt(nodeData[6]._hex, 16) + 1;
+      this.dailyEarnings = (
+        parseFloat(ethers.utils.formatEther(nodeData[2]._hex)) * 6
+      ).toFixed(2);
     } catch (err) {
       console.log(err);
     }

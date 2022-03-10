@@ -2,13 +2,11 @@
   <div
     class="node-card flex flex-col mx-auto md:mx-[64px] mt-[30px] md:mt-[123px]"
   >
-    <div class="node-card__header">
-      Create {{ nodeNftName }} Mountain NFT 🗻️
-    </div>
+    <div class="node-card__header">Create {{ nodeNftName }} Mountain 🗻️</div>
     <div class="mt-8 mb-16 mx-16">
       <div class="node-card__subtitle">
-        Create a Mountain NFT with $POLAR tokens to earn lifetime high-yield
-        token rewards!
+        Create a Mountain with $POLAR tokens to earn lifetime high-yield token
+        rewards!
       </div>
       <VRow justify="space-between" class="mt-8">
         <VCol cols="12" md="6" class="d-flex align-center">
@@ -58,11 +56,23 @@
                 </VBtn>
               </div>
             </div>
+
             <VBtn
+              v-if="isApprove"
+              class="node-card__outlined node-card__button pa-2"
+              dark
+              text
+              @click="onApprove"
+            >
+              Approve
+            </VBtn>
+            <VBtn
+              v-else
               class="node-card__outlined node-card__button pa-2"
               dark
               text
               :disabled="quantity < 1"
+              @click="onCreate"
             >
               Create
             </VBtn>
@@ -77,6 +87,8 @@
 import { Component, Prop, Vue } from "nuxt-property-decorator";
 import { NodeNftNames } from "~/models/types";
 import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
+import { abi as POLAR } from "~/hardhat/artifacts/contracts/PolarNodes.sol/PolarNodes.json";
+import { WalletModule } from "~/store";
 
 const ethers = require("ethers");
 const { Token, PolarToken, Owner } = require("~/hardhat/scripts/address.js");
@@ -94,11 +106,13 @@ type Url = "fuji" | "mont-blanc" | "kilimanjaro" | "ushuaia" | "everest";
 export default class Create extends Vue {
   public nodeNftName: NodeNftNames | null = null;
   public quantity = 1;
+  public isApprove = true;
 
   private dailyEarningPerNode = 0;
   private cost = 0;
-  private roi = 1.5;
-  private tax = 1;
+  private tax: number | null = null;
+  private polar: any;
+  private pnode: any;
 
   private async created() {
     const nodeNftName = URL_TO_NAME[this.$route.params.id as Url];
@@ -111,11 +125,17 @@ export default class Create extends Vue {
           "any"
         );
         const signer = provider.getSigner();
-        const pnode = new ethers.Contract(Token, NODER, signer);
-        const nodeData = await pnode.getNodeTypeAll(nodeNftName);
+        this.polar = new ethers.Contract(PolarToken, POLAR, signer);
+        this.isApprove =
+          (await this.polar.allowance(WalletModule.walletaddress, Token)) == 0;
+        this.pnode = new ethers.Contract(Token, NODER, signer);
+
+        const nodeData = await this.pnode.getNodeTypeAll(nodeNftName);
 
         this.cost = ethers.utils.formatEther(nodeData[0]._hex);
-        this.dailyEarningPerNode = ethers.utils.formatEther(nodeData[2]._hex);
+        this.dailyEarningPerNode =
+          ethers.utils.formatEther(nodeData[2]._hex) * 6;
+        this.tax = parseInt(nodeData[6]._hex, 16) + 1;
       } catch (err) {
         console.log(err);
       }
@@ -134,10 +154,89 @@ export default class Create extends Vue {
     this.quantity++;
   }
 
+  public onError(err: any) {
+    if (err) {
+      if (err.message.indexOf("User denied transaction signature") >= 0) {
+        (this.$root.$refs.alert as any).MustSign();
+        return;
+      } else if (err.message.indexOf("Global limit reached") >= 0) {
+        (this.$root.$refs.alert as any).MaxReached();
+        return;
+      } else if (
+        err.message.indexOf("Creation with pending limit reached for user") >= 0
+      ) {
+        (this.$root.$refs.alert as any).UserMaxReached();
+        return;
+      } else if (err.message.indexOf("Balance too low for creation") >= 0) {
+        (this.$root.$refs.alert as any).NeedBalance();
+        return;
+      } else if (err.message.indexOf("nodeTypeName does not exist") >= 0) {
+        (this.$root.$refs.alert as any).NodesName();
+        return;
+      } else if (err.message.indexOf("Blacklisted address") >= 0) {
+        (this.$root.$refs.alert as any).NodesBlacklist();
+        return;
+      } else if (err.message.indexOf("fInsufficient Pending") >= 0) {
+        (this.$root.$refs.alert as any).noLiquidity();
+        return;
+      } else if (err.message.indexOf("Balance too low for creation.") >= 0) {
+        (this.$root.$refs.alert as any).NeedBalance();
+        return;
+      } else if (err.message.indexOf("Node creation not authorized yet") >= 0) {
+        (this.$root.$refs.alert as any).NotAuthorized();
+        return;
+      } else if (
+        err.message.indexOf("futur and rewardsPool cannot create node") >= 0
+      ) {
+        (this.$root.$refs.alert as any).NotFutur();
+        return;
+      } else if (err.message.indexOf("Max already reached") >= 0) {
+        (this.$root.$refs.alert as any).MaxReached();
+        return;
+      } else {
+        (this.$root.$refs.alert as any).OtherError();
+        return;
+      }
+    } else {
+      if (
+        err.message.indexOf(
+          "MetaMask Tx Signature: User denied transaction signature."
+        ) >= 0
+      ) {
+        (this.$root.$refs.alert as any).UserReject();
+        return;
+      }
+    }
+
+    return;
+  }
+
+  public async onApprove() {
+    try {
+      await this.polar.approve(
+        Token,
+        ethers.BigNumber.from(
+          "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+        )
+      );
+      this.isApprove = false;
+    } catch (err: any) {
+      this.onError(err);
+    }
+  }
+
+  public async onCreate() {
+    try {
+      await this.pnode.createNodeWithTokens(this.nodeNftName, this.quantity);
+    } catch (err: any) {
+      this.onError(err);
+    }
+  }
+
   get dataBlocks() {
-    const { cost, roi, tax } = this;
+    const { cost, roi, tax, quantity } = this;
     return [
-      { key: "Cost:", value: cost, unit: "$POLAR" },
+      { key: "Cost:", value: cost * quantity, unit: "$POLAR" },
       { key: "ROI / day:", value: roi, unit: "%" },
       { key: "Claim Tax:", value: tax, unit: "%" },
     ];
@@ -145,8 +244,12 @@ export default class Create extends Vue {
 
   get dailyEarning() {
     const { quantity, dailyEarningPerNode } = this;
-
     return (dailyEarningPerNode * quantity).toFixed(2);
+  }
+
+  get roi() {
+    const { dailyEarningPerNode, cost } = this;
+    return ((dailyEarningPerNode / cost) * 100).toFixed(2);
   }
 }
 </script>
