@@ -24,9 +24,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "nuxt-property-decorator";
-import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
+import { PropType } from "vue";
+import { Component, Vue } from "nuxt-property-decorator";
 import { NodeNftNames } from "~/models/types";
+import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
 
 const ethers = require("ethers");
 const { Token, PolarToken, Owner } = require("~/hardhat/scripts/address.js");
@@ -41,16 +42,18 @@ const NAME_TO_URL = {
 
 @Component({
   props: {
-    name: { type: String },
+    name: { type: String as PropType<NodeNftNames> },
   },
 })
 export default class NodeNft extends Vue {
-  public dailyEarnings = null;
-  public cost = null;
+  public dailyEarnings: string | null = null;
+  public cost: string | null = null;
   public claimTax = 1;
 
   public onSelectNode() {
-    this.$router.push(`/create/${NAME_TO_URL[this.$props.name]}`);
+    this.$router.push(
+      `/create/${NAME_TO_URL[this.$props.name as NodeNftNames]}`
+    );
   }
 
   private async created() {

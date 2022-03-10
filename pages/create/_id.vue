@@ -11,15 +11,17 @@
         token rewards!
       </div>
       <VRow justify="space-between" class="mt-8">
-        <VCol col="12" sm="12" md="6">
+        <VCol cols="12" md="6" class="d-flex align-center">
           <img
             src="https://images.pexels.com/photos/5011647/pexels-photo-5011647.jpeg"
             class="node-image"
           />
         </VCol>
-        <VCol col="12" sm="12" md="6">
+        <VCol cols="12" md="6">
           <div class="text-center">
-            <div class="node-card__outlined pa-5">Earn 0.45 $POLAR per day</div>
+            <div class="node-card__outlined pa-5">
+              Earn {{ dailyEarning }} $POLAR per day
+            </div>
             <div class="node-card__content inline-block my-5">
               <VRow
                 v-for="db in dataBlocks"
@@ -39,13 +41,24 @@
                 <VBtn small rounded color="#00c6ed" dark @click="onRemove">
                   -
                 </VBtn>
-                <div class="mx-auto">{{ quantity }}</div>
+                <div class="mx-auto">
+                  <VTextField
+                    v-model.number="quantity"
+                    dark
+                    class="centered-input"
+                  />
+                </div>
                 <VBtn small rounded color="#00c6ed" dark @click="onAdd">
                   +
                 </VBtn>
               </div>
             </div>
-            <VBtn class="node-card__outlined node-card__button pa-2" dark text>
+            <VBtn
+              class="node-card__outlined node-card__button pa-2"
+              dark
+              text
+              :disabled="quantity < 1"
+            >
               Create
             </VBtn>
           </div>
@@ -58,7 +71,10 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "nuxt-property-decorator";
 import { NodeNftNames } from "~/models/types";
+import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
 
+const ethers = require("ethers");
+const { Token, PolarToken, Owner } = require("~/hardhat/scripts/address.js");
 const URL_TO_NAME = {
   fuji: NodeNftNames.Fuji,
   "mont-blanc": NodeNftNames.MontBlanc,
@@ -67,21 +83,37 @@ const URL_TO_NAME = {
   everest: NodeNftNames.Everest,
 };
 
+type Url = "fuji" | "mont-blanc" | "kilimanjaro" | "ushuaia" | "everest";
+
 @Component({})
 export default class Create extends Vue {
-  public nodeNftName: NodeNftNames;
+  public nodeNftName: NodeNftNames | null = null;
   public quantity = 1;
-  public dataBlocks = [
-    { key: "Cost:", value: 30, unit: "$POLAR" },
-    { key: "ROI / day:", value: 1.5, unit: "%" },
-    { key: "Claim Tax:", value: 1, unit: "%" },
-  ];
 
-  private created() {
-    const nodeNftName = URL_TO_NAME[this.$route.params.id];
+  private dailyEarningPerNode = 0;
+  private cost = 0;
+  private roi = 1.5;
+  private tax = 1;
+
+  private async created() {
+    const nodeNftName = URL_TO_NAME[this.$route.params.id as Url];
 
     if (nodeNftName) {
       this.nodeNftName = nodeNftName;
+      try {
+        const provider = new ethers.providers.Web3Provider(
+          window.ethereum,
+          "any"
+        );
+        const signer = provider.getSigner();
+        const pnode = new ethers.Contract(Token, NODER, signer);
+        const nodeData = await pnode.getNodeTypeAll(nodeNftName);
+
+        this.cost = ethers.utils.formatEther(nodeData[0]._hex);
+        this.dailyEarningPerNode = ethers.utils.formatEther(nodeData[2]._hex);
+      } catch (err) {
+        console.log(err);
+      }
     } else {
       this.$router.push("/nodes");
     }
@@ -96,12 +128,32 @@ export default class Create extends Vue {
   public onAdd() {
     this.quantity++;
   }
+
+  get dataBlocks() {
+    const { cost, roi, tax } = this;
+    return [
+      { key: "Cost:", value: cost, unit: "$POLAR" },
+      { key: "ROI / day:", value: roi, unit: "%" },
+      { key: "Claim Tax:", value: tax, unit: "%" },
+    ];
+  }
+
+  get dailyEarning() {
+    const { quantity, dailyEarningPerNode } = this;
+
+    return (dailyEarningPerNode * quantity).toFixed(2);
+  }
 }
 </script>
 
 <style scoped>
+.centered-input >>> input {
+  text-align: center;
+}
+
 .node-image {
   width: 100%;
+  min-width: 150px;
   border-radius: 14px;
 }
 
@@ -148,7 +200,7 @@ export default class Create extends Vue {
 }
 
 .node-card__content {
-  width: 200px;
+  width: 250px;
 }
 
 .node-card__data-block {
