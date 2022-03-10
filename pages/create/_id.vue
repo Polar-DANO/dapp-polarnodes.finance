@@ -29,12 +29,17 @@
                 justify="center"
                 class="my-1 ml-0 node-card__data-block"
               >
-                <VCol md="auto" class="py-2 px-6 node-card__data-block__blue">
+                <VCol
+                  md="auto"
+                  class="py-2 px-6 node-card__data-block__blue d-flex align-center"
+                >
                   {{ db.key }}
                 </VCol>
-                <VCol class="pa-1 text-center"
-                  >{{ db.value }} {{ db.unit }}</VCol
+                <VCol
+                  class="pa-1 text-center d-flex align-center justify-center"
                 >
+                  {{ db.value }} {{ db.unit }}
+                </VCol>
               </VRow>
 
               <div class="mt-6 mb-1 d-flex justify-center items-center">
@@ -155,6 +160,8 @@ export default class Create extends Vue {
   width: 100%;
   min-width: 150px;
   border-radius: 14px;
+  height: 100%;
+  object-fit: cover;
 }
 
 .node-card {
@@ -172,7 +179,7 @@ export default class Create extends Vue {
 }
 
 .node-card__header {
-  height: 60px;
+  min-height: 60px;
   border-radius: 10px 10px 0px 0px;
   padding: 16px;
   background-color: #00c6ed;
@@ -191,6 +198,7 @@ export default class Create extends Vue {
   text-transform: none !important;
 }
 .node-card__outlined {
+  min-width: 250px !important;
   width: 100%;
   border-radius: 14px;
   border: solid 2px #00c6ed;
@@ -200,12 +208,12 @@ export default class Create extends Vue {
 }
 
 .node-card__content {
-  width: 250px;
+  width: 200px;
 }
 
 .node-card__data-block {
   width: 100%;
-  height: 32px;
+  font-size: 14px;
   border-radius: 14px;
   border: solid 2px #00c6ed;
   background-color: rgba(0, 198, 237, 0);
@@ -213,7 +221,6 @@ export default class Create extends Vue {
 
 .node-card__data-block__blue {
   background-color: #00c6ed;
-  height: 30px;
   font-size: 14px;
   border-radius: 10px 0px 0px 10px;
 }
