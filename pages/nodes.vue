@@ -13,7 +13,7 @@
     </div>
     <span class="mt-[64px] text-[24px] text-white">Create Node 🗻️</span>
     <div
-      class="md:flex flex-wrap gap-2 md:gap-[24px] mt-[32px]"
+      class="md:flex flex-wrap gap-2 md:gap-[24px] my-[32px]"
       style="color: white"
     >
       <NodeNft
@@ -22,7 +22,7 @@
         :name="node.nodeValue"
       />
     </div>
-    <div class="md:mt-[32px]">
+    <div class="my-[32px]">
       <NodeTable :items="myNodeData" />
     </div>
   </div>

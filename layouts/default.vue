@@ -18,6 +18,7 @@
 
           <div class="flex justify-end items-center">
             <v-alert
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="noProvider"
@@ -27,7 +28,7 @@
               You must install MetaMask
             </v-alert>
             <v-alert
-              class="m-5"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="acceptMetamask"
@@ -37,378 +38,345 @@
               You must accept the connection with MetaMask
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="wrongNetwork"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               You must connect on the Avalanche Network
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertMustWLsale"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               You must buy with the Whitelist Sale
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="green"
               :value="alertWalletConnectOk"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               The Wallet Connected
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertDontHaveNFT"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               You dont have the NFT Key in your wallet
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertMustSign"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               You must accept the transaction
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertAMount"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               The amount must be a number less than the Individual Allocation
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertExceedsBalance"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Transfer amount exceeds balance
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertPurchase"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               You have already allocated this amount
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertNodesName"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Name not available
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertnoLiquidity"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Insufficient Pending
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertNeedBalance"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               You need more tokens to purchase
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="green"
               :value="alertBuyOk"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               The transaction should have gone well, wait few minutes
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertOverflow"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               You cannot allocate less than the previous amount
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertNodesBlacklist"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Blacklisted address
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertresurrectionNode"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               This number must not exceed the number of nodes you have left to
               retrieve. Enter small numbers to avoid exceeding the gas limit.
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertBuyNodesChars"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               This name must be beetween 3 and 32 characters
             </v-alert>
 
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertAlreadyClaim"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Tokens already claimed
             </v-alert>
 
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertNoOwner"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               No Node Owner
             </v-alert>
 
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertMaxReached"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Global limit reached
             </v-alert>
 
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertUserMaxReached"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Creation with pending limit reached for user
             </v-alert>
 
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertLevelUpReached"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Level up limit reached for user
             </v-alert>
 
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertNoOneLevelup"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               No one can level up this type of node
             </v-alert>
 
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertNoTarget"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Target doesn't exist
             </v-alert>
 
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertNoName"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Name doesn't exist
             </v-alert>
 
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertNoLevelDown"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Cannot level down
             </v-alert>
 
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertNoEnoughSent"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Not enough sent
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertNoClaim"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Nothing to claim
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertUserReject"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               MetaMask Tx Signature: User denied transaction signature.
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertTooManyRequest"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Too many nodes requested
             </v-alert>
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertNotAuthorized"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Not authorized yet
             </v-alert>
 
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertNotFutur"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               futur and rewardsPool cannot create node
             </v-alert>
 
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertMaxAlreadyReached"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               Max already reached
             </v-alert>
 
             <v-alert
-              class="mx-5 mb-0 h-[64px]"
+              class="alert-component mt-4"
               type="info"
               color="red"
               :value="alertOtherError"
               dismissible
-              position="relative"
               transition="scale-transition"
             >
               An error occured
@@ -696,3 +664,15 @@ export default class Defalut extends Vue {
   }
 }
 </script>
+
+<style scoped>
+.alert-component {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 320px;
+  z-index: 10;
+}
+</style>

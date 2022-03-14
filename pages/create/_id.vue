@@ -154,57 +154,47 @@ export default class Create extends Vue {
     this.quantity++;
   }
 
-  public onError(err: any) {
+  public onError(err: { message: string } | null): void {
     if (err) {
-      if (err.message.indexOf("User denied transaction signature") >= 0) {
-        (this.$root.$refs.alert as any).MustSign();
-        return;
-      } else if (err.message.indexOf("Global limit reached") >= 0) {
-        (this.$root.$refs.alert as any).MaxReached();
-        return;
+      const inAppAlert = this.$root.$refs.alert as unknown as Record<
+        string,
+        Function
+      >;
+
+      if (err.message.includes("User denied transaction signature")) {
+        inAppAlert.MustSign();
+      } else if (err.message.includes("Global limit reached")) {
+        inAppAlert.MaxReached();
       } else if (
-        err.message.indexOf("Creation with pending limit reached for user") >= 0
+        err.message.includes("Creation with pending limit reached for user")
       ) {
-        (this.$root.$refs.alert as any).UserMaxReached();
-        return;
-      } else if (err.message.indexOf("Balance too low for creation") >= 0) {
-        (this.$root.$refs.alert as any).NeedBalance();
-        return;
-      } else if (err.message.indexOf("nodeTypeName does not exist") >= 0) {
-        (this.$root.$refs.alert as any).NodesName();
-        return;
-      } else if (err.message.indexOf("Blacklisted address") >= 0) {
-        (this.$root.$refs.alert as any).NodesBlacklist();
-        return;
-      } else if (err.message.indexOf("fInsufficient Pending") >= 0) {
-        (this.$root.$refs.alert as any).noLiquidity();
-        return;
-      } else if (err.message.indexOf("Balance too low for creation.") >= 0) {
-        (this.$root.$refs.alert as any).NeedBalance();
-        return;
-      } else if (err.message.indexOf("Node creation not authorized yet") >= 0) {
-        (this.$root.$refs.alert as any).NotAuthorized();
-        return;
+        inAppAlert.UserMaxReached();
+      } else if (err.message.includes("Balance too low for creation")) {
+        inAppAlert.NeedBalance();
+      } else if (err.message.includes("nodeTypeName does not exist")) {
+        inAppAlert.NodesName();
+      } else if (err.message.includes("Blacklisted address")) {
+        inAppAlert.NodesBlacklist();
+      } else if (err.message.includes("fInsufficient Pending")) {
+        inAppAlert.noLiquidity();
+      } else if (err.message.includes("Balance too low for creation.")) {
+        inAppAlert.NeedBalance();
+      } else if (err.message.includes("Node creation not authorized yet")) {
+        inAppAlert.NotAuthorized();
       } else if (
-        err.message.indexOf("futur and rewardsPool cannot create node") >= 0
+        err.message.includes("futur and rewardsPool cannot create node")
       ) {
-        (this.$root.$refs.alert as any).NotFutur();
-        return;
-      } else if (err.message.indexOf("Max already reached") >= 0) {
-        (this.$root.$refs.alert as any).MaxReached();
-        return;
-      } else {
-        (this.$root.$refs.alert as any).OtherError();
-        return;
-      }
-    } else {
-      if (
-        err.message.indexOf(
+        inAppAlert.NotFutur();
+      } else if (err.message.includes("Max already reached")) {
+        inAppAlert.MaxReached();
+      } else if (
+        err.message.includes(
           "MetaMask Tx Signature: User denied transaction signature."
-        ) >= 0
+        )
       ) {
-        (this.$root.$refs.alert as any).UserReject();
-        return;
+        inAppAlert.UserReject();
+      } else {
+        inAppAlert.OtherError();
       }
     }
 

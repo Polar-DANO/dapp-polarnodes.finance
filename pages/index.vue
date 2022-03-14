@@ -128,17 +128,15 @@ export default class IndexVue extends Vue {
       )
       .then(
         (response : any) => {
-            var keyArray = Object.keys(response.data)            
-            console.log(response.data,"marketcap")
+            const keyArray = Object.keys(response.data)  
+                      
             this.protocolStats[0].price = this.getFromattedNb(response.data[keyArray[0]].usd)
             this.protocolStats[0].percentage = this.getFromattedNb (response.data[keyArray[0]].usd_24h_change) 
-            let tempPrice = this.getFromattedNb(response.data[keyArray[0]].usd  * 1000000)
-            console.log(tempPrice,"tempPrice")
-            this.protocolStats[1].price = tempPrice
+            this.protocolStats[1].price = this.getFromattedNb(response.data[keyArray[0]].usd  * 1000000)
         }
       );
     } catch {
-      console.log('Catch Network')
+      console.error('Catch Network')
     }    
   }
 
@@ -188,14 +186,12 @@ export default class IndexVue extends Vue {
       await Promise.all(tempNodeName).then((res)=>{
         nodeName = res
       })
-      console.log(nodeName,"NodeName")
       for(let i = 0 ; i < nodeSize ; i++)
           tempNodeReward.push(pnode.getNodeTypeAll(nodeName[i]));
       await Promise.all(tempNodeReward).then((res) => {
         for(let index in res)
           perNodeReward[index] = ethers.utils.formatEther(res[index][2]._hex)
       })
-      console.log(perNodeReward,"perNodeReward")
 
       for(let i = 0 ; i < nodeSize ; i++)
       {
@@ -205,13 +201,11 @@ export default class IndexVue extends Vue {
         for(let index in res)
           nodeCounter[index] = parseInt(res[index]._hex, 16)
       })
-      console.log(nodeCounter,"NodeCOunter")
       let rewardPerClaim = 0;
       for(let i = 0 ; i <nodeSize ; i++)
       {
          rewardPerClaim += perNodeReward[i]*nodeCounter[i]*6
       }
-      console.log(rewardPerClaim,"REwardPER")
       this.personalStats[2].price = this.getFromattedNb(rewardPerClaim);
       
       //pendingrewards
