@@ -2,7 +2,7 @@
   <div class="bg-black">
     <v-app>
       <div class="bg-[#17171b] h-full">
-        <LeftSideBar></LeftSideBar>
+        <LeftSideBar />
 
         <v-app-bar-nav-icon
           class="text-[#FFFFFF] md:hidden"
@@ -18,170 +18,171 @@
 
           <div class="flex justify-end items-center">
             <v-alert
-              class="alert-component mt-4"
-              type="info"
-              color="red"
-              :value="noProvider"
-              dismissible
-              transition="scale-transition"
-            >
-              You must install MetaMask
-            </v-alert>
-            <v-alert
-              class="alert-component mt-4"
-              type="info"
-              color="red"
-              :value="acceptMetamask"
-              dismissible
-              transition="scale-transition"
-            >
-              You must accept the connection with MetaMask
-            </v-alert>
-            <v-alert
-              class="alert-component mt-4"
-              type="info"
-              color="red"
-              :value="wrongNetwork"
-              dismissible
-              transition="scale-transition"
-            >
-              You must connect on the Avalanche Network
-            </v-alert>
-            <v-alert
-              class="alert-component mt-4"
-              type="info"
-              color="red"
-              :value="alertMustWLsale"
-              dismissible
-              transition="scale-transition"
-            >
-              You must buy with the Whitelist Sale
-            </v-alert>
-            <v-alert
+              v-if="alertBuyOk"
               class="alert-component mt-4"
               type="info"
               color="green"
-              :value="alertWalletConnectOk"
-              dismissible
-              transition="scale-transition"
-            >
-              The Wallet Connected
-            </v-alert>
-            <v-alert
-              class="alert-component mt-4"
-              type="info"
-              color="red"
-              :value="alertDontHaveNFT"
-              dismissible
-              transition="scale-transition"
-            >
-              You dont have the NFT Key in your wallet
-            </v-alert>
-            <v-alert
-              class="alert-component mt-4"
-              type="info"
-              color="red"
-              :value="alertMustSign"
-              dismissible
-              transition="scale-transition"
-            >
-              You must accept the transaction
-            </v-alert>
-            <v-alert
-              class="alert-component mt-4"
-              type="info"
-              color="red"
-              :value="alertAMount"
-              dismissible
-              transition="scale-transition"
-            >
-              The amount must be a number less than the Individual Allocation
-            </v-alert>
-            <v-alert
-              class="alert-component mt-4"
-              type="info"
-              color="red"
-              :value="alertExceedsBalance"
-              dismissible
-              transition="scale-transition"
-            >
-              Transfer amount exceeds balance
-            </v-alert>
-            <v-alert
-              class="alert-component mt-4"
-              type="info"
-              color="red"
-              :value="alertPurchase"
-              dismissible
-              transition="scale-transition"
-            >
-              You have already allocated this amount
-            </v-alert>
-            <v-alert
-              class="alert-component mt-4"
-              type="info"
-              color="red"
-              :value="alertNodesName"
-              dismissible
-              transition="scale-transition"
-            >
-              Name not available
-            </v-alert>
-            <v-alert
-              class="alert-component mt-4"
-              type="info"
-              color="red"
-              :value="alertnoLiquidity"
-              dismissible
-              transition="scale-transition"
-            >
-              Insufficient Pending
-            </v-alert>
-            <v-alert
-              class="alert-component mt-4"
-              type="info"
-              color="red"
-              :value="alertNeedBalance"
-              dismissible
-              transition="scale-transition"
-            >
-              You need more tokens to purchase
-            </v-alert>
-            <v-alert
-              class="alert-component mt-4"
-              type="info"
-              color="green"
-              :value="alertBuyOk"
               dismissible
               transition="scale-transition"
             >
               The transaction should have gone well, wait few minutes
             </v-alert>
             <v-alert
+              v-if="alertWalletConnectOk"
+              class="alert-component mt-4"
+              type="info"
+              color="green"
+              dismissible
+              transition="scale-transition"
+            >
+              The Wallet Connected
+            </v-alert>
+            <v-alert
+              v-if="noProvider"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertOverflow"
+              dismissible
+              transition="scale-transition"
+            >
+              You must install MetaMask
+            </v-alert>
+            <v-alert
+              v-if="acceptMetamask"
+              class="alert-component mt-4"
+              type="info"
+              color="red"
+              dismissible
+              transition="scale-transition"
+            >
+              You must accept the connection with MetaMask
+            </v-alert>
+            <v-alert
+              v-if="wrongNetwork"
+              class="alert-component mt-4"
+              type="info"
+              color="red"
+              dismissible
+              transition="scale-transition"
+            >
+              You must connect on the Avalanche Network
+            </v-alert>
+            <v-alert
+              v-if="alertMustWLsale"
+              class="alert-component mt-4"
+              type="info"
+              color="red"
+              dismissible
+              transition="scale-transition"
+            >
+              You must buy with the Whitelist Sale
+            </v-alert>
+            <v-alert
+              v-if="alertDontHaveNFT"
+              class="alert-component mt-4"
+              type="info"
+              color="red"
+              dismissible
+              transition="scale-transition"
+            >
+              You dont have the NFT Key in your wallet
+            </v-alert>
+            <v-alert
+              v-if="alertMustSign"
+              class="alert-component mt-4"
+              type="info"
+              color="red"
+              dismissible
+              transition="scale-transition"
+            >
+              You must accept the transaction
+            </v-alert>
+            <v-alert
+              v-if="alertAMount"
+              class="alert-component mt-4"
+              type="info"
+              color="red"
+              dismissible
+              transition="scale-transition"
+            >
+              The amount must be a number less than the Individual Allocation
+            </v-alert>
+            <v-alert
+              v-if="alertExceedsBalance"
+              class="alert-component mt-4"
+              type="info"
+              color="red"
+              dismissible
+              transition="scale-transition"
+            >
+              Transfer amount exceeds balance
+            </v-alert>
+            <v-alert
+              v-if="alertPurchase"
+              class="alert-component mt-4"
+              type="info"
+              color="red"
+              dismissible
+              transition="scale-transition"
+            >
+              You have already allocated this amount
+            </v-alert>
+            <v-alert
+              v-if="alertNodesName"
+              class="alert-component mt-4"
+              type="info"
+              color="red"
+              dismissible
+              transition="scale-transition"
+            >
+              Name not available
+            </v-alert>
+            <v-alert
+              v-if="alertnoLiquidity"
+              class="alert-component mt-4"
+              type="info"
+              color="red"
+              dismissible
+              transition="scale-transition"
+            >
+              Insufficient Pending
+            </v-alert>
+            <v-alert
+              v-if="alertNeedBalance"
+              class="alert-component mt-4"
+              type="info"
+              color="red"
+              dismissible
+              transition="scale-transition"
+            >
+              You need more tokens to purchase
+            </v-alert>
+
+            <v-alert
+              v-if="alertOverflow"
+              class="alert-component mt-4"
+              type="info"
+              color="red"
               dismissible
               transition="scale-transition"
             >
               You cannot allocate less than the previous amount
             </v-alert>
             <v-alert
+              v-if="alertNodesBlacklist"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertNodesBlacklist"
               dismissible
               transition="scale-transition"
             >
               Blacklisted address
             </v-alert>
             <v-alert
+              v-if="alertresurrectionNode"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertresurrectionNode"
               dismissible
               transition="scale-transition"
             >
@@ -189,10 +190,10 @@
               retrieve. Enter small numbers to avoid exceeding the gas limit.
             </v-alert>
             <v-alert
+              v-if="alertBuyNodesChars"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertBuyNodesChars"
               dismissible
               transition="scale-transition"
             >
@@ -200,10 +201,10 @@
             </v-alert>
 
             <v-alert
+              v-if="alertAlreadyClaim"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertAlreadyClaim"
               dismissible
               transition="scale-transition"
             >
@@ -211,10 +212,10 @@
             </v-alert>
 
             <v-alert
+              v-if="alertNoOwner"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertNoOwner"
               dismissible
               transition="scale-transition"
             >
@@ -222,10 +223,10 @@
             </v-alert>
 
             <v-alert
+              v-if="alertMaxReached"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertMaxReached"
               dismissible
               transition="scale-transition"
             >
@@ -233,10 +234,10 @@
             </v-alert>
 
             <v-alert
+              v-if="alertUserMaxReached"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertUserMaxReached"
               dismissible
               transition="scale-transition"
             >
@@ -244,10 +245,10 @@
             </v-alert>
 
             <v-alert
+              v-if="alertLevelUpReached"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertLevelUpReached"
               dismissible
               transition="scale-transition"
             >
@@ -255,10 +256,10 @@
             </v-alert>
 
             <v-alert
+              v-if="alertNoOneLevelup"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertNoOneLevelup"
               dismissible
               transition="scale-transition"
             >
@@ -266,10 +267,10 @@
             </v-alert>
 
             <v-alert
+              v-if="alertNoTarget"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertNoTarget"
               dismissible
               transition="scale-transition"
             >
@@ -277,10 +278,10 @@
             </v-alert>
 
             <v-alert
+              v-if="alertNoName"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertNoName"
               dismissible
               transition="scale-transition"
             >
@@ -288,10 +289,10 @@
             </v-alert>
 
             <v-alert
+              v-if="alertNoLevelDown"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertNoLevelDown"
               dismissible
               transition="scale-transition"
             >
@@ -299,50 +300,50 @@
             </v-alert>
 
             <v-alert
+              v-if="alertNoEnoughSent"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertNoEnoughSent"
               dismissible
               transition="scale-transition"
             >
               Not enough sent
             </v-alert>
             <v-alert
+              v-if="alertNoClaim"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertNoClaim"
               dismissible
               transition="scale-transition"
             >
               Nothing to claim
             </v-alert>
             <v-alert
+              v-if="alertUserReject"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertUserReject"
               dismissible
               transition="scale-transition"
             >
               MetaMask Tx Signature: User denied transaction signature.
             </v-alert>
             <v-alert
+              v-if="alertTooManyRequest"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertTooManyRequest"
               dismissible
               transition="scale-transition"
             >
               Too many nodes requested
             </v-alert>
             <v-alert
+              v-if="alertNotAuthorized"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertNotAuthorized"
               dismissible
               transition="scale-transition"
             >
@@ -350,10 +351,10 @@
             </v-alert>
 
             <v-alert
+              v-if="alertNotFutur"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertNotFutur"
               dismissible
               transition="scale-transition"
             >
@@ -361,10 +362,10 @@
             </v-alert>
 
             <v-alert
+              v-if="alertMaxAlreadyReached"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertMaxAlreadyReached"
               dismissible
               transition="scale-transition"
             >
@@ -372,10 +373,10 @@
             </v-alert>
 
             <v-alert
+              v-if="alertOtherError"
               class="alert-component mt-4"
               type="info"
               color="red"
-              :value="alertOtherError"
               dismissible
               transition="scale-transition"
             >
@@ -444,6 +445,19 @@ export default class Defalut extends Vue {
 
   created() {
     (this.$root.$refs.alert as Defalut) = this;
+  }
+
+  public async BuyOk(): Promise<void> {
+    await this.sleep(6000);
+    this.alertBuyOk = true;
+    await this.sleep(4000);
+    this.alertBuyOk = false;
+  }
+
+  public async WalletConnectOk(): Promise<void> {
+    this.alertWalletConnectOk = true;
+    await this.sleep(3000);
+    this.alertWalletConnectOk = false;
   }
 
   public async NoProvider(): Promise<void> {
@@ -524,13 +538,6 @@ export default class Defalut extends Vue {
     this.alertNeedBalance = false;
   }
 
-  public async BuyOk(): Promise<void> {
-    await this.sleep(6000);
-    this.alertBuyOk = true;
-    await this.sleep(4000);
-    this.alertBuyOk = false;
-  }
-
   public async noLiquidity(): Promise<void> {
     this.alertnoLiquidity = true;
     await this.sleep(3000);
@@ -553,12 +560,6 @@ export default class Defalut extends Vue {
     this.alertAlreadyClaim = true;
     await this.sleep(1500);
     this.alertAlreadyClaim = false;
-  }
-
-  public async WalletConnectOk(): Promise<void> {
-    this.alertWalletConnectOk = true;
-    await this.sleep(3000);
-    this.alertWalletConnectOk = false;
   }
 
   public async MaxReached(): Promise<void> {
