@@ -1,9 +1,6 @@
 <template>
   <div class="node-nft" @click="onSelectNode">
-    <v-skeleton-loader
-      type="article, list-item-two-line"
-      dark
-    ></v-skeleton-loader>
+    <v-skeleton-loader type="article, list-item-two-line" dark />
   </div>
 </template>
 
@@ -18,7 +15,7 @@
   padding: 12px 0;
   border-radius: 14px;
   border: solid 1px #00c6ed;
-  background-color: #1E1E1E;
+  background-color: #1e1e1e;
   font-family: WorkSans;
   font-weight: 500;
   font-stretch: normal;
