@@ -17,8 +17,6 @@
             v-for="(item, i) in core"
             :key="i"
             :to="item.to"
-            :href="item.href"
-            :target="item.target"
 
           >
             <img class="mx-[23.5px]" :src="item.url" alt="">
@@ -85,6 +83,11 @@ export default class LeftSideBar extends Vue {
           url: require('../assets/img/nodesIcon.svg'),
           title: "Nodes",
           to: "/nodes",
+        },
+        {
+          url: require('../assets/img/nodesIcon.svg'),
+          title: "Polar Market",
+          to: "/market",
         },
     ]
         
