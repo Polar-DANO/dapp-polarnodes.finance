@@ -1,6 +1,6 @@
 <template>
   <div
-    class="node-card flex flex-col mx-auto md:mx-[64px] mt-[30px] md:mt-[123px]"
+    class="node-card flex flex-col mx-auto md:mx-[64px] mt-[30px] md:mt-[100px]"
   >
     <div class="node-card__header">Create {{ nodeNftName }} Mountain 🗻️</div>
     <div class="mt-8 mb-16 mx-16">
@@ -291,7 +291,6 @@ export default class Create extends Vue {
   text-transform: none !important;
 }
 .node-card__outlined {
-  min-width: 250px !important;
   width: 100%;
   border-radius: 14px;
   border: solid 2px #00c6ed;

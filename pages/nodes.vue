@@ -13,6 +13,7 @@
     </div>
     <span class="mt-[64px] text-[24px] text-white">Create Node 🗻️</span>
     <div
+      v-if="nodeNameList && nodeNameList.length > 0"
       class="md:flex flex-wrap gap-2 md:gap-[24px] my-[32px]"
       style="color: white"
     >
@@ -20,6 +21,16 @@
         v-for="(node, i) of nodeNameList"
         :key="`${node.nodeValue}-${i}`"
         :name="node.nodeValue"
+      />
+    </div>
+    <div
+      v-else
+      class="md:flex flex-wrap gap-2 md:gap-[24px] my-[32px]"
+      style="color: white"
+    >
+      <NodeNftLoading
+        v-for="(node, i) of 5"
+        :key="`${node.nodeValue}-${i}`"
       />
     </div>
     <div class="my-[32px]">
