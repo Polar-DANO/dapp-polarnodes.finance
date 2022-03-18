@@ -35,3 +35,40 @@ module.exports = {
 	Owner, Addresses, Metamask
 }
 
+
+
+/// testnet contracts
+// // Deploy
+// const Handler = "0x6e819ca4e09652ec3288e1468Af8FeeE687d81F1";
+// const NodeType0 = "0xda4C68f3f7436D641010E9760882Fbb3bED2E638";
+// const NodeType1 = "0x0Fcf09Ab873e449aC1d5Cef80b796c3E8FC4F8b6";
+// const NodeType2 = "0xd237Fb62ee6375f091678b7742D6872c0BA6528A";
+// const NodeType3 = "0xD939b80dC0efDf1cd66a782D77E7E4e9A9c90a24";
+// const NodeType4 = "0xEA8B79944a91dcEd3fe46271e7D910a5728F7bad";
+// const PolarNode = "0x825E924a1eD0ccA7fC5759f240ebf2A72EFc4B66";
+// const PolarLuckyBox = "0xD3DD93B1A82BA2AF3b21191b900Ca97cE3fb777d";
+// const Swapper = "0x19FF002B5Bda80909974600692998Cc18d01f2DF";
+
+// // Contracts
+// const Token = "0xB6879b273B8FF9526aaC61A61B9e04cD5a0BAc18";
+// const Old = "0x303602efbc67C4E9D96363BC3975fBeD5f06A15f";
+// const Futur = "0x9410B0740c2e1a4a53F119178F3f7C601e4C546A";
+// const Distri = "0x9EE11FfC78d15E125DDF7bac9860a4e5A19e8fbB"; 
+// const LpHandler = "0xD403058E2702B383A08e4f5a1615A2b0fE2c4539";
+
+// const Router = "0x5db0735cf88F85E78ed742215090c465979B5006";
+// const Native = "0xd00ae08403B9bbb9124bB305C09058E32C39A48c";
+// const Pair = "0x388e8E00f50175382beE8141156E18460FAB6b18";
+// const Dai = "0xE283e73b20Ef77b336b7C79aaeAA22673891b8dF";
+// const Factory = "0x7eeccb3028870540EEc3D88C2259506f2d34fEE0";
+
+// // Wallets
+// const Owner = "0xbD1100c9439E4Cc3370395fF506e182e0BB6eB1A"; 
+// const Payees = [ 
+//     "0x1fDebcb5c287056cA3B156BFeBE9C91B959C68AF", 
+//     "0x0B0a7a303644f02303e9aE5BC78fa31630E98D3f",
+//     "0xeeae6f31FB84b0bc1b4CaaBf85A61cdc28DDb561",
+//     "0xDE4E69e0D534DB4422EfBac29Cd215C94328CF36",
+//     "0x95d11d563e4A605e7D67cFe0e7331E8d33E04B7d"
+// ]
+// const Metamask = "0x2f6B82Eb238DDEAF5F61BA9A0f4a3fbf749B603A";
