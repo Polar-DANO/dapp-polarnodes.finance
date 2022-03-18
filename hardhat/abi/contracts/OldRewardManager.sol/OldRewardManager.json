@@ -2,12 +2,17 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "nodeTypeName",
+        "type": "string"
+      },
+      {
         "internalType": "address",
-        "name": "account",
+        "name": "_owner",
         "type": "address"
       }
     ],
-    "name": "_getNodeNumberOf",
+    "name": "getNodeTypeOwnerNumber",
     "outputs": [
       {
         "internalType": "uint256",
