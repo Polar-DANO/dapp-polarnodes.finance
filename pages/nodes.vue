@@ -25,7 +25,7 @@
     </div>
     <div
       v-else
-      class="md:flex flex-wrap gap-2 md:gap-[24px] my-[32px]"
+      class="md:flex flex-wrap gap-2 md:gap-[12px] my-[32px]"
       style="color: white"
     >
       <NodeNftLoading v-for="index of 5" :key="`loading-node-${index}`" />
