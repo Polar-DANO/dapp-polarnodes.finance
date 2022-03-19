@@ -3,7 +3,7 @@
   <div class="border-solid border-[#00C6ED] border-[2px] rounded-[14px]">
     <img class="mr-[5px] rounded-[14px] height-[140px]" :src="cardData.src" alt=""/>
   </div>
-  <div class="text-[white] text-[16px] mt-[16px]">Fuji #123</div>
+  <div class="text-[white] text-[16px] mt-[16px]">{{cardData.title}}#123</div>
   <div class="flex justify-between mt-[16px]">
     <div class="flex flex-col">
       <span class="text-[#00C6ED] text-[12px]"> Buy Now </span>
