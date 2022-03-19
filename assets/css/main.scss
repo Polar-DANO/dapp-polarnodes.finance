@@ -57,11 +57,15 @@ body {
 }
 
 .v-input__slot:before{
-    border-color: rgba(255, 255, 255, 0.4) !important    
+    border-color: none !important    
 }
 
 .v-input__slot:after{
-    border-color: #00C6ED !important    
+    border-color: none !important    
+}
+
+.v-list-item {
+    padding: 0px 10px !important
 }
 
 ::placeholder {

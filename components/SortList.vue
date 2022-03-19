@@ -1,41 +1,28 @@
 <template>
-<div class="md:flex flex-col md:flex-wrap bg-[#17171B] rounded-[12px] min-h-[172px] border-solid border-[#00C6ED] border-[1px]  py-[16px] px-[16px] gap-2">
-  <div class="grid md:grid-cols-4 gap-4 mt-[10px]">
-    <v-select
-      :items="pricesort"
-
-    ></v-select>
-    <v-select
-      :items="pricesort"
-
-    ></v-select>
-    <v-select
-      :items="pricesort"
-
-    ></v-select>
-    <v-select
-      :items="pricesort"
-
-    ></v-select>
-    <v-select
-      :items="pricesort"
-
-    ></v-select>
-   <v-select
-      :items="pricesort"
-
-    ></v-select>
-  </div>
-  <div class="flex  flex-wrap items-center gap-4">
-    <div class="flex justify-center">
-      <img class="w-[22px] h-[22px] mr-[5px]" :src="require('../assets/img/logo.svg')" alt="">
-      <span class="text-[white]">Floor:</span>
-      <span class="text-[white]">0.6 AVAX </span>
+<div class="flex flex-col md:flex-row justify-between gap-2">
+  <div class="flex flex-col md:flex-row gap-[6px] md:w-[30%]">
+    <div class="border-solid border-[#00C6ED] border-[2px] rounded-[14px] px-[10px] md:w-[60%]">
+      <v-select
+        :items="nft"
+        v-model="defaultSelected"
+      ></v-select>
     </div>
-    <div class="flex">
-      <img class="w-[22px] h-[22px] mr-[5px]"  :src="require('../assets/img/logo.svg')" alt="">
-      <span class="text-[white]">VOLUME:</span>
-      <span class="text-[white]">478.34 AVAX</span>
+    <div class="border-solid border-[#00C6ED] border-[2px] rounded-[14px] px-[10px] md:w-[40%]">
+      <v-select
+        :items="sort"
+        v-model="defaultSort"
+      ></v-select>
+    </div>
+  </div>
+  <div class="w-[28%]"></div>
+  <div class="flex justify-end items-center gap-4">
+    <div class="border-solid rounded-[14px] border-[#00C6ED] border-[2px] p-[15px]">
+      <span class="text-[white] text-[14px]">Floor Price:</span>
+      <span class="text-[white] text-[14px]">5 AVAX </span>
+    </div>
+    <div class="border-solid rounded-[14px] border-[#00C6ED] border-[2px] p-[15px]">
+      <span class="text-[white] text-[14px]">Volume:</span>
+      <span class="text-[white] text-[14px]">100 AVAX</span>
     </div>
   </div>
 </div>
@@ -54,6 +41,21 @@ declare var window: any
 
 @Component
 export default class SortList extends Vue {
-  public pricesort = ["list1","list2","list3"]
+  private nft = ["MountainTier","list2","list3"];
+  private defaultSelected = "MountainTier";
+  private sort = ["Sort by","list1","list2"];
+  private defaultSort ="Sort by"
+
+  // private defaultSort = "Sort by";
 }
 </script>
+<style>
+  .v-text-field {
+    padding-top: 0px !important;
+    margin-top: 0px !important;
+  }
+  .v-input__slot {
+    margin-bottom: 0px !important;
+    margin-top: 9px !important;
+  }
+</style>
