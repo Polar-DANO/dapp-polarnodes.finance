@@ -28,9 +28,19 @@
       class="md:flex flex-wrap gap-2 md:gap-[24px] my-[32px]"
       style="color: white"
     >
-      <NodeNftLoading
-        v-for="(node, i) of 5"
-        :key="`${node.nodeValue}-${i}`"
+      <NodeNftLoading v-for="index of 5" :key="`loading-node-${index}`" />
+    </div>
+    <span class="mt-[64px] text-[24px] text-white">Node Lucky Boxes 📦️</span>
+    <div
+      class="md:flex flex-wrap gap-2 md:gap-[24px] my-[32px]"
+      style="color: white"
+    >
+      <NodeNftLuckyBox
+        v-for="({ index, name, cost }, i) of luckyBoxesList"
+        :key="`${name}-${i}`"
+        :index="index"
+        :name="name"
+        :cost="cost"
       />
     </div>
     <div class="my-[32px]">
@@ -51,6 +61,7 @@ import { abi as POLAR } from "~/hardhat/artifacts/contracts/PolarNodes.sol/Polar
 import Defalut from "~/layouts/default.vue";
 import { WalletModule } from "~/store";
 import { NodeNftNames } from "~/models/types";
+import { luckyBoxes } from "~/models/constants";
 
 const { Token, PolarToken } = require("~/hardhat/scripts/address.js");
 
@@ -95,6 +106,8 @@ export default class Nodes extends Vue {
       nodeCounter: 5,
     },
   ];
+
+  public luckyBoxesList = luckyBoxes;
 
   private nodeNameList: any = [];
   private nodeCounter: any = [];

@@ -8,18 +8,85 @@
         Create a Mountain with $POLAR tokens to earn lifetime high-yield token
         rewards!
       </div>
-      <VRow justify="space-between" class="mt-8">
-        <VCol cols="12" md="6" class="d-flex align-center">
-          <img
-            src="https://images.pexels.com/photos/5011647/pexels-photo-5011647.jpeg"
-            class="node-image"
-          />
+      <VRow justify="space-between">
+        <VCol cols="12" md="6" class="d-flex align-center mt-8">
+          <div class="full-height">
+            <div v-if="!isDetailsOpen" class="inline-block node-image__wrapper">
+              <img
+                src="https://images.pexels.com/photos/5011647/pexels-photo-5011647.jpeg"
+                class="node-image"
+              />
+              <div
+                class="text-center mt-2 node-card__details pointer"
+                @click="isDetailsOpen = true"
+              >
+                <VIcon large color="#00c6ed" class="mr-1">
+                  mdi-arrow-right-drop-circle-outline
+                </VIcon>
+                View All Details
+              </div>
+            </div>
+            <div
+              v-else
+              class="inline-block node-image__wrapper"
+              style="width: 100%"
+            >
+              <VRow
+                v-for="db in detailsBlocks"
+                :key="db.key"
+                justify="center"
+                class="my-2 ml-0 node-card__data-block node-card__details-block"
+              >
+                <VCol
+                  md="auto"
+                  class="py-2 px-6 node-card__data-block__blue d-flex align-center"
+                >
+                  {{ db.key }}
+                </VCol>
+                <VCol
+                  class="pa-1 text-center d-flex align-center justify-center"
+                >
+                  {{ db.value }} {{ db.unit }}
+                </VCol>
+              </VRow>
+              <div
+                class="text-center mt-5 node-card__details pointer"
+                @click="isDetailsOpen = false"
+              >
+                <VIcon large color="#00c6ed" class="mr-1">
+                  mdi-arrow-left-drop-circle-outline
+                </VIcon>
+                Go Back To Main
+              </div>
+            </div>
+            <div class="mt-8 d-flex align-center node-card__details__options">
+              <VCheckbox hide-details class="mr-1" color="#00c6ed" />
+              Create this Mountain NFT with Pending Rewards
+            </div>
+            <div class="mt-1 d-flex align-center node-card__details__options">
+              <VCheckbox
+                v-model="isLevelUpSelected"
+                hide-details
+                class="mr-1"
+                color="#00c6ed"
+              />
+              Create this Mountain NFT by ‘Leveling Up’ Existing NFTs
+            </div>
+          </div>
         </VCol>
-        <VCol cols="12" md="6">
-          <div class="text-center">
+        <VCol cols="12" md="6" class="mt-8">
+          <div v-if="!isLevelUpSelected" class="text-center">
             <div class="node-card__outlined pa-5">
               Earn {{ dailyEarning }} $POLAR per day
             </div>
+            <VSelect
+              class="node-card__outlined node-card__select centered-input mt-4"
+              width="200px"
+              placeholder="Buy With"
+              dense
+              hide-details
+              outlined
+            />
             <div class="node-card__content inline-block my-5">
               <VRow
                 v-for="db in dataBlocks"
@@ -56,7 +123,6 @@
                 </VBtn>
               </div>
             </div>
-
             <VBtn
               v-if="isApprove"
               class="node-card__outlined node-card__button pa-2"
@@ -75,6 +141,55 @@
               @click="onCreate"
             >
               Create
+            </VBtn>
+          </div>
+          <div v-else class="text-center">
+            <div class="pb-5 text-left node-card__levelup__title">
+              Select Mountain NFT(s) To Exchange:
+            </div>
+
+            <VSelect
+              class="node-card__outlined centered-input mt-4"
+              placeholder="Select Mountain NFT(s)"
+              dense
+              hide-details
+              outlined
+            />
+
+            <div class="mt-4 text-left node-card__danger-text">
+              *** WARNING / ATTENTION: ***
+            </div>
+            <div class="mt-4 text-left node-card__danger-text">
+              Leveling up an NFT will make it lose any existing pending rewards!
+            </div>
+            <div class="mt-4 text-left node-card__danger-text">
+              Please count the number of NFTs you want to exchange. If you
+              select more than the price of the target NFT, you will lose the
+              excess NFTs.
+            </div>
+            <div class="mt-4 mb-8 text-left node-card__danger-text">
+              Make sure that the total amount of NFTs you exchange corresponds
+              to the price of the target NFT. Be careful!
+            </div>
+
+            <VBtn
+              v-if="isApprove"
+              class="node-card__outlined node-card__button pa-2"
+              dark
+              text
+              @click="onApprove"
+            >
+              Approve
+            </VBtn>
+            <VBtn
+              v-else
+              class="node-card__outlined node-card__button pa-2"
+              dark
+              text
+              :disabled="quantity < 1"
+              @click="onLevelUp"
+            >
+              Level Up
             </VBtn>
           </div>
         </VCol>
@@ -107,6 +222,8 @@ export default class Create extends Vue {
   public nodeNftName: NodeNftNames | null = null;
   public quantity = 1;
   public isApprove = true;
+  public isDetailsOpen = false;
+  public isLevelUpSelected = false;
 
   private dailyEarningPerNode = 0;
   private cost = 0;
@@ -223,12 +340,26 @@ export default class Create extends Vue {
     }
   }
 
+  public onLevelUp() {
+    alert("level up");
+  }
+
   get dataBlocks() {
     const { cost, roi, tax, quantity } = this;
     return [
       { key: "Cost:", value: cost * quantity, unit: "$POLAR" },
       { key: "ROI / day:", value: roi, unit: "%" },
       { key: "Claim Tax:", value: tax, unit: "%" },
+    ];
+  }
+
+  get detailsBlocks() {
+    return [
+      { key: "Max Slots:", value: "0 / 0" },
+      { key: "Max Level Up User:", value: 0 },
+      { key: "Max Level Up Global:", value: 0 },
+      { key: "Max Creation Pending User:", value: 0 },
+      { key: "Max Creation Pending Global:", value: 0 },
     ];
   }
 
@@ -257,6 +388,10 @@ export default class Create extends Vue {
   object-fit: cover;
 }
 
+.node-image__wrapper {
+  height: calc(100% - 120px);
+}
+
 .node-card {
   width: 90%;
   max-width: 980px;
@@ -269,6 +404,16 @@ export default class Create extends Vue {
   letter-spacing: normal;
   text-align: left;
   color: #fff;
+}
+
+.node-card__details {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.node-card__details__options {
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .node-card__header {
@@ -290,6 +435,7 @@ export default class Create extends Vue {
 .node-card__button {
   text-transform: none !important;
 }
+
 .node-card__outlined {
   width: 100%;
   border-radius: 14px;
@@ -299,8 +445,19 @@ export default class Create extends Vue {
   background-color: rgba(0, 198, 237, 0);
 }
 
+.node-card__select {
+  max-width: 200px;
+  margin: auto;
+}
+
 .node-card__content {
   width: 200px;
+}
+
+.node-card__details-block {
+  max-width: 300px;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 .node-card__data-block {
@@ -315,5 +472,16 @@ export default class Create extends Vue {
   background-color: #00c6ed;
   font-size: 14px;
   border-radius: 10px 0px 0px 10px;
+}
+
+.node-card__levelup__title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.node-card__danger-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f00;
 }
 </style>
