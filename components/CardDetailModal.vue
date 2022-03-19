@@ -1,4 +1,5 @@
 <template>
+  <transition name="scale-transition" mode="out-in">
   <div class="flex flex-col justify-center fixed bg-[#000000da] top-0 right-0 bottom-0 left-0 md:ml-[244px] md:py-[13%] px-[3%]">
     <div class="bg-[#00C6ED] text-[white] rounded-t-[20px] text-[18px] md:text-[24px] p-[16px]">
       Buy Fuji Mountain #123 NFT 🗻️
@@ -14,7 +15,11 @@
       </div>
       <div class="flex flex-wrap mt-[20px] justify-between md:px-[10%]">
         <div class="flex flex-col md:pb-[6%]">
-          <img class="md:ml-[5px] px-[10px] md:px-[0px]  rounded-[15px] h-[200px] md:h-[245px]" :src="require('../assets/img/nft/3.jpg')" alt=""/>
+          <div class="flex justify-center rounded-[15px] md:ml-[5px] px-[10px]">
+            <video class="md:px-[0px]  rounded-[15px] h-[200px] md:h-[245px]" width="240px"  autoplay loop>
+              <source :src="cardData.video" type="video/mp4">
+            </video>
+          </div>
           <div class="flex flex-col px-[16%] mt-[16px]">
             <div class="flex flex-col gap-[4px] md:gap-[8px]">
               <div class="flex text-center items-center">
@@ -104,6 +109,7 @@
       </div>
     </div>
   </div>
+  </transition>
 </template>
 
 <script lang="ts">
@@ -112,7 +118,8 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component({
   props:{
     dataDetail:Array
-  }
+  },
+  transition: "scale-transition",
 })
 export default class CardDetailModal extends Vue {
 
@@ -137,5 +144,20 @@ export default class CardDetailModal extends Vue {
     font-size:16px !important;
     font-weight: 600 !important;
     
+  }
+  @keyframes modalSlide {
+  from {
+    width: 20%;
+    opacity: 0.5;
+  }
+
+  to {
+    width: 100%;
+    opacity: 1;
+  }
+  }
+
+  .transModal {
+    animation: modalSlide 0.5s ease-out;
   }
 </style>
