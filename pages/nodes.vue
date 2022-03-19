@@ -14,7 +14,7 @@
     <span class="mt-[64px] text-[24px] text-white">Create Node 🗻️</span>
     <div
       v-if="nodeNameList && nodeNameList.length > 0"
-      class="md:flex flex-wrap gap-2 md:gap-[24px] my-[32px]"
+      class="md:flex flex-wrap gap-2 md:gap-[12px] my-[32px]"
       style="color: white"
     >
       <NodeNft
