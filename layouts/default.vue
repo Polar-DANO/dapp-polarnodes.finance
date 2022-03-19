@@ -406,7 +406,7 @@ declare var window: any;
   components: { LeftSideBar },
   transition: "scale-transition",
 })
-export default class Defalut extends Vue {
+export default class Default extends Vue {
   public wrongNetwork = false;
   public alertMustWLsale = false;
   public alertMustSign = false;
@@ -444,7 +444,7 @@ export default class Defalut extends Vue {
   public alertOtherError = false;
 
   created() {
-    (this.$root.$refs.alert as Defalut) = this;
+    (this.$root.$refs.alert as Default) = this;
   }
 
   public async BuyOk(): Promise<void> {

@@ -183,7 +183,7 @@ Be careful.</span>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import Defalut from "~/layouts/default.vue"
+import Default from "~/layouts/default.vue"
 import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
 import { abi as POLAR } from "~/hardhat/artifacts/contracts/PolarNodes.sol/PolarNodes.json";
 
@@ -256,39 +256,39 @@ export default class CreateNode extends Vue {
       if(err.data)
       {
         if (err.data.message.indexOf("No one can level up this type of node") >= 0) {
-          (this.$root.$refs.alert as Defalut).NoOneLevelUp();
+          (this.$root.$refs.alert as Default).NoOneLevelUp();
           return;
         }
         if (err.data.message.indexOf("Level up limit reached for user") >= 0) {
-          (this.$root.$refs.alert as Defalut).MaxLimitLevelUp();
+          (this.$root.$refs.alert as Default).MaxLimitLevelUp();
           return;
         }
         if (err.data.message.indexOf("target doesnt exist") >= 0) {
-          (this.$root.$refs.alert as Defalut).NoTarget();
+          (this.$root.$refs.alert as Default).NoTarget();
           return;
         }
         if (err.data.message.indexOf("name doesnt exist") >= 0) {
-          (this.$root.$refs.alert as Defalut).NoName();
+          (this.$root.$refs.alert as Default).NoName();
           return;
         }
         if (err.data.message.indexOf("Not owned") >= 0) {
-          (this.$root.$refs.alert as Defalut).NoOwner();
+          (this.$root.$refs.alert as Default).NoOwner();
           return;
         }
         if (err.data.message.indexOf("Cannot level down") >= 0) {
-          (this.$root.$refs.alert as Defalut).NoLevelDown();
+          (this.$root.$refs.alert as Default).NoLevelDown();
           return;
         }
         if (err.data.message.indexOf("Not enough sent") >= 0) {
-          (this.$root.$refs.alert as Defalut).NoEnoughSent();
+          (this.$root.$refs.alert as Default).NoEnoughSent();
           return;
         }
         if (err.data.message.indexOf("Node level up not authorized yet") >= 0) {
-          (this.$root.$refs.alert as Defalut).NotAuthorized();
+          (this.$root.$refs.alert as Default).NotAuthorized();
           return;
         }
         if (err.data.message.indexOf("Max already reached") >= 0) {
-            (this.$root.$refs.alert as Defalut).MaxAlreadyReached();
+            (this.$root.$refs.alert as Default).MaxAlreadyReached();
             return;
           }
       } else {
@@ -320,7 +320,7 @@ export default class CreateNode extends Vue {
     } catch(err : any) {
         if(err.data){
           if (err.data.message.indexOf("Too many nodes requested") >= 0) {
-            (this.$root.$refs.alert as Defalut).TooManyRequest();
+            (this.$root.$refs.alert as Default).TooManyRequest();
             return;
           }
         }
@@ -349,7 +349,7 @@ export default class CreateNode extends Vue {
       
       if(this.seletedNodeName == null && this.approved)
       {
-        (this.$root.$refs.alert as Defalut).NodesName();
+        (this.$root.$refs.alert as Default).NodesName();
         return;
       }
       else {
@@ -366,52 +366,52 @@ export default class CreateNode extends Vue {
     } catch(err : any) {
         if(err.data){
           if (err.data.message.indexOf("User denied transaction signature") >= 0) {
-            (this.$root.$refs.alert as Defalut).MustSign();
+            (this.$root.$refs.alert as Default).MustSign();
             return;
           }
           if (err.data.message.indexOf("Global limit reached") >= 0) {
-            (this.$root.$refs.alert as Defalut).MaxReached();
+            (this.$root.$refs.alert as Default).MaxReached();
             return;
           }
           if (err.data.message.indexOf("Creation with pending limit reached for user") >= 0) {
-            (this.$root.$refs.alert as Defalut).UserMaxReached();
+            (this.$root.$refs.alert as Default).UserMaxReached();
             return;
           }
           if (err.data.message.indexOf("Balance too low for creation") >= 0) {
-            (this.$root.$refs.alert as Defalut).NeedBalance();
+            (this.$root.$refs.alert as Default).NeedBalance();
             return;
           }
           if (err.data.message.indexOf("nodeTypeName does not exist") >= 0) {
-            (this.$root.$refs.alert as Defalut).NodesName();
+            (this.$root.$refs.alert as Default).NodesName();
             return;
           }
           if (err.data.message.indexOf("Blacklisted address") >= 0) {
-            (this.$root.$refs.alert as Defalut).NodesBlacklist();
+            (this.$root.$refs.alert as Default).NodesBlacklist();
             return;
           }
           if (err.data.message.indexOf("fInsufficient Pending") >= 0) {
-            (this.$root.$refs.alert as Defalut).noLiquidity();
+            (this.$root.$refs.alert as Default).noLiquidity();
             return;
           }
           if (err.data.message.indexOf("Balance too low for creation.") >= 0) {
-            (this.$root.$refs.alert as Defalut).NeedBalance();
+            (this.$root.$refs.alert as Default).NeedBalance();
             return;
           }
           if (err.data.message.indexOf("Node creation not authorized yet") >= 0) {
-            (this.$root.$refs.alert as Defalut).NotAuthorized();
+            (this.$root.$refs.alert as Default).NotAuthorized();
             return;
           }
           if (err.data.message.indexOf("futur and rewardsPool cannot create node") >= 0) {
-            (this.$root.$refs.alert as Defalut).NotFutur();
+            (this.$root.$refs.alert as Default).NotFutur();
             return;
           }
           if (err.data.message.indexOf("Max already reached") >= 0) {
-            (this.$root.$refs.alert as Defalut).MaxReached();
+            (this.$root.$refs.alert as Default).MaxReached();
             return;
           }
         } else {
           if (err.message.indexOf("MetaMask Tx Signature: User denied transaction signature.") >= 0) {
-            (this.$root.$refs.alert as Defalut).UserReject();
+            (this.$root.$refs.alert as Default).UserReject();
             return;
           }
         }
@@ -474,13 +474,13 @@ export default class CreateNode extends Vue {
             }        
           })
         } else {
-          (this.$root.$refs.alert as Defalut).NoProvider();
+          (this.$root.$refs.alert as Default).NoProvider();
         }
       } catch(err) {
-        (this.$root.$refs.alert as Defalut).AcceptMetamask();
+        (this.$root.$refs.alert as Default).AcceptMetamask();
       }      
     } else {
-      (this.$root.$refs.alert as Defalut).NoProvider();
+      (this.$root.$refs.alert as Default).NoProvider();
     }
   }
 }

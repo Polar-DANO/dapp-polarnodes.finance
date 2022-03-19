@@ -55,7 +55,7 @@ import axios from "axios";
 
 import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
 import { abi as POLAR } from "~/hardhat/artifacts/contracts/PolarNodes.sol/PolarNodes.json";
-import Defalut from "~/layouts/default.vue";
+import Default from "~/layouts/default.vue";
 import { WalletModule } from "~/store";
 import { NodeNftNames } from "~/models/types";
 import { luckyBoxes } from "~/models/constants";
@@ -214,7 +214,7 @@ export default class Nodes extends Vue {
           }
         }
       } catch (err) {
-        (this.$root.$refs.alert as Defalut).AcceptMetamask();
+        (this.$root.$refs.alert as Default).AcceptMetamask();
       }
     }
   }
