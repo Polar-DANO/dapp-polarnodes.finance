@@ -38,7 +38,12 @@
             <span class="text-[#00c6ed]">Node Counter</span>
           </th>
           <th class="pt-[12px] pl-[16px] text-left text-[12px]">
-            <!-- <span class="text-[#00c6ed]">Last Claim</span> -->
+            <button
+              class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[1px] hover:bg-[#00C6ED] rounded-[14px] px-[30%] my-[10px]"
+              @click="()=> nftSellSectionModal = true"
+            >
+              <div>Manage</div>
+            </button>
           </th>
           <th class="pt-[12px] pl-[16px] text-left text-[12px]">
             <!-- <span class="text-[#00c6ed]">Claimed Rewards</span> -->
@@ -78,6 +83,12 @@
         </tr>
       </tbody>
     </table>
+    <div v-if="nftSellSectionModal">
+      <NFTSellSectionModal @closeModal="()=>nftSellSectionModal=false" @sellModal="clickedSellModal" />
+    </div>
+    <div v-if="nftSellModal">
+      <NFTSellModal @closeSellModal="()=>nftSellModal=false" />
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -97,11 +108,17 @@ declare var window: any;
 })
 export default class NodeTable extends Vue {
   private nodeData = [];
+  private nftSellSectionModal = false;
+  private nftSellModal = false;
 
   private created() {
     this.nodeData = this.$props.items;
   }
 
+  private clickedSellModal() {
+    this.nftSellSectionModal = false;
+    this.nftSellModal = true;
+  }
   public onError(err: { message: string } | null): void {
     if (err) {
       const inAppAlert = this.$root.$refs.alert as unknown as Record<

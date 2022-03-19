@@ -1,17 +1,25 @@
 <template>
-<div class="md:flex flex-col md:flex-wrap bg-[#17171B] rounded-[16px] p-[15px]">
-   <img class="mr-[5px] rounded-t-[20px] rounded-b-[12px]" :src="cardData.src" alt="" @click="$emit('cardModal',cardData)"/>
-   <div class="flex flex-wrap mt-[10px] items-center px-[30px]" @click="$emit(cardModal)">
-    <div class="w-[41px] h-[41px] rounded-[50%] border-solid border-[#00C6ED] border-[2px] text-[#00C6ED] text-center font-bold p-[6px]">{{cardData.level}}</div>
-    <span class="text-[16px] font-bold ml-[15px] text-[#00C6ED]">POLAR</span>
-    <span class="text-[16px] font-bold ml-[5px] text-[#00C6ED]">{{cardData.cardId}}</span>
-   </div>
-   <div class="flex flex-wrap items-center mt-[10px] px-[30px]">
-    <img class="w-[22px] h-[22px] mx-[14px]" :src="require('../assets/img/logo.svg')" alt=""/>
-    <span class="text-[16px] ml-[5px] text-[#00C6ED]">{{cardData.price}}</span>
-    <span class="text-[16px] ml-[5px] text-[#00C6ED]">POLAR</span>
-   </div>
-   <!-- <CardDetailModal v-show="showModal"/> -->
+<div class="md:flex flex-col md:flex-wrap bg-[#17171B] rounded-[14px] p-[15px] nftCard">
+  <div class="border-solid border-[#00C6ED] border-[2px] rounded-[14px]">
+    <img class="mr-[5px] rounded-[14px] height-[140px]" :src="cardData.src" alt=""/>
+  </div>
+  <div class="text-[white] text-[16px] mt-[16px]">Fuji #123</div>
+  <div class="flex justify-between mt-[16px]">
+    <div class="flex flex-col">
+      <span class="text-[#00C6ED] text-[12px]"> Buy Now </span>
+      <span class="text-[white] text-[16px]">100.89 AVAX </span>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-[#00C6ED] text-[12px]">Current Bid</span>
+      <span class="text-[white] text-[16px]">100.89 AVAX </span>
+    </div>
+  </div>
+  <button
+    class="text-center text-white font-normal text-[14px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] p-[4px] my-[10px] w-[100%]"
+    @click="$emit('cardModal',cardData)"
+  >
+    <div>View</div>
+  </button>
 </div>
 </template>
 <script lang="ts">
@@ -42,3 +50,11 @@ export default class SortList extends Vue {
   }
 }
 </script>
+<style>
+.nftCard:hover {
+  box-shadow: 0 0 14px 14px rgba(0, 198, 237, 0.5);
+}
+.nftCard {
+  cursor: pointer;
+}
+</style>

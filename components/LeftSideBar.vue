@@ -85,7 +85,7 @@ export default class LeftSideBar extends Vue {
           to: "/nodes",
         },
         {
-          url: require('../assets/img/nodesIcon.svg'),
+          url: require('../assets/img/shopicon.svg'),
           title: "Polar Market",
           to: "/market",
         },
