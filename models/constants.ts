@@ -33,15 +33,15 @@ export const NODENAME_TO_IMAGE = {
 
 export const NODENAME_TO_VIDEO = {
   [NodeNftNames.Fuji]:
-    "https://ipfs.io/ipfs/QmbqaNCGuqnMzzLq5pB8x75nWNeY55W7TBqfjwyt14w51M?filename=FUJI%20ANIM.mp4",
+  require("../assets/PACK/FUJI ANIM.mp4"),
   [NodeNftNames.MontBlanc]:
-    "https://ipfs.io/ipfs/QmSm4mzJQmy97oqnN1jbxYXMQ2GE1TGz2dQsYucMivLyLV?filename=MONT%20BLANC%20ANIM.mp4",
+  require("../assets/PACK/MONT BLANC ANIM.mp4"),
   [NodeNftNames.Kilimanjaro]:
-    "https://ipfs.io/ipfs/QmZJqJUAUcQ4PhxSCS1QFrG1PrKZRYwZLv6yhdorXi6HYU?filename=KILIMANDJARO%20ANIM.mp4",
+  require("../assets/PACK/KILIMANDJARO ANIM.mp4"),
   [NodeNftNames.Ushuaia]:
-    "https://ipfs.io/ipfs/QmdotjoP4x6CLFsSvKY96uTCGTwWmEURvxSuPMfdy4LxX4?filename=USHUAIA%20ANIM.mp4",
+  require("../assets/PACK/USHUAIA ANIM.mp4"),
   [NodeNftNames.Everest]:
-    "https://ipfs.io/ipfs/Qmf9Gwn9oVaCfj4H5cRzxhwGiAMxHbEX5wVFAGdE7yBXoi?filename=EVEREST%20ANIM.mp4",
+  require("../assets/PACK/EVEREST ANIM.mp4"),
 };
 
 export const luckyBoxes = [
