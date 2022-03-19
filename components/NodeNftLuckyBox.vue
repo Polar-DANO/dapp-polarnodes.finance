@@ -5,7 +5,10 @@
     </div>
     <div class="divider" />
 
-    <div class="spacer" />
+    <img
+      src="https://ipfs.io/ipfs/QmWaScFo2DDRG2cpfK8ZUqtctSZRZpPcpBLkUXmkfMHi15?filename=LUCKY%20BOX%20NEUTRAL.jpg"
+      class="node-image"
+    />
 
     <div class="divider" />
 
@@ -48,8 +51,10 @@ export default class NodeNft extends Vue {
 </script>
 
 <style scoped>
-.spacer {
+.node-image {
+  width: 100%;
   height: 127px;
+  object-fit: cover;
 }
 
 .divider {
