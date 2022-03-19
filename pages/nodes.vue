@@ -14,7 +14,7 @@
     <span class="mt-[64px] text-[24px] text-white">Create Node 🗻️</span>
     <div
       v-if="nodeNameList && nodeNameList.length > 0"
-      class="md:flex flex-wrap gap-2 md:gap-[24px] my-[32px]"
+      class="md:flex flex-wrap gap-2 md:gap-[12px] my-[32px]"
       style="color: white"
     >
       <NodeNft
@@ -25,7 +25,7 @@
     </div>
     <div
       v-else
-      class="md:flex flex-wrap gap-2 md:gap-[24px] my-[32px]"
+      class="md:flex flex-wrap gap-2 md:gap-[12px] my-[32px]"
       style="color: white"
     >
       <NodeNftLoading v-for="index of 5" :key="`loading-node-${index}`" />
@@ -42,9 +42,6 @@
         :name="name"
         :cost="cost"
       />
-    </div>
-    <div class="my-[32px]">
-      <NodeTable :items="myNodeData" />
     </div>
   </div>
 </template>
@@ -111,7 +108,6 @@ export default class Nodes extends Vue {
 
   private nodeNameList: any = [];
   private nodeCounter: any = [];
-  private myNodeData: any = [];
   private counterTemp: any = [];
   private myNodeList: any = [];
   private nodeInst: any;
@@ -136,8 +132,6 @@ export default class Nodes extends Vue {
     }, 15000);
   }
   private async listenConnectEvent(): Promise<void> {
-    this.myNodeData = [];
-
     if (window.ethereum) {
       const ethers = require("ethers");
 
@@ -210,7 +204,6 @@ export default class Nodes extends Vue {
               nodeType: this.nodeNameList[i].nodeValue,
               nodeCounter: this.nodeCounter[i],
             };
-            this.myNodeData.push(this.counterTemp);
             for (let j = 0; j < this.nodeCounter[i]; j++) {
               let temp = {
                 nodeNameList: this.nodeNameList[i].nodeValue,

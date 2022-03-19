@@ -10,10 +10,13 @@
       </div>
       <VRow justify="space-between" class="mt-8">
         <VCol cols="12" md="6" class="d-flex align-center">
-          <img
-            src="https://images.pexels.com/photos/5011647/pexels-photo-5011647.jpeg"
-            class="node-image"
-          />
+          <video class="node-video" autoplay loop muted>
+            <source
+              src="https://ipfs.io/ipfs/QmdugWR6xNqUoK6rDjccnzJEVxN7VysncttHvjG2QMUWK3?filename=LUCKY_BOX_NEUTRAL_ANIM.mp4"
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video>
         </VCol>
         <VCol cols="12" md="6">
           <div class="text-center">
@@ -239,7 +242,7 @@ export default class Create extends Vue {
   text-align: center;
 }
 
-.node-image {
+.node-video {
   width: 100%;
   min-width: 150px;
   border-radius: 14px;

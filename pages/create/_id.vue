@@ -9,13 +9,16 @@
         rewards!
       </div>
       <VRow justify="space-between">
-        <VCol cols="12" md="6" class="d-flex align-center mt-8">
+        <VCol cols="12" md="6" class="d-flex align-center justify-center mt-8">
           <div class="full-height">
-            <div v-if="!isDetailsOpen" class="inline-block node-image__wrapper">
-              <img
-                src="https://images.pexels.com/photos/5011647/pexels-photo-5011647.jpeg"
-                class="node-image"
-              />
+            <div
+              v-if="!isDetailsOpen"
+              class="inline-block node-video__container"
+            >
+              <video class="node-video" autoplay loop muted>
+                <source :src="video" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
               <div
                 class="text-center mt-2 node-card__details pointer"
                 @click="isDetailsOpen = true"
@@ -28,7 +31,7 @@
             </div>
             <div
               v-else
-              class="inline-block node-image__wrapper"
+              class="inline-block node-video__container"
               style="width: 100%"
             >
               <VRow
@@ -204,18 +207,10 @@ import { NodeNftNames } from "~/models/types";
 import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
 import { abi as POLAR } from "~/hardhat/artifacts/contracts/PolarNodes.sol/PolarNodes.json";
 import { WalletModule } from "~/store";
+import { URL_TO_NAME, NODENAME_TO_VIDEO, Url } from "~/models/constants";
 
 const ethers = require("ethers");
 const { Token, PolarToken, Owner } = require("~/hardhat/scripts/address.js");
-const URL_TO_NAME = {
-  fuji: NodeNftNames.Fuji,
-  "mont-blanc": NodeNftNames.MontBlanc,
-  kilimanjaro: NodeNftNames.Kilimanjaro,
-  ushuaia: NodeNftNames.Ushuaia,
-  everest: NodeNftNames.Everest,
-};
-
-type Url = "fuji" | "mont-blanc" | "kilimanjaro" | "ushuaia" | "everest";
 
 @Component({})
 export default class Create extends Vue {
@@ -224,6 +219,7 @@ export default class Create extends Vue {
   public isApprove = true;
   public isDetailsOpen = false;
   public isLevelUpSelected = false;
+  public video: string | null = null;
 
   private dailyEarningPerNode = 0;
   private cost = 0;
@@ -233,6 +229,7 @@ export default class Create extends Vue {
 
   private async created() {
     const nodeNftName = URL_TO_NAME[this.$route.params.id as Url];
+    this.video = NODENAME_TO_VIDEO[nodeNftName];
 
     if (nodeNftName) {
       this.nodeNftName = nodeNftName;
@@ -380,16 +377,17 @@ export default class Create extends Vue {
   text-align: center;
 }
 
-.node-image {
+.node-video {
   width: 100%;
-  min-width: 150px;
   border-radius: 14px;
-  height: 100%;
   object-fit: cover;
+  height: 100%;
 }
 
-.node-image__wrapper {
-  height: calc(100% - 120px);
+.node-video__container {
+  height: 300px;
+  width: 100%;
+  margin: auto;
 }
 
 .node-card {
