@@ -62,7 +62,7 @@ export default class NodeNft extends Vue {
   box-shadow: 0 0 14px 14px rgba(0, 198, 237, 0.5);
 }
 
-@media (min-width: 1441px) {
+@media (min-width: 1440px) {
   .node-nft {
     max-width: 180px;
   }

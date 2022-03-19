@@ -105,6 +105,12 @@ export default class NodeNft extends Vue {
   }
 }
 
+@media screen and (max-width: 425px) {
+  .node-nft {
+    margin-bottom: 8px;
+  }
+}
+
 .node-nft {
   min-width: 160px;
   cursor: pointer;
