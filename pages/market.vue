@@ -2,13 +2,13 @@
   <div class="flex flex-col md:mx-[164px] mx-[10%] mt-[30px] md:mt-[84px]">
     <span class="text-[24px] text-[#FFFFFF] ml-[3px] mb-[32px]">Polar NFT Market 🛒</span>
     <SortList/>
-    <div class="grid md:grid-cols-3 gap-4 mt-[30px]">
+    <div class="grid md:grid-cols-4 gap-4 mt-[30px]">
       <Card v-for="(list, i) in artList" 
         :key="i"
         :card="list"
         @cardModal="clickedCardModal" />
     </div> 
-    <div v-if="showModal">
+    <div v-if="showModal">  
         <CardDetailModal :dataDetail="selectedData" @closeModal="()=>showModal=false"/>
     </div>
   </div>
@@ -53,7 +53,7 @@ export default class Market extends Vue {
       src:  require("../assets/PACK/KILIMANDJARO FIXE.jpg"),
       video: require("../assets/PACK/KILIMANDJARO ANIM.mp4"),
       title: "Kilimanjaro",
-      price: 1.2
+      price: 1.2 
     },
     {
       src:  require("../assets/PACK/USHUAIA RENDER0133.jpg"),

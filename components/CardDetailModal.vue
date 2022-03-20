@@ -1,5 +1,4 @@
 <template>
-  <transition name="scale-transition" mode="out-in">
   <div class="flex flex-col justify-center fixed bg-[#000000da] top-0 right-0 bottom-0 left-0 md:ml-[244px] md:py-[13%] px-[3%]">
     <div class="bg-[#00C6ED] text-[white] rounded-t-[20px] text-[18px] md:text-[24px] p-[16px]">
       Buy Fuji Mountain #123 NFT 🗻️
@@ -13,10 +12,10 @@
       <div class="mt-[32px] text-[white] text-[16px] text-center">
         Create a Mountain NFT with $POLAR tokens to earn lifetime high-yield token rewards!
       </div>
-      <div class="flex flex-wrap mt-[20px] justify-between md:px-[10%]">
+      <div class="flex flex-wrap gap-[64px] mt-[20px] justify-between px-[10%]">
         <div class="flex flex-col md:pb-[6%]">
           <div class="flex justify-center rounded-[15px] md:ml-[5px] px-[10px]">
-            <video class="md:px-[0px]  rounded-[15px] h-[200px] md:h-[245px]" width="240px"  autoplay loop>
+            <video class="md:px-[0px]  rounded-[15px] h-[250px]  object-cover" width="100%" height="100%" autoplay loop>
               <source :src="cardData.video" type="video/mp4">
             </video>
           </div>
@@ -45,7 +44,7 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-col gap-[8px] md:gap-[43px] px-[16%] md:px-[13%]  md:mt-[10px] pb-[14px] md:pb-[66px]">
+        <div class="flex flex-col gap-[8px] md:gap-[43px]  pb-[14px] md:pb-[66px]">
           <div class="flex flex-col gap-[8px] md:gap-[14px]">
             <v-checkbox
               class="text-[16px] font-[16px]"
@@ -109,7 +108,6 @@
       </div>
     </div>
   </div>
-  </transition>
 </template>
 
 <script lang="ts">
@@ -144,20 +142,5 @@ export default class CardDetailModal extends Vue {
     font-size:16px !important;
     font-weight: 600 !important;
     
-  }
-  @keyframes modalSlide {
-  from {
-    width: 20%;
-    opacity: 0.5;
-  }
-
-  to {
-    width: 100%;
-    opacity: 1;
-  }
-  }
-
-  .transModal {
-    animation: modalSlide 0.5s ease-out;
   }
 </style>
