@@ -89,6 +89,11 @@ export default class LeftSideBar extends Vue {
           title: "Polar Market",
           to: "/market",
         },
+        {
+          url: require('../assets/img/mynft.svg'),
+          title: "My NFTs",
+          to: "/mynft", 
+        }
     ]
         
     created() {
