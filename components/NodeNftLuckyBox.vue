@@ -6,7 +6,7 @@
     <div class="divider" />
 
     <img
-      src="https://ipfs.io/ipfs/QmWaScFo2DDRG2cpfK8ZUqtctSZRZpPcpBLkUXmkfMHi15?filename=LUCKY%20BOX%20NEUTRAL.jpg"
+      src="../assets/PACK/LUCKY BOX NEUTRAL.jpg"
       class="node-image"
     />
 

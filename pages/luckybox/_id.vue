@@ -12,7 +12,7 @@
         <VCol cols="12" md="6" class="d-flex align-center">
           <video class="node-video" autoplay loop muted>
             <source
-              src="https://ipfs.io/ipfs/QmdugWR6xNqUoK6rDjccnzJEVxN7VysncttHvjG2QMUWK3?filename=LUCKY_BOX_NEUTRAL_ANIM.mp4"
+              :src="require('../../assets/PACK/LUCKY_BOX_NEUTRAL_ANIM.mp4')"
               type="video/mp4"
             />
             Your browser does not support the video tag.
