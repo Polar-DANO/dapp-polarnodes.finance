@@ -1,5 +1,5 @@
 <template>
-<div class="flex flex-col md:flex-row justify-between gap-2">
+<div class="flex flex-col md:flex-row md:justify-between gap-2">
   <div class="flex flex-col md:flex-row gap-[6px] md:w-[30%]">
     <div class="border-solid border-[#00C6ED] border-[2px] rounded-[14px] px-[10px] md:w-[60%]">
       <v-select
