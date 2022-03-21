@@ -33,6 +33,7 @@ import axios from "axios"
 import { abi as HANDLER_ABI } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
 import { abi as POLAR_TOKEN_ABI } from "~/hardhat/artifacts/contracts/Polar.sol/Polar.json";
 import { abi as NODE_TYPE_ABI } from "~/hardhat/artifacts/contracts/NodeType.sol/NodeType.json";
+import { PAYOUTS_PER_DAY } from '~/models/constants';
 
 import {WalletModule} from '~/store'
 
@@ -197,7 +198,7 @@ export default class IndexVue extends Vue {
       );
 
 
-      const rewardPerClaim = nodes.reduce((acc, node) => acc.add(node.rewardAmount.mul(node.userCount)), ethers.BigNumber.from(0));
+      const rewardPerClaim = nodes.reduce((acc, node) => acc.add(node.rewardAmount.mul(node.userCount).mul(PAYOUTS_PER_DAY)), ethers.BigNumber.from(0));
       this.personalStats[2].price = this.getFormattedNb(ethers.utils.formatEther(rewardPerClaim));
       
       //pendingrewards

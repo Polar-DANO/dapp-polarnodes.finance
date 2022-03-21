@@ -1,5 +1,7 @@
 import { NodeNftNames } from "./types";
 
+export const PAYOUTS_PER_DAY = 6;
+
 export const NAME_TO_URL = {
   [NodeNftNames.Fuji]: "fuji",
   [NodeNftNames.MontBlanc]: "mont-blanc",
