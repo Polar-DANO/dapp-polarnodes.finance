@@ -1,88 +1,93 @@
 <template>
   <div class="overflow-x-auto w-full">
-    <table
-      class="mx-auto w-full whitespace-nowrap rounded-lg bg-[#17171B] overflow-hidden"
-    >
+    <div class="flex flex-col">
+      <div class="flex justify-between bg-[#00C6ED]  rounded-t-lg p-[16px] min-w-[420px]">
+        <div class="text-white text-[16px]">
+           My Mountain NFTs
+        </div>
+        <button
+          class="tex text-white font-normal text-[16px] border-solid border-[white] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px]"
+          @click="rewardClaim"
+        >
+          <div>Claim All</div>
+        </button>
+      </div>
+      <table
+        class="mx-auto w-[100%] min-w-[420px] rounded-b-lg bg-[#17171B]"
+      >
       <thead>
-        <tr class="text-white text-left bg-[#00C6ED]">
-          <th class="p-[16px]">My Nodes</th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-        </tr>
         <tr>
-          <th class="pl-[16px] pt-[12px] text-left">
-            <button
-              class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[1px] hover:bg-[#00C6ED] rounded-[14px] px-[30%] my-[10px]"
-              @click="rewardClaim"
-            >
-              <div>Claim Rewards</div>
-            </button>
+          <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <span class="text-[#00c6ed]">NFT ID</span>
           </th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-        </tr>
-        <tr>
-          <th class="w-[20%] pt-[12px] pl-[16px] text-left text-[12px]">
-            <span class="text-[#00c6ed]">Node Level</span>
+          <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <span class="text-[#00c6ed]">NFT Tier</span>
           </th>
-          <th class="w-[30%] pt-[12px] pl-[16px] text-left text-[12px]">
-            <span class="text-[#00c6ed]">Node Type</span>
+          <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <span class="text-[#00c6ed]">Date</span>
+          </th>
+          <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <span class="text-[#00c6ed]">last Claim</span>
+          </th>
+          <th class="w-[15%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <span class="text-[#00c6ed]">Claimed Rewards</span>
           </th>
           <th class="w-[20%] pt-[12px] pl-[16px] text-left text-[12px]">
-            <span class="text-[#00c6ed]">Node Counter</span>
+            <span class="text-[#00c6ed]">Pending Rewards</span>
           </th>
-          <th class="pt-[12px] pl-[16px] text-left text-[12px]">
+          <!-- <th class="pt-[12px] pl-[16px] text-left text-[12px]">
             <button
               class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[1px] hover:bg-[#00C6ED] rounded-[14px] px-[30%] my-[10px]"
               @click="()=> nftSellSectionModal = true"
             >
               <div>Manage</div>
             </button>
-          </th>
-          <th class="pt-[12px] pl-[16px] text-left text-[12px]">
-            <!-- <span class="text-[#00c6ed]">Claimed Rewards</span> -->
-          </th>
-          <th class="pt-[12px] pl-[16px] text-left text-[12px]">
-            <!-- <span class="text-[#00c6ed]">Pending Rewards</span> -->
-          </th>
+          </th> -->
         </tr>
       </thead>
       <tbody class="divide-white/10 divide-y-[1px] px-[16px]">
-        <tr v-for="(item, i) in nodeData">
+      </tbody>
+        <tr>
           <td
-            class="w-[20%] py-[12px] pl-[16px] text-left text-[12px] text-white"
+            class="py-[12px] pl-[16px] text-left text-[12px] text-white"
           >
-            {{ item.nodeIndex }}
+          001
+            <!-- {{ item.nodeIndex }} -->
           </td>
           <td
-            class="w-[30%] py-[12px] pl-[16px] text-left text-[12px] text-white"
+            class="py-[12px] pl-[16px] text-left text-[12px] text-white"
           >
-            {{ item.nodeType }}
+          Snow Node
+            <!-- {{ item.nodeType }} -->
           </td>
           <td
-            class="w-[20%] py-[12px] pl-[16px] text-left text-[12px] text-white"
+            class="py-[12px] pl-[16px] text-left text-[12px] text-white"
           >
-            {{ item.nodeCounter }}
+          12/01/2022
+            <!-- {{ item.nodeCounter }} -->
           </td>
 
           <td class="py-[12px] pl-[16px] text-left text-[12px] text-white">
+          $640
             <!-- {{item.lastClaim}} -->
           </td>
           <td class="py-[12px] pl-[16px] text-left text-[12px] text-white">
+          $640
             <!-- {{item.claimRewards}} -->
           </td>
-          <td class="py-[12px] pl-[16px] text-left text-[12px] text-white">
-            <!-- {{item.pendingRewards}} -->
+          <td class="flex flex-wrap items-center justify-center py-[12px] pl-[16px] text-[12px] text-white">
+          $640
+            <button
+              class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px] my-[10px] ml-[16px]"
+              @click="()=> nftSellSectionModal = true"
+            >
+              <div>Manage</div>
+            </button>
+          </th>
           </td>
         </tr>
-      </tbody>
-    </table>
+      </table>
+    </div>
     <div v-if="nftSellSectionModal">
       <NFTSellSectionModal @closeModal="()=>nftSellSectionModal=false" @sellModal="clickedSellModal" />
     </div>

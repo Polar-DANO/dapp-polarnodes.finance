@@ -1,37 +1,35 @@
 <template>
-  <div class="flex flex-col justify-center fixed bg-[#000000da] top-0 right-0 bottom-0 left-0 md:ml-[244px] md:py-[13%] px-[3%]">
+  <div class="flex flex-col justify-center fixed bg-[#000000da] top-0 right-0 bottom-0 left-0 md:ml-[244px] md:pt-[190px] md:pb-[90px] md:px-[100px]">
     <div class="bg-[#00C6ED] text-[white] rounded-t-[20px] text-[18px] md:text-[24px] p-[16px]">
       Buy Fuji Mountain #123 NFT 🗻️
-      <div class="cursor-pointer inline absolute right-0 md:px-[3%]">
+      <div class="cursor-pointer inline absolute right-0 md:px-[94px]">
         <v-btn class="mr-[20px]" icon @click="$emit('closeModal')">
           <v-icon class="text-white">mdi-close</v-icon>
         </v-btn>
       </div>
     </div>
-    <div class="flex flex-col bg-[#17171B] rounded-b-[20px] border-solid border-[#00C6ED] border-[2px]">
-      <div class="mt-[32px] text-[white] text-[16px] text-center">
+    <div class="flex flex-col gap-[20px] bg-[#17171B] rounded-b-[20px] border-solid border-[#00C6ED] border-[2px] p-[20px]">
+      <div class="text-[white] text-[16px] text-center">
         Create a Mountain NFT with $POLAR tokens to earn lifetime high-yield token rewards!
       </div>
-      <div class="flex flex-wrap gap-[64px] mt-[20px] justify-between px-[10%]">
-        <div class="flex flex-col md:pb-[6%]">
-          <div class="flex justify-center rounded-[15px] md:ml-[5px] px-[10px]">
-            <video class="md:px-[0px]  rounded-[15px] h-[250px]  object-cover" width="100%" height="100%" autoplay loop>
-              <source :src="cardData.video" type="video/mp4">
-            </video>
-          </div>
-          <div class="flex flex-col px-[16%] mt-[16px]">
-            <div class="flex flex-col gap-[4px] md:gap-[8px]">
-              <div class="flex text-center items-center">
+      <div class="flex flex-wrap md:gap-[64px] mx-[20px] md:mx-[64px]">
+        <div class="flex flex-col gap-[16px]">
+          <video class="rounded-[15px] max-h-[300px]  object-cover" width="100%" height="100%" autoplay loop>
+            <source :src="cardData.video" type="video/mp4">
+          </video>
+          <div class="flex flex-col md:mx-[90px]">
+            <div class="flex flex-col gap-[4px] md:gap-[8px] ">
+              <div class="flex flex-initial text-center items-center">
                 <div class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]">
                   ROI / day:
                 </div>
-                <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]">
+                <div class="justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]">
                   <div class="py-[4px] md:py-[8px]">
                     <span class="text-[white] text-[14px] text-center font-[500]">1.5%</span>
                   </div>
                 </div>
               </div>
-              <div class="flex text-center items-center">
+              <div class="flex flex-initial text-center items-center">
                 <div class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]">
                   Claim Tax:
                 </div>
@@ -44,8 +42,8 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-col gap-[8px] md:gap-[43px]  pb-[14px] md:pb-[66px]">
-          <div class="flex flex-col gap-[8px] md:gap-[14px]">
+        <div class="flex flex-col gap-[8px] md:gap-[43px]">
+          <div class="flex flex-initial flex-col gap-[8px] md:gap-[14px]">
             <v-checkbox
               class="text-[16px] font-[16px]"
               label="Fixed Price"    
@@ -54,7 +52,7 @@
               v-model="sellGroup[0]"
               @change="uniqueCheck($event, 0)"
             ></v-checkbox>
-            <div class="flex text-center items-center">
+            <div class="flex flex-initial  text-center items-center">
               <div class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]">
                 ‘Buy Now’ Price:
               </div>
@@ -66,7 +64,7 @@
               </div>
             </div>
           </div>          
-          <div class="flex flex-col gap-[8px]  md:gap-[14px]">
+          <div class="flex flex-initial flex-col gap-[8px]  md:gap-[14px]">
             <v-checkbox
               label="Auction"      
               color="#00C6ED"
@@ -75,7 +73,7 @@
               @change="uniqueCheck($event, 1)"
             ></v-checkbox>
             <div class="flex flex-col gap-[4px] md:gap-[8px]">
-              <div class="flex text-center items-center">
+              <div class="flex flex-initial text-center items-center">
                 <div class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]">
                   Current Bid:
                 </div>
@@ -86,7 +84,7 @@
                   </div>
                 </div>
               </div>
-              <div class="flex text-center items-center">
+              <div class="flex flex-initial text-center items-center">
                 <div class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]">
                  Enter New Bid:
                 </div>
@@ -100,9 +98,9 @@
             </div>
           </div>
           <button
-            class="text-white text-center font-normal text-[14px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] h-[35px]"
+            class="text-white text-center font-normal text-[14px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px]"
           >
-            <div class="text-[16px] font-[600] py-[5px] text-center">Buy</div>
+            <div class="text-[16px] font-[600] py-[8px] text-center">Buy</div>
           </button>
         </div>
       </div>
