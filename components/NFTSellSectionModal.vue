@@ -30,7 +30,7 @@
               <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]">
                 <div class="px-[4px] py-[8px]">
                   <span class="text-[white] text-[14px] mr-[16px] font-[500]">100</span>
-                  <span class="text-[#00C6ED] text-[14px] font-[600]">AVAX</span>
+                  <span class="text-[#00C6ED] text-[14px] font-[600]">POLAR</span>
                 </div>
               </div>
             </div>

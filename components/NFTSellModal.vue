@@ -73,6 +73,23 @@
             <div class="text-[16px] font-[600] py-[8px] text-center">Sell</div>
           </button>
         </div>
+        <div class="flex items-center text-center">
+          <div class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] text-[center] w-[50%] py-[4px] font-[600]">
+            Minimum Bid:
+          </div>
+          <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] text-[center] w-[50%]">
+            <div class="px-[4px] py-[4px]">
+              <span class="text-[white] text-[14px] mr-[16px] font-[500]">100</span>
+              <span class="text-[#00C6ED] text-[14px] font-[600]">POLAR</span>
+            </div>
+          </div>
+        </div>
+        <button
+          class="text-white text-center font-normal text-[14px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] h-[35px]"
+          @click="$emit('sellModal')"
+        >
+          <div class="text-[16px] font-[600] py-[5px] text-center">Sell</div>
+        </button>
       </div>
     </div>
   </div>

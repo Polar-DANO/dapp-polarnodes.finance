@@ -7,11 +7,11 @@
   <div class="flex justify-between mt-[16px]">
     <div class="flex flex-col">
       <span class="text-[#00C6ED] text-[12px]"> Buy Now </span>
-      <span class="text-[white] text-[16px]">100.89 AVAX </span>
+      <span class="text-[white] text-[16px]">100.89 POLAR </span>
     </div>
     <div class="flex flex-col">
       <span class="text-[#00C6ED] text-[12px]">Current Bid</span>
-      <span class="text-[white] text-[16px]">100.89 AVAX </span>
+      <span class="text-[white] text-[16px]">100.89 POLAR </span>
     </div>
   </div>
 </div>
