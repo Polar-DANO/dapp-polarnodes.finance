@@ -13,7 +13,7 @@
         <div class="max-w-[420px] max-h-[325px]">
           <img class="rounded-[15px] w-[420px] h-[325px] object-cover" :src="require('../assets/img/nft/3.jpg')" alt=""/>
         </div>
-        <div class="flex flex-col gap-[12px] md:gap-[24px]">
+        <div class="flex flex-col gap-[12px] md:gap-[10px]">
           <div class="border-solid border-[#00C6ED] border-[2px] rounded-[14px] text-center p-[23px]">
             <span class="text-[white] text-[16px] font-[600]">Earning 0.45 $POLAR per day</span>
           </div>
