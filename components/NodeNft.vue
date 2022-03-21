@@ -27,7 +27,7 @@
 import { PropType } from "vue";
 import { Component, Vue } from "nuxt-property-decorator";
 import { NodeNftNames } from "~/models/types";
-import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
+import { abi as NODER } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
 import { NAME_TO_URL, NODENAME_TO_IMAGE } from "~/models/constants";
 
 const ethers = require("ethers");

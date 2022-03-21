@@ -306,19 +306,19 @@ export default class ConnectionBtn extends Vue {
             decimals: 18
         },
     },])*/
-    await provider.request({
-      method : "wallet_addEthereumChain",
-      params : [{
-        chainId: "0xa86a",
-        chainName: "Avalanche Network",
-        rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
-        blockExplorerUrls: ["https://snowtrace.io/"],
-        nativeCurrency: {
-            name: "AVAX",
-            symbol: "AVAX",
-            decimals: 18
-        },
-    },]})
+    // await provider.request({
+    //   method : "wallet_addEthereumChain",
+    //   params : [{
+    //     chainId: "0xa86a",
+    //     chainName: "Avalanche Network",
+    //     rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
+    //     blockExplorerUrls: ["https://snowtrace.io/"],
+    //     nativeCurrency: {
+    //         name: "AVAX",
+    //         symbol: "AVAX",
+    //         decimals: 18
+    //     },
+    // },]})
   }
 
   public async requestWalletAccounts() {    

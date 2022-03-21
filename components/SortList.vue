@@ -30,7 +30,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
-import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
+import { abi as NODER } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
 import Default from "~/layouts/default.vue"
 
 const {

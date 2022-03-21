@@ -184,8 +184,8 @@ Be careful.</span>
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import Default from "~/layouts/default.vue"
-import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
-import { abi as POLAR } from "~/hardhat/artifacts/contracts/PolarNodes.sol/PolarNodes.json";
+import { abi as NODER } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
+import { abi as POLAR } from "~/hardhat/artifacts/contracts/PolarNode.sol/PolarNode.json";
 
 import {WalletModule} from '~/store'
 

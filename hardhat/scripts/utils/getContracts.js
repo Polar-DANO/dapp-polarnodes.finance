@@ -47,7 +47,7 @@ async function getContracts() {
 	const abiWavax = JSON.parse(rawJson);
 	const wavax = new ethers.Contract(address.Native, abiWavax, ethers.provider);
 
-	rawJson = fs.readFileSync("./abi/contracts/NODERewardManager.sol/NODERewardManager.json");
+	rawJson = fs.readFileSync("./abi/contracts/Handler.sol/Handler.json");
 	const abiOld = JSON.parse(rawJson);
 	const old = new ethers.Contract(address.Old, abiOld, ethers.provider);
 	

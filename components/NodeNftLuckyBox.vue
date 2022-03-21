@@ -23,7 +23,7 @@
 import { PropType } from "vue";
 import { Component, Vue } from "nuxt-property-decorator";
 import { NodeNftNames } from "~/models/types";
-import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
+import { abi as NODER } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
 
 const ethers = require("ethers");
 const { Token, PolarToken, Owner } = require("~/hardhat/scripts/address.js");

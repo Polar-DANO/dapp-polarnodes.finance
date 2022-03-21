@@ -53,14 +53,14 @@ import AlertComponents from "~/components/AlertComponents.vue";
 
 import axios from "axios";
 
-import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
-import { abi as POLAR } from "~/hardhat/artifacts/contracts/PolarNodes.sol/PolarNodes.json";
+import { abi as HANDLER_ABI } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
+import { abi as POLAR_TOKEN_ABI } from "~/hardhat/artifacts/contracts/Polar.sol/Polar.json";
 import Default from "~/layouts/default.vue";
 import { WalletModule } from "~/store";
 import { NodeNftNames } from "~/models/types";
 import { luckyBoxes } from "~/models/constants";
 
-const { Token, PolarToken } = require("~/hardhat/scripts/address.js");
+const { Token: PolarToken, Handler } = require("~/hardhat/scripts/address.js");
 
 declare var window: any;
 
@@ -142,40 +142,28 @@ export default class Nodes extends Vue {
       try {
         const signer = provider.getSigner();
 
-        const pnode = new ethers.Contract(Token, NODER, signer);
-        const polar = new ethers.Contract(PolarToken, POLAR, signer);
+        const handlerContract = new ethers.Contract(Handler, HANDLER_ABI, signer);
+        const polar = new ethers.Contract(PolarToken, POLAR_TOKEN_ABI, signer);
 
         let tmp;
         if (WalletModule.walletaddress) {
-          tmp = await pnode.calculateAllClaimableRewards(
-            WalletModule.walletaddress
-          );
-
-          const totalNodes = await pnode.getTotalCreatedNodes();
+          const totalNodes = await handlerContract.getTotalCreatedNodes();
           this.nodeStation[0].price = parseInt(totalNodes._hex, 16).toString();
 
-          tmp = await pnode.getTotalCreatedNodesOf(WalletModule.walletaddress);
+          tmp = await handlerContract.getTotalNodesOf(WalletModule.walletaddress);
           this.nodeStation[1].price = parseInt(tmp._hex, 16).toString();
           tmp = await polar.balanceOf(WalletModule.walletaddress);
           this.nodeStation[2].price = this.getFromattedNb(
             ethers.utils.formatEther(tmp._hex)
           );
         }
-        tmp = await pnode.getNodeTypesSize();
-        let nodeSize = parseInt(tmp._hex, 16);
 
-        let tempNodeNameList = [];
-        for (let i = 0; i < nodeSize; i++) {
-          tempNodeNameList.push(pnode.getNodeTypeNameAtIndex(i));
-        }
-        await Promise.all(tempNodeNameList).then(res => {
-          this.nodeNameList = [];
-          for (let i = 0; i < res.length; i++) {
-            this.nodeInst = {
-              nodeNameList: res[i] + " (Level " + (i + 1) + ")",
-              nodeValue: res[i].toString(),
-            };
-            this.nodeNameList.push(this.nodeInst);
+        const nodeSize = parseInt((await handlerContract.getNodeTypesSize())._hex, 16)
+        const nodeNames = await handlerContract.getNodeTypesBetweenIndexes(0, nodeSize);
+        this.nodeInst = nodeNames.map((nodeName: string, idx: number) => {
+          return {
+            nodeNameList: ` (Level ${idx + 1})`,
+            nodeValue: nodeName.toString(),
           }
         });
 
@@ -183,7 +171,7 @@ export default class Nodes extends Vue {
 
         for (let i = 0; i < this.nodeNameList.length; i++) {
           tempCounter.push(
-            pnode.getNodeTypeOwnerNumber(
+            handlerContract.getNodeTypeOwnerNumber(
               this.nodeNameList[i].nodeValue,
               WalletModule.walletaddress
             )
@@ -214,6 +202,7 @@ export default class Nodes extends Vue {
           }
         }
       } catch (err) {
+        console.error(err);
         (this.$root.$refs.alert as Default).AcceptMetamask();
       }
     }

@@ -1,5 +1,5 @@
 <template>
-  <div class="node-nft" @click="onSelectNode">
+  <div class="node-nft">
     <v-skeleton-loader type="article, list-item-two-line" dark />
   </div>
 </template>

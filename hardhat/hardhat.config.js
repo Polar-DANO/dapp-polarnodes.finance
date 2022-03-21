@@ -48,14 +48,11 @@ module.exports = {
 	},
 	networks: {
 		hardhat : {
+			chainId: 43113,
 			forking: {
-				url: "https://api.avax.network/ext/bc/C/rpc",
-				chainId: 31337,
+				url: "https://api.avax-test.network/ext/bc/C/rpc",
+				enabled: true,
 			},
-		},
-		avalanche : {
-			url: "https://api.avax.network/ext/bc/C/rpc",
-			chainId: 43114,
 		},
 	},
 };
