@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./Owners.sol";
+import "./IPolarNft.sol";
 
 import "hardhat/console.sol";
 
@@ -52,8 +53,28 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 		mapping(address => uint) indexOf;
 		mapping(address => bool) inserted;
 	}
+
+	struct MinPrices {
+		uint offerPrice;
+		uint auctionPrice;
+	}
+
+	struct MapPrices {
+		string[] keys; // token name to min prices struct
+		mapping(string => MinPrices) values;
+		mapping(string => uint) indexOf;
+		mapping(string => bool) inserted;
+	}
+
+	struct MapNftPrices {
+		address[] keys; // nft address to MapPrices struct
+		mapping(address => MapPrices) values;
+		mapping(address => uint) indexOf;
+		mapping(address => bool) inserted;
+	}
 	
 	MapNft private nft;
+	MapNftPrices private nftPrices;
 	
 	address public polar;
 	address public swapper;
@@ -70,11 +91,51 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 		fee = _fee;
 	}
 
+	function setMinPrices(
+		address _nft,
+		string[] memory _names,
+		uint[] memory _offerPrices,
+		uint[] memory _auctionPrices	
+	) 
+		external 
+		onlyOwners 
+	{
+		require(_names.length == _offerPrices.length, "PolarMarketPlace: Length mismatch");
+		require(_names.length == _auctionPrices.length, "PolarMarketPlace: Length mismatch");
+			
+		IPolarNft(_nft).tokenIdsToType(0); // pseudo check polar standard
+
+		mapNftPricesAdd(_nft);
+		for (uint i = 0; i < _names.length; i++) {
+			mapPricesSet(nftPrices.values[_nft], _names[i], MinPrices({
+				offerPrice: _offerPrices[i],
+				auctionPrice: _auctionPrices[i]
+			}));
+		}
+	}
+
+	function deleteMapPrice(address _nft, string[] memory names) external onlyOwners {
+		MapPrices storage mapPrices = nftPrices.values[_nft];
+		
+		for (uint i = 0; i < names.length; i++)
+			mapPricesRemove(mapPrices, names[i]);
+		mapNftPricesDelete(_nft);
+	}
+
 	// external offer
 	function sellOfferItem(address _nft, uint _tokenId, uint _price) external nonReentrant {
 		require(_price > 0, "PolarMarketPlace: Price must be greater than 0");
 		require(!isBlacklistedNft[_nft], "PolarMarketPlace: Not authorized contract");
 		require(openOffer, "PolarMarketPlace: Not open");
+
+		if (nftPrices.inserted[_nft]) {
+			string memory name = IPolarNft(_nft).tokenIdsToType(_tokenId);
+
+			MapPrices storage mapPrices = nftPrices.values[_nft];
+			require(mapPrices.inserted[name], "PolarMarketPlace: Contact core team");
+			require(mapPrices.values[name].offerPrice <= _price, 
+					"PolarMarketPlace: Price lower than min price");
+		}
 
 		IERC721(_nft).transferFrom(msg.sender, address(this), _tokenId);
 		
@@ -132,7 +193,16 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 	{
 		require(!isBlacklistedNft[_nft], "PolarMarketPlace: Not authorized contract");
 		require(openAuction, "PolarMarketPlace: Not open");
+		
+		if (nftPrices.inserted[_nft]) {
+			string memory name = IPolarNft(_nft).tokenIdsToType(_tokenId);
 
+			MapPrices storage mapPrices = nftPrices.values[_nft];
+			require(mapPrices.inserted[name], "PolarMarketPlace: Contact core team");
+			require(mapPrices.values[name].auctionPrice <= _currentPrice, 
+					"PolarMarketPlace: Price lower than min price");
+		}
+		
 		IERC721(_nft).transferFrom(msg.sender, address(this), _tokenId);
 
 		mapNftAdd(_nft);
@@ -347,6 +417,71 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 		return auctions;
 	}
 
+	// map nft price
+	function getNftPricesSize() external view returns(uint) {
+		return nftPrices.keys.length;
+	}
+
+	function getNftPricesAddressBetweenIndexes(
+		uint iStart, 
+		uint iEnd
+	) 
+		external 
+		view 
+		returns(
+			address[] memory
+		) 
+	{
+		address[] memory addresses = new address[](iEnd - iStart);
+		for (uint256 i = iStart; i < iEnd; i++)
+			addresses[i - iStart] = nftPrices.keys[i];
+		return addresses;
+	}
+
+	function getNftPricesAddressAll() external view returns(address[] memory) {
+		return nftPrices.keys;
+	}
+
+	// map prices
+	function getPricesOfSize(address _nft) external view returns(uint) {
+		return nftPrices.values[_nft].keys.length;
+	}
+	
+	function getPricesOfKeysBetweenIndexes(
+		address _nft, 
+		uint iStart, 
+		uint iEnd
+	) 
+		external 
+		view
+		returns(
+			string[] memory
+		)
+	{
+		string[] memory names = new string[](iEnd - iStart);
+		MapPrices storage mapPrices = nftPrices.values[_nft];
+		for (uint256 i = iStart; i < iEnd; i++)
+			names[i - iStart] = mapPrices.keys[i];
+		return names;
+	}
+
+	function getPricesOfBetweenIndexes(
+		address _nft, 
+		uint iStart, 
+		uint iEnd
+	) 
+		external 
+		view
+		returns(
+			MinPrices[] memory
+		)
+	{
+		MinPrices[] memory prices = new MinPrices[](iEnd - iStart);
+		MapPrices storage mapPrices = nftPrices.values[_nft];
+		for (uint256 i = iStart; i < iEnd; i++)
+			prices[i - iStart] = mapPrices.values[mapPrices.keys[i]];
+		return prices;
+	}
 	// private
 
 	// maps
@@ -454,6 +589,78 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 				if (lastIndex != index)
 					nft.keys[index] = lastKey;
 				nft.keys.pop();
+			}
+        }
+    }
+	
+	function mapPricesSet(
+		MapPrices storage map,
+        string memory key,
+        MinPrices memory value
+    ) private {
+        if (map.inserted[key]) {
+            map.values[key] = value;
+        } else {
+            map.inserted[key] = true;
+            map.values[key] = value;
+            map.indexOf[key] = map.keys.length;
+            map.keys.push(key);
+        }
+    }
+	
+	function mapPricesRemove(MapPrices storage map, string memory key) private {
+        if (!map.inserted[key]) {
+            return;
+        }
+
+        delete map.inserted[key];
+        delete map.values[key];
+
+        uint256 index = map.indexOf[key];
+        uint256 lastIndex = map.keys.length - 1;
+        string memory lastKey = map.keys[lastIndex];
+
+        map.indexOf[lastKey] = index;
+        delete map.indexOf[key];
+
+		if (lastIndex != index)
+			map.keys[index] = lastKey;
+        map.keys.pop();
+    }
+	
+	function mapNftPricesAdd(
+        address key
+    ) private {
+        if (nftPrices.inserted[key]) {
+			return;
+        } else {
+            nftPrices.inserted[key] = true;
+            nftPrices.indexOf[key] = nftPrices.keys.length;
+            nftPrices.keys.push(key);
+        }
+    }
+	
+	function mapNftPricesDelete(
+        address key
+    ) private {
+        if (!nftPrices.inserted[key]) {
+			return;
+        } else {
+			uint sizePrices = nftPrices.values[key].keys.length;
+			if (sizePrices == 0) {
+				delete nftPrices.inserted[key];
+				delete nftPrices.values[key];
+
+				uint256 index = nftPrices.indexOf[key];
+				uint256 lastIndex = nftPrices.keys.length - 1;
+				address lastKey = nftPrices.keys[lastIndex];
+
+				nftPrices.indexOf[lastKey] = index;
+				delete nftPrices.indexOf[key];
+
+				if (lastIndex != index)
+					nftPrices.keys[index] = lastKey;
+				nftPrices.keys.pop();
 			}
         }
     }

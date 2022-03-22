@@ -22,6 +22,11 @@ const NodeType0 = {
 		500, // isBoostedTokenRate
 		1 * 24 * 3600, // noClaimTimeReference
 		ethers.utils.parseUnits("1", 18), // noClaimRewardAmount
+		0, // global tax
+		7 * 24 * 3600, // claimTimeReference
+		100, // claimTimeRate
+		10, // maxMultiObtaining
+		0, // maxMultiClaim
 	]
 }
 const NodeType1 = {
@@ -44,6 +49,11 @@ const NodeType1 = {
 		500, // isBoostedTokenRate
 		1 * 24 * 3600, // noClaimTimeReference
 		ethers.utils.parseUnits("1", 18), // noClaimRewardAmount
+		0, // global tax
+		7 * 24 * 3600, // claimTimeReference
+		100, // claimTimeRate
+		10, // maxMultiObtaining
+		0, // maxMultiClaim
 	]
 }
 const NodeType2 = {
@@ -66,6 +76,11 @@ const NodeType2 = {
 		500, // isBoostedTokenRate
 		1 * 24 * 3600, // noClaimTimeReference
 		ethers.utils.parseUnits("1", 18), // noClaimRewardAmount
+		0, // global tax
+		7 * 24 * 3600, // claimTimeReference
+		100, // claimTimeRate
+		10, // maxMultiObtaining
+		0, // maxMultiClaim
 	]
 }
 const NodeType3 = {
@@ -88,6 +103,11 @@ const NodeType3 = {
 		500, // isBoostedTokenRate
 		1 * 24 * 3600, // noClaimTimeReference
 		ethers.utils.parseUnits("1", 18), // noClaimRewardAmount
+		0, // global tax
+		7 * 24 * 3600, // claimTimeReference
+		100, // claimTimeRate
+		10, // maxMultiObtaining
+		0, // maxMultiClaim
 	]
 }
 const NodeType4 = {
@@ -110,6 +130,11 @@ const NodeType4 = {
 		500, // isBoostedTokenRate
 		1 * 24 * 3600, // noClaimTimeReference
 		ethers.utils.parseUnits("1", 18), // noClaimRewardAmount
+		0, // global tax
+		7 * 24 * 3600, // claimTimeReference
+		100, // claimTimeRate
+		10, // maxMultiObtaining
+		0, // maxMultiClaim
 	]
 }
 
@@ -257,6 +282,51 @@ const NodeTypes = [
 	NodeType0, NodeType1, NodeType2, NodeType3, NodeType4
 ]
 
+const MinPricesNode = {
+	names: [
+		NodeTypes[0].name,
+		NodeTypes[1].name,
+		NodeTypes[2].name,
+		NodeTypes[3].name,
+		NodeTypes[4].name,
+	],
+	offerPrices: [
+		ethers.utils.parseUnits("1", 18), // fuji
+		ethers.utils.parseUnits("1", 18), // mont blanc
+		ethers.utils.parseUnits("1", 18), // kilimanjaro
+		ethers.utils.parseUnits("1", 18), // ushuaia
+		ethers.utils.parseUnits("1", 18), // everest
+	],
+	auctionPrices: [
+		ethers.utils.parseUnits("1", 18),
+		ethers.utils.parseUnits("1", 18),
+		ethers.utils.parseUnits("1", 18),
+		ethers.utils.parseUnits("1", 18),
+		ethers.utils.parseUnits("1", 18),
+	],
+}
+
+const MinPricesLucky = {
+	names: [
+		LuckyBox0.name,
+		LuckyBox1.name,
+		LuckyBox2.name,
+		LuckyBox3.name,
+	],
+	offerPrices: [
+		ethers.utils.parseUnits("1", 18), // box 1
+		ethers.utils.parseUnits("1", 18), // box 2
+		ethers.utils.parseUnits("1", 18), // box 3
+		ethers.utils.parseUnits("1", 18), // box 4
+	],
+	auctionPrices: [
+		ethers.utils.parseUnits("1", 18),
+		ethers.utils.parseUnits("1", 18),
+		ethers.utils.parseUnits("1", 18),
+		ethers.utils.parseUnits("1", 18),
+	],
+}
+
 module.exports = {
 	NodeType0, NodeType1, NodeType2, NodeType3, NodeType4,
 	PolarNode, PolarLuckyBox, Swapper,
@@ -264,6 +334,6 @@ module.exports = {
 	NodeType4Feature0, NodeType4Feature1, NodeType4Feature2,
 	SwapperPath0, SwapperPath1,
 	AddOwner,
-	NodeTypes
+	NodeTypes, MinPricesNode, MinPricesLucky
 }
 

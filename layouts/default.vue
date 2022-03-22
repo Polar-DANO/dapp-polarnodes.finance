@@ -7,7 +7,7 @@
         <v-app-bar-nav-icon
           class="text-[#FFFFFF] md:hidden"
           @click="$root.$refs.draw.Draw()"
-        ></v-app-bar-nav-icon>
+        />
 
         <v-main class="md:py-[28px] md:mr-[28px] md:ml-[0px] h-full">
           <!-- <span class="text-[16px] text-[#FF0000]"
@@ -396,272 +396,269 @@
 </template>
 
 <script lang="ts">
-import { ethers } from "ethers";
-import { Component, Prop, Vue } from "nuxt-property-decorator";
-import LeftSideBar from "~/components/LeftSideBar.vue";
-
-declare var window: any;
+import { Component, Vue } from 'nuxt-property-decorator'
+import LeftSideBar from '~/components/LeftSideBar.vue'
 
 @Component({
   components: { LeftSideBar },
-  transition: "scale-transition",
+  transition: 'scale-transition'
 })
 export default class Default extends Vue {
-  public wrongNetwork = false;
-  public alertMustWLsale = false;
-  public alertMustSign = false;
-  public alertAMount = false;
-  public alertExceedsBalance = false;
-  public alertNeedBalance = false;
-  public alertBuyOk = false;
-  public alertPurchase = false;
-  public alertOverflow = false;
-  public alertAlreadyClaim = false;
-  public alertDontHaveNFT = false;
-  public alertBuyNodesChars = false;
-  public alertNodesBlacklist = false;
-  public alertNodesName = false;
-  public alertnoLiquidity = false;
-  public alertresurrectionNode = false;
-  public alertWalletConnectOk = false;
-  public alertNoOwner = false;
-  public alertNoTarget = false;
-  public alertNoName = false;
-  public alertNoLevelDown = false;
-  public alertNoEnoughSent = false;
-  public alertNoClaim = false;
-  public alertUserReject = false;
-  public alertTooManyRequest = false;
-  public noProvider = false;
-  public acceptMetamask = false;
-  public alertMaxReached = false;
-  public alertUserMaxReached = false;
-  public alertLevelUpReached = false;
-  public alertNoOneLevelup = false;
-  public alertNotAuthorized = false;
-  public alertMaxAlreadyReached = false;
-  public alertNotFutur = false;
-  public alertOtherError = false;
+  public wrongNetwork = false
+  public alertMustWLsale = false
+  public alertMustSign = false
+  public alertAMount = false
+  public alertExceedsBalance = false
+  public alertNeedBalance = false
+  public alertBuyOk = false
+  public alertPurchase = false
+  public alertOverflow = false
+  public alertAlreadyClaim = false
+  public alertDontHaveNFT = false
+  public alertBuyNodesChars = false
+  public alertNodesBlacklist = false
+  public alertNodesName = false
+  public alertnoLiquidity = false
+  public alertresurrectionNode = false
+  public alertWalletConnectOk = false
+  public alertNoOwner = false
+  public alertNoTarget = false
+  public alertNoName = false
+  public alertNoLevelDown = false
+  public alertNoEnoughSent = false
+  public alertNoClaim = false
+  public alertUserReject = false
+  public alertTooManyRequest = false
+  public noProvider = false
+  public acceptMetamask = false
+  public alertMaxReached = false
+  public alertUserMaxReached = false
+  public alertLevelUpReached = false
+  public alertNoOneLevelup = false
+  public alertNotAuthorized = false
+  public alertMaxAlreadyReached = false
+  public alertNotFutur = false
+  public alertOtherError = false
 
-  created() {
-    (this.$root.$refs.alert as Default) = this;
+  created () {
+    (this.$root.$refs.alert as Default) = this
   }
 
-  public async BuyOk(): Promise<void> {
-    await this.sleep(6000);
-    this.alertBuyOk = true;
-    await this.sleep(4000);
-    this.alertBuyOk = false;
+  public async BuyOk (): Promise<void> {
+    await this.sleep(6000)
+    this.alertBuyOk = true
+    await this.sleep(4000)
+    this.alertBuyOk = false
   }
 
-  public async WalletConnectOk(): Promise<void> {
-    this.alertWalletConnectOk = true;
-    await this.sleep(3000);
-    this.alertWalletConnectOk = false;
+  public async WalletConnectOk (): Promise<void> {
+    this.alertWalletConnectOk = true
+    await this.sleep(3000)
+    this.alertWalletConnectOk = false
   }
 
-  public async NoProvider(): Promise<void> {
-    this.noProvider = true;
-    await this.sleep(10000);
-    this.noProvider = false;
+  public async NoProvider (): Promise<void> {
+    this.noProvider = true
+    await this.sleep(10000)
+    this.noProvider = false
   }
 
-  public async WrongNetwork(): Promise<void> {
-    this.wrongNetwork = true;
-    await this.sleep(1500);
-    this.wrongNetwork = false;
+  public async WrongNetwork (): Promise<void> {
+    this.wrongNetwork = true
+    await this.sleep(1500)
+    this.wrongNetwork = false
   }
 
-  public async sleep(ms: any): Promise<void> {
-    return new Promise(resolve => {
-      setTimeout(resolve, ms);
-    });
+  public sleep (ms: any): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms)
+    })
   }
 
-  public async MustWLsale(): Promise<void> {
-    this.alertMustWLsale = true;
-    await this.sleep(1500);
-    this.alertMustWLsale = false;
+  public async MustWLsale (): Promise<void> {
+    this.alertMustWLsale = true
+    await this.sleep(1500)
+    this.alertMustWLsale = false
   }
 
-  public async BuyNodesChars(): Promise<void> {
-    this.alertBuyNodesChars = true;
-    await this.sleep(1500);
-    this.alertBuyNodesChars = false;
+  public async BuyNodesChars (): Promise<void> {
+    this.alertBuyNodesChars = true
+    await this.sleep(1500)
+    this.alertBuyNodesChars = false
   }
 
-  public async NodesBlacklist(): Promise<void> {
-    this.alertNodesBlacklist = true;
-    await this.sleep(1500);
-    this.alertNodesBlacklist = false;
+  public async NodesBlacklist (): Promise<void> {
+    this.alertNodesBlacklist = true
+    await this.sleep(1500)
+    this.alertNodesBlacklist = false
   }
 
-  public async NodesName(): Promise<void> {
-    this.alertNodesName = true;
-    await this.sleep(1500);
-    this.alertNodesName = false;
+  public async NodesName (): Promise<void> {
+    this.alertNodesName = true
+    await this.sleep(1500)
+    this.alertNodesName = false
   }
 
-  public async resurrectionNode(): Promise<void> {
-    this.alertresurrectionNode = true;
-    await this.sleep(10000);
-    this.alertresurrectionNode = false;
+  public async resurrectionNode (): Promise<void> {
+    this.alertresurrectionNode = true
+    await this.sleep(10000)
+    this.alertresurrectionNode = false
   }
 
-  public async DontHaveNFT(): Promise<void> {
-    this.alertDontHaveNFT = true;
-    await this.sleep(1500);
-    this.alertDontHaveNFT = false;
+  public async DontHaveNFT (): Promise<void> {
+    this.alertDontHaveNFT = true
+    await this.sleep(1500)
+    this.alertDontHaveNFT = false
   }
 
-  public async AlertAmount(): Promise<void> {
-    this.alertAMount = true;
-    await this.sleep(1500);
-    this.alertAMount = false;
+  public async AlertAmount (): Promise<void> {
+    this.alertAMount = true
+    await this.sleep(1500)
+    this.alertAMount = false
   }
 
-  public async MustSign(): Promise<void> {
-    this.alertMustSign = true;
-    await this.sleep(1500);
-    this.alertMustSign = false;
+  public async MustSign (): Promise<void> {
+    this.alertMustSign = true
+    await this.sleep(1500)
+    this.alertMustSign = false
   }
 
-  public async ExceedsBalance(): Promise<void> {
-    this.alertExceedsBalance = true;
-    await this.sleep(1500);
-    this.alertExceedsBalance = false;
+  public async ExceedsBalance (): Promise<void> {
+    this.alertExceedsBalance = true
+    await this.sleep(1500)
+    this.alertExceedsBalance = false
   }
 
-  public async NeedBalance(): Promise<void> {
-    this.alertNeedBalance = true;
-    await this.sleep(6000);
-    this.alertNeedBalance = false;
+  public async NeedBalance (): Promise<void> {
+    this.alertNeedBalance = true
+    await this.sleep(6000)
+    this.alertNeedBalance = false
   }
 
-  public async noLiquidity(): Promise<void> {
-    this.alertnoLiquidity = true;
-    await this.sleep(3000);
-    this.alertnoLiquidity = false;
+  public async noLiquidity (): Promise<void> {
+    this.alertnoLiquidity = true
+    await this.sleep(3000)
+    this.alertnoLiquidity = false
   }
 
-  public async Purchase(): Promise<void> {
-    this.alertPurchase = true;
-    await this.sleep(4000);
-    this.alertPurchase = false;
+  public async Purchase (): Promise<void> {
+    this.alertPurchase = true
+    await this.sleep(4000)
+    this.alertPurchase = false
   }
 
-  public async Overflow(): Promise<void> {
-    this.alertOverflow = true;
-    await this.sleep(4000);
-    this.alertOverflow = false;
+  public async Overflow (): Promise<void> {
+    this.alertOverflow = true
+    await this.sleep(4000)
+    this.alertOverflow = false
   }
 
-  public async AlreadyClaim(): Promise<void> {
-    this.alertAlreadyClaim = true;
-    await this.sleep(1500);
-    this.alertAlreadyClaim = false;
+  public async AlreadyClaim (): Promise<void> {
+    this.alertAlreadyClaim = true
+    await this.sleep(1500)
+    this.alertAlreadyClaim = false
   }
 
-  public async MaxReached(): Promise<void> {
-    this.alertMaxReached = true;
-    await this.sleep(3000);
-    this.alertMaxReached = false;
+  public async MaxReached (): Promise<void> {
+    this.alertMaxReached = true
+    await this.sleep(3000)
+    this.alertMaxReached = false
   }
 
-  public async UserMaxReached(): Promise<void> {
-    this.alertUserMaxReached = true;
-    await this.sleep(3000);
-    this.alertUserMaxReached = false;
+  public async UserMaxReached (): Promise<void> {
+    this.alertUserMaxReached = true
+    await this.sleep(3000)
+    this.alertUserMaxReached = false
   }
 
-  public async MaxLimitLevelUp(): Promise<void> {
-    this.alertLevelUpReached = true;
-    await this.sleep(3000);
-    this.alertLevelUpReached = false;
+  public async MaxLimitLevelUp (): Promise<void> {
+    this.alertLevelUpReached = true
+    await this.sleep(3000)
+    this.alertLevelUpReached = false
   }
 
-  public async NoOneLevelUp(): Promise<void> {
-    this.alertNoOneLevelup = true;
-    await this.sleep(3000);
-    this.alertNoOneLevelup = false;
+  public async NoOneLevelUp (): Promise<void> {
+    this.alertNoOneLevelup = true
+    await this.sleep(3000)
+    this.alertNoOneLevelup = false
   }
 
-  public async NoOwner(): Promise<void> {
-    this.alertNoOwner = true;
-    await this.sleep(3000);
-    this.alertNoOwner = false;
+  public async NoOwner (): Promise<void> {
+    this.alertNoOwner = true
+    await this.sleep(3000)
+    this.alertNoOwner = false
   }
 
-  public async NoTarget(): Promise<void> {
-    this.alertNoOwner = true;
-    await this.sleep(3000);
-    this.alertNoOwner = false;
+  public async NoTarget (): Promise<void> {
+    this.alertNoOwner = true
+    await this.sleep(3000)
+    this.alertNoOwner = false
   }
 
-  public async NoName(): Promise<void> {
-    this.alertNoTarget = true;
-    await this.sleep(3000);
-    this.alertNoTarget = false;
+  public async NoName (): Promise<void> {
+    this.alertNoTarget = true
+    await this.sleep(3000)
+    this.alertNoTarget = false
   }
 
-  public async NoLevelDown(): Promise<void> {
-    this.alertNoLevelDown = true;
-    await this.sleep(3000);
-    this.alertNoLevelDown = false;
+  public async NoLevelDown (): Promise<void> {
+    this.alertNoLevelDown = true
+    await this.sleep(3000)
+    this.alertNoLevelDown = false
   }
 
-  public async NoEnoughSent(): Promise<void> {
-    this.alertNoEnoughSent = true;
-    await this.sleep(3000);
-    this.alertNoEnoughSent = false;
+  public async NoEnoughSent (): Promise<void> {
+    this.alertNoEnoughSent = true
+    await this.sleep(3000)
+    this.alertNoEnoughSent = false
   }
 
-  public async NoClaim(): Promise<void> {
-    this.alertNoClaim = true;
-    await this.sleep(3000);
-    this.alertNoClaim = false;
+  public async NoClaim (): Promise<void> {
+    this.alertNoClaim = true
+    await this.sleep(3000)
+    this.alertNoClaim = false
   }
 
-  public async UserReject(): Promise<void> {
-    this.alertUserReject = true;
-    await this.sleep(3000);
-    this.alertUserReject = false;
+  public async UserReject (): Promise<void> {
+    this.alertUserReject = true
+    await this.sleep(3000)
+    this.alertUserReject = false
   }
 
-  public async TooManyRequest(): Promise<void> {
-    this.alertTooManyRequest = true;
-    await this.sleep(3000);
-    this.alertTooManyRequest = false;
+  public async TooManyRequest (): Promise<void> {
+    this.alertTooManyRequest = true
+    await this.sleep(3000)
+    this.alertTooManyRequest = false
   }
 
-  public async AcceptMetamask(): Promise<void> {
-    this.acceptMetamask = true;
-    await this.sleep(3000);
-    this.acceptMetamask = false;
+  public async AcceptMetamask (): Promise<void> {
+    this.acceptMetamask = true
+    await this.sleep(3000)
+    this.acceptMetamask = false
   }
 
-  public async NotAuthorized(): Promise<void> {
-    this.alertNotAuthorized = true;
-    await this.sleep(3000);
-    this.alertNotAuthorized = false;
+  public async NotAuthorized (): Promise<void> {
+    this.alertNotAuthorized = true
+    await this.sleep(3000)
+    this.alertNotAuthorized = false
   }
 
-  public async MaxAlreadyReached(): Promise<void> {
-    this.alertMaxAlreadyReached = true;
-    await this.sleep(3000);
-    this.alertMaxAlreadyReached = false;
+  public async MaxAlreadyReached (): Promise<void> {
+    this.alertMaxAlreadyReached = true
+    await this.sleep(3000)
+    this.alertMaxAlreadyReached = false
   }
 
-  public async NotFutur(): Promise<void> {
-    this.alertNotFutur = true;
-    await this.sleep(3000);
-    this.alertNotFutur = false;
+  public async NotFutur (): Promise<void> {
+    this.alertNotFutur = true
+    await this.sleep(3000)
+    this.alertNotFutur = false
   }
 
-  public async OtherError(): Promise<void> {
-    this.alertOtherError = true;
-    await this.sleep(3000);
-    this.alertOtherError = false;
+  public async OtherError (): Promise<void> {
+    this.alertOtherError = true
+    await this.sleep(3000)
+    this.alertOtherError = false
   }
 }
 </script>

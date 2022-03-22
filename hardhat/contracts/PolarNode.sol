@@ -14,7 +14,7 @@ contract PolarNode is ERC721, ERC721Enumerable, Owners {
 	using Counters for Counters.Counter;
 
 	address public handler;
-	mapping(uint => string) public tokenIdsToNodeType;
+	mapping(uint => string) public tokenIdsToType;
 
 	Counters.Counter private _tokenIdCounter;
 	string private uriBase;
@@ -69,7 +69,7 @@ contract PolarNode is ERC721, ERC721Enumerable, Owners {
 		for (uint i = 0; i < count; i++) {
 			uint tokenId = _tokenIdCounter.current();
 			tokenIds[i] = tokenId;
-			tokenIdsToNodeType[tokenId] = name;
+			tokenIdsToType[tokenId] = name;
 			_safeMint(user, tokenId);
 			_tokenIdCounter.increment();
 		}
@@ -78,8 +78,8 @@ contract PolarNode is ERC721, ERC721Enumerable, Owners {
 	}
 
 	// external setters
-	function setTokenIdToNodeType(uint tokenId, string memory nodeType) external onlyHandler {	
-	   tokenIdsToNodeType[tokenId] = nodeType;
+	function setTokenIdToType(uint tokenId, string memory nodeType) external onlyHandler {	
+	   tokenIdsToType[tokenId] = nodeType;
 	}
 
 	function setBaseURI(string memory _new) external onlyOwners {

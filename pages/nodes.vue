@@ -47,91 +47,92 @@
 </template>
 
 <script lang="ts">
-import { mapGetters } from "vuex";
-import { Component, Prop, Vue } from "nuxt-property-decorator";
-import AlertComponents from "~/components/AlertComponents.vue";
+import { Component, Vue } from 'nuxt-property-decorator'
+import * as ethers from 'ethers'
+import AlertComponents from '~/components/AlertComponents.vue'
 
-import axios from "axios";
+import { abi as HANDLER_ABI } from '~/hardhat/artifacts/contracts/Handler.sol/Handler.json'
+import { abi as POLAR_TOKEN_ABI } from '~/hardhat/artifacts/contracts/Polar.sol/Polar.json'
+import Default from '~/layouts/default.vue'
+import { WalletModule } from '~/store'
+import { luckyBoxes } from '~/models/constants'
 
-import { abi as HANDLER_ABI } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
-import { abi as POLAR_TOKEN_ABI } from "~/hardhat/artifacts/contracts/Polar.sol/Polar.json";
-import Default from "~/layouts/default.vue";
-import { WalletModule } from "~/store";
-import { NodeNftNames } from "~/models/types";
-import { luckyBoxes } from "~/models/constants";
+import { Token as PolarToken, Handler } from '~/hardhat/scripts/address'
 
-const { Token: PolarToken, Handler } = require("~/hardhat/scripts/address.js");
-
-declare var window: any;
+declare let window: any
 
 @Component({
-  components: { AlertComponents },
+  components: { AlertComponents }
 })
 export default class Nodes extends Vue {
   public nodeStation = [
     {
-      icon: require("../assets/img/nodesIcon/totalnodes_icon.svg"),
-      title: "Total Nodes",
-      price: "0",
-      percentage: "0",
+      icon: require('../assets/img/nodesIcon/totalnodes_icon.svg'),
+      title: 'Total Nodes',
+      price: '0',
+      percentage: '0'
     },
     {
-      icon: require("../assets/img/nodesIcon/mynodes_icon.svg"),
-      title: "My Nodes",
-      price: "0",
-      percentage: "0",
+      icon: require('../assets/img/nodesIcon/mynodes_icon.svg'),
+      title: 'My Nodes',
+      price: '0',
+      percentage: '0'
     },
     {
-      icon: require("../assets/img/nodesIcon/polarbalance_icon.svg"),
-      title: "My $POLAR Balance",
-      price: "0",
-      percentage: "0",
-    },
-  ];
+      icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
+      title: 'My $POLAR Balance',
+      price: '0',
+      percentage: '0'
+    }
+  ]
 
-  public luckyBoxesList = luckyBoxes;
+  public luckyBoxesList = luckyBoxes
 
-  private nodeNames: any = [];
+  private nodeNames: any = []
 
-  private async created(): Promise<void> {
-    this.listenConnectEvent();
-    this.intervalFetchData();
+  private created () {
+    this.listenConnectEvent()
+    this.intervalFetchData()
   }
 
-  public intervalFetchData(): void {
-    setInterval(() => {
-      this.listenConnectEvent();
-    }, 15000);
+  private intervalFetchDataInterval?: ReturnType<typeof setInterval>
+
+  public intervalFetchData () {
+    this.intervalFetchDataInterval = setInterval(() => {
+      this.listenConnectEvent()
+    }, 15000)
   }
-  private async listenConnectEvent(): Promise<void> {
+
+  public beforeDestroy () {
+    if (this.intervalFetchDataInterval) { clearInterval(this.intervalFetchDataInterval) }
+  }
+
+  private async listenConnectEvent () {
     if (window.ethereum) {
-      const ethers = require("ethers");
-
       const provider = new ethers.providers.Web3Provider(
         window.ethereum,
-        "any"
-      );
+        'any'
+      )
       try {
-        const signer = provider.getSigner();
+        const signer = provider.getSigner()
 
-        const handlerContract = new ethers.Contract(Handler, HANDLER_ABI, signer);
-        const polar = new ethers.Contract(PolarToken, POLAR_TOKEN_ABI, signer);
+        const handlerContract = new ethers.Contract(Handler, HANDLER_ABI, signer)
+        const polar = new ethers.Contract(PolarToken, POLAR_TOKEN_ABI, signer)
 
-        const totalNodes = await handlerContract.getTotalCreatedNodes();
-        this.nodeStation[0].price = totalNodes.toString();
+        const totalNodes = await handlerContract.getTotalCreatedNodes()
+        this.nodeStation[0].price = totalNodes.toString()
         this.nodeStation[1].price = (WalletModule.walletaddress)
           ? (await handlerContract.getTotalNodesOf(WalletModule.walletaddress)).toString()
-          : "-";
+          : '-'
         this.nodeStation[2].price = (WalletModule.walletaddress)
-          ? (await polar.balanceOf(WalletModule.walletaddress)).toString()
-          : "-";
+          ? ethers.utils.formatEther(await polar.balanceOf(WalletModule.walletaddress))
+          : '-'
 
-
-        const nodeSize = (await handlerContract.getNodeTypesSize()).toNumber();
-        this.nodeNames = await handlerContract.getNodeTypesBetweenIndexes(0, nodeSize);
+        const nodeSize = (await handlerContract.getNodeTypesSize()).toNumber()
+        this.nodeNames = await handlerContract.getNodeTypesBetweenIndexes(0, nodeSize)
       } catch (err) {
         console.error(err);
-        (this.$root.$refs.alert as Default).AcceptMetamask();
+        (this.$root.$refs.alert as Default).AcceptMetamask()
       }
     }
   }

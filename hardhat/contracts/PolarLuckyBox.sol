@@ -39,7 +39,7 @@ contract PolarLuckyBox is ERC721, ERC721Enumerable, Owners {
 	uint private nonce;
 
 	address public handler;
-	mapping(uint => string) public tokenIdsToBoxType;
+	mapping(uint => string) public tokenIdsToType;
 	mapping(string => mapping(address => uint)) public boxesUserCount;
 
 	Counters.Counter private _tokenIdCounter;
@@ -221,7 +221,7 @@ contract PolarLuckyBox is ERC721, ERC721Enumerable, Owners {
 
 			require(ownerOf(tokenId) == user, "PolarLuckyBox: Not nft owner");
 
-			Box storage box = map.values[tokenIdsToBoxType[tokenId]];
+			Box storage box = map.values[tokenIdsToType[tokenId]];
 
 			box.openBox++;
 
@@ -381,7 +381,7 @@ contract PolarLuckyBox is ERC721, ERC721Enumerable, Owners {
 
 		for (uint i = 0; i < count; i++) {
 			uint tokenId = _tokenIdCounter.current();
-			tokenIdsToBoxType[tokenId] = name;
+			tokenIdsToType[tokenId] = name;
 			_safeMint(user, tokenId);
 			_tokenIdCounter.increment();
 		}
@@ -439,7 +439,6 @@ contract PolarLuckyBox is ERC721, ERC721Enumerable, Owners {
 	function _generatePseudoRandom(address user) internal returns(uint) {
 		uint r = uint(keccak256(abi.encodePacked(nonce, user, block.difficulty, block.timestamp)));
 		unchecked { nonce++; }
-		nonce++;
 		return r % 10000;
 	}
 

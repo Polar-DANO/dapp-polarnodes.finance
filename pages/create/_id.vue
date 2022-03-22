@@ -2,7 +2,9 @@
   <div
     class="node-card flex flex-col mx-auto md:mx-[64px] mt-[30px] md:mt-[100px]"
   >
-    <div class="node-card__header">Create {{ nodeNftName }} Mountain 🗻️</div>
+    <div class="node-card__header">
+      Create {{ nodeNftName }} Mountain 🗻️
+    </div>
     <div class="mt-8 mb-16 mx-16">
       <div class="node-card__subtitle">
         Create a Mountain with $POLAR tokens to earn lifetime high-yield token
@@ -16,7 +18,7 @@
               class="inline-block node-video__container"
             >
               <video class="node-video" autoplay loop muted>
-                <source :src="video" type="video/mp4" />
+                <source :src="video" type="video/mp4">
                 Your browser does not support the video tag.
               </video>
               <div
@@ -202,196 +204,201 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "nuxt-property-decorator";
-import { NodeNftNames } from "~/models/types";
-import { abi as HANDLER_ABI } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
-import { abi as NODE_TYPE_ABI } from "~/hardhat/artifacts/contracts/NodeType.sol/NodeType.json";
-import { abi as POLAR_TOKEN_ABI } from "~/hardhat/artifacts/contracts/Polar.sol/Polar.json";
-import { WalletModule } from "~/store";
-import { URL_TO_NAME, NODENAME_TO_VIDEO, Url, PAYOUTS_PER_DAY } from "~/models/constants";
+import { Component, Vue } from 'nuxt-property-decorator'
+import { NodeNftNames } from '~/models/types'
+import { abi as HANDLER_ABI } from '~/hardhat/artifacts/contracts/Handler.sol/Handler.json'
+import { abi as NODE_TYPE_ABI } from '~/hardhat/artifacts/contracts/NodeType.sol/NodeType.json'
+import { abi as POLAR_TOKEN_ABI } from '~/hardhat/artifacts/contracts/Polar.sol/Polar.json'
+import { WalletModule } from '~/store'
+import { URL_TO_NAME, NODENAME_TO_VIDEO, Url, PAYOUTS_PER_DAY } from '~/models/constants'
 
-const ethers = require("ethers");
-const { Token, Handler } = require("~/hardhat/scripts/address.js");
+const ethers = require('ethers')
+const { Token, Handler } = require('~/hardhat/scripts/address.js')
 
 @Component({})
 export default class Create extends Vue {
-  public nodeNftName: NodeNftNames | null = null;
-  public quantity = 1;
-  public isApprove = true;
-  public isDetailsOpen = false;
-  public isLevelUpSelected = false;
-  public video: string | null = null;
+  public nodeNftName: NodeNftNames | null = null
+  public quantity = 1
+  public isApprove = true
+  public isDetailsOpen = false
+  public isLevelUpSelected = false
+  public video: string | null = null
 
-  private dailyEarningPerNode = ethers.BigNumber.from(0);
-  private cost = ethers.BigNumber.from(0);
-  private tax: number | null = null;
-  private polar: any;
-  private handlerContract: any;
-  private nodeTypeContract: any;
+  private dailyEarningPerNode = ethers.BigNumber.from(0)
+  private cost = ethers.BigNumber.from(0)
+  private tax: number | null = null
+  private polar: any
+  private handlerContract: any
+  private nodeTypeContract: any
 
-  private async created() {
-    const nodeNftName = URL_TO_NAME[this.$route.params.id as Url];
-    this.video = NODENAME_TO_VIDEO[nodeNftName];
+  private totalCreatedNodes = 0
+  private maxSlots: number | null = null
+  private maxCreationPendingGlobal: number | null = null
+  private maxCreationPendingUser: number | null = null
+  private maxLevelUpGlobal: number | null = null
+  private maxLevelUpUser: number | null = null
+
+  private async created () {
+    const nodeNftName = URL_TO_NAME[this.$route.params.id as Url]
+    this.video = NODENAME_TO_VIDEO[nodeNftName]
 
     if (!nodeNftName) {
-      this.$router.push("/nodes");
-      return;
+      this.$router.push('/nodes')
+      return
     }
 
-    this.nodeNftName = nodeNftName;
+    this.nodeNftName = nodeNftName
     try {
       const provider = new ethers.providers.Web3Provider(
         window.ethereum,
-        "any"
-      );
-      const signer = provider.getSigner();
-      this.polar = new ethers.Contract(Token, POLAR_TOKEN_ABI, signer);
-      this.isApprove =
-        (await this.polar.allowance(WalletModule.walletaddress, Handler)) == 0;
-      this.handlerContract = new ethers.Contract(Handler, HANDLER_ABI, signer);
+        'any'
+      )
+      const signer = provider.getSigner()
+      this.polar = new ethers.Contract(Token, POLAR_TOKEN_ABI, signer)
+      const allowance = (await this.polar.allowance(WalletModule.walletaddress, Handler))
+      this.isApprove = allowance.gte(this.totalCost || 0)
+      this.handlerContract = new ethers.Contract(Handler, HANDLER_ABI, signer)
       const nodeTypeAddress = await this.handlerContract.getNodeTypesAddress(
         this.nodeNftName
-      );
+      )
 
       this.nodeTypeContract = new ethers.Contract(
         nodeTypeAddress,
         NODE_TYPE_ABI,
         signer
-      );
+      )
 
-      this.cost = await this.nodeTypeContract.price();
-      this.dailyEarningPerNode = (await this.nodeTypeContract.rewardAmount()).mul(PAYOUTS_PER_DAY);
-      this.tax = (await this.nodeTypeContract.claimTaxRoi()).div(100);
+      this.cost = await this.nodeTypeContract.price()
+      this.dailyEarningPerNode = (await this.nodeTypeContract.rewardAmount()).mul(PAYOUTS_PER_DAY)
+      this.tax = (await this.nodeTypeContract.claimTaxRoi()).div(100)
 
-      this.totalCreatedNodes = await this.nodeTypeContract.totalCreatedNodes();
-      this.maxSlots = await this.nodeTypeContract.maxCount();
-      this.maxLevelUpUser = await this.nodeTypeContract.maxLevelUpUser();
-      this.maxLevelUpGlobal = await this.nodeTypeContract.maxLevelUpTotal();
-      this.maxCreationPendingUser = await this.nodeTypeContract.maxCreationPendingUser();
-      this.maxCreationPendingGlobal = await this.nodeTypeContract.maxCreationPendingTotal();
+      this.totalCreatedNodes = await this.nodeTypeContract.totalCreatedNodes()
+      this.maxSlots = await this.nodeTypeContract.maxCount()
+      this.maxLevelUpUser = await this.nodeTypeContract.maxLevelUpUser()
+      this.maxLevelUpGlobal = await this.nodeTypeContract.maxLevelUpTotal()
+      this.maxCreationPendingUser = await this.nodeTypeContract.maxCreationPendingUser()
+      this.maxCreationPendingGlobal = await this.nodeTypeContract.maxCreationPendingTotal()
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
   }
 
-  public onRemove() {
+  public onRemove () {
     if (this.quantity > 1) {
-      this.quantity--;
+      this.quantity--
     }
   }
 
-  public onAdd() {
-    this.quantity++;
+  public onAdd () {
+    this.quantity++
   }
 
-  public onError(err: { message: string } | null): void {
+  public onError (err: { message: string } | null): void {
     if (err) {
       const inAppAlert = this.$root.$refs.alert as unknown as Record<
         string,
         Function
-      >;
+      >
 
-      if (err.message.includes("User denied transaction signature")) {
-        inAppAlert.MustSign();
-      } else if (err.message.includes("Global limit reached")) {
-        inAppAlert.MaxReached();
+      if (err.message.includes('User denied transaction signature')) {
+        inAppAlert.MustSign()
+      } else if (err.message.includes('Global limit reached')) {
+        inAppAlert.MaxReached()
       } else if (
-        err.message.includes("Creation with pending limit reached for user")
+        err.message.includes('Creation with pending limit reached for user')
       ) {
-        inAppAlert.UserMaxReached();
-      } else if (err.message.includes("Balance too low for creation")) {
-        inAppAlert.NeedBalance();
-      } else if (err.message.includes("nodeTypeName does not exist")) {
-        inAppAlert.NodesName();
-      } else if (err.message.includes("Blacklisted address")) {
-        inAppAlert.NodesBlacklist();
-      } else if (err.message.includes("fInsufficient Pending")) {
-        inAppAlert.noLiquidity();
-      } else if (err.message.includes("Balance too low for creation.")) {
-        inAppAlert.NeedBalance();
-      } else if (err.message.includes("Node creation not authorized yet")) {
-        inAppAlert.NotAuthorized();
+        inAppAlert.UserMaxReached()
+      } else if (err.message.includes('Balance too low for creation')) {
+        inAppAlert.NeedBalance()
+      } else if (err.message.includes('nodeTypeName does not exist')) {
+        inAppAlert.NodesName()
+      } else if (err.message.includes('Blacklisted address')) {
+        inAppAlert.NodesBlacklist()
+      } else if (err.message.includes('fInsufficient Pending')) {
+        inAppAlert.noLiquidity()
+      } else if (err.message.includes('Balance too low for creation.')) {
+        inAppAlert.NeedBalance()
+      } else if (err.message.includes('Node creation not authorized yet')) {
+        inAppAlert.NotAuthorized()
       } else if (
-        err.message.includes("futur and rewardsPool cannot create node")
+        err.message.includes('futur and rewardsPool cannot create node')
       ) {
-        inAppAlert.NotFutur();
-      } else if (err.message.includes("Max already reached")) {
-        inAppAlert.MaxReached();
+        inAppAlert.NotFutur()
+      } else if (err.message.includes('Max already reached')) {
+        inAppAlert.MaxReached()
       } else if (
         err.message.includes(
-          "MetaMask Tx Signature: User denied transaction signature."
+          'MetaMask Tx Signature: User denied transaction signature.'
         )
       ) {
-        inAppAlert.UserReject();
+        inAppAlert.UserReject()
       } else {
-        inAppAlert.OtherError();
+        inAppAlert.OtherError()
       }
     }
-
-    return;
   }
 
-  public async onApprove() {
+  public async onApprove () {
     try {
       await this.polar.approve(
         Handler,
         ethers.BigNumber.from(
-          "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+          '115792089237316195423570985008687907853269984665640564039457584007913129639935'
         )
-      );
-      this.isApprove = false;
+      )
+      this.isApprove = false
     } catch (err: any) {
-      this.onError(err);
+      this.onError(err)
     }
   }
 
-  public async onCreate() {
+  public async onCreate () {
     try {
-      await this.handlerContract.createNodeWithTokens(this.nodeNftName, this.quantity);
+      await this.handlerContract.createNodeWithTokens(this.nodeNftName, this.quantity)
     } catch (err: any) {
-      this.onError(err);
+      this.onError(err)
     }
   }
 
-  public onLevelUp() {
-    alert("level up");
+  public onLevelUp () {
+    alert('level up')
   }
 
-  get totalCost() {
-    return this.cost.mul(this.quantity);
+  get totalCost () {
+    return this.cost.mul(this.quantity)
   }
 
-  get dataBlocks() {
-    const { totalCost, roi, tax, quantity } = this;
+  get dataBlocks () {
+    const { totalCost, roi, tax } = this
     return [
-      { key: "Cost:", value: ethers.utils.formatEther(totalCost), unit: "$POLAR" },
-      { key: "ROI / day:", value: roi.toFixed(2), unit: "%" },
-      { key: "Claim Tax:", value: tax, unit: "%" },
-    ];
+      { key: 'Cost:', value: ethers.utils.formatEther(totalCost), unit: '$POLAR' },
+      { key: 'ROI / day:', value: roi.toFixed(2), unit: '%' },
+      { key: 'Claim Tax:', value: tax, unit: '%' }
+    ]
   }
 
-  get detailsBlocks() {
+  get detailsBlocks () {
     return [
-      { key: "Max Slots:", value: `${this.totalCreatedNodes} / ${this.maxSlots}` },
-      { key: "Max Level Up User:", value: this.maxLevelUpUser },
-      { key: "Max Level Up Global:", value: this.maxLevelUpGlobal },
-      { key: "Max Creation Pending User:", value: this.maxCreationPendingUser },
-      { key: "Max Creation Pending Global:", value: this.maxCreationPendingGlobal },
-    ];
+      { key: 'Max Slots:', value: `${this.totalCreatedNodes} / ${this.maxSlots}` },
+      { key: 'Max Level Up User:', value: this.maxLevelUpUser },
+      { key: 'Max Level Up Global:', value: this.maxLevelUpGlobal },
+      { key: 'Max Creation Pending User:', value: this.maxCreationPendingUser },
+      { key: 'Max Creation Pending Global:', value: this.maxCreationPendingGlobal }
+    ]
   }
 
-  get dailyEarning() {
-    const { quantity, dailyEarningPerNode } = this;
-    return ethers.utils.formatEther(dailyEarningPerNode.mul(quantity));
+  get dailyEarning () {
+    const { quantity, dailyEarningPerNode } = this
+    return ethers.utils.formatEther(dailyEarningPerNode.mul(quantity))
   }
 
-  get roi() {
-    const { dailyEarningPerNode, cost } = this;
-    if(cost.eq(0)) {
-      return 0;
+  get roi () {
+    const { dailyEarningPerNode, cost } = this
+    if (cost.eq(0)) {
+      return 0
     }
-    
-    return (ethers.utils.formatEther(dailyEarningPerNode) / ethers.utils.formatEther(cost)) * 100;
+
+    return (ethers.utils.formatEther(dailyEarningPerNode) / ethers.utils.formatEther(cost)) * 100
   }
 }
 </script>

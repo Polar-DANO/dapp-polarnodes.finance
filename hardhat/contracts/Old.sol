@@ -77,7 +77,7 @@ contract Old {
 
 	function _generatePseudoRandom(address user, uint min, uint max) internal returns(uint) {
 		uint r = uint(keccak256(abi.encodePacked(nonce, user, block.difficulty, block.timestamp)));
-		unchecked { nonce++; }
+		nonce++;
 		return min + r % max;
 	}
 }

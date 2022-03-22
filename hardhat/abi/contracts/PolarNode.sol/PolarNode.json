@@ -603,7 +603,7 @@
         "type": "string"
       }
     ],
-    "name": "setTokenIdToNodeType",
+    "name": "setTokenIdToType",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -667,7 +667,7 @@
         "type": "uint256"
       }
     ],
-    "name": "tokenIdsToNodeType",
+    "name": "tokenIdsToType",
     "outputs": [
       {
         "internalType": "string",

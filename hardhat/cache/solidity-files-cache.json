@@ -54,7 +54,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/Handler.sol": {
-      "lastModificationDate": 1647620517736,
+      "lastModificationDate": 1647983354134,
       "contentHash": "f37cd75f51ceacb0e9452cedf05a83eb",
       "sourceName": "contracts/Handler.sol",
       "solcConfig": {
@@ -96,7 +96,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/INodeType.sol": {
-      "lastModificationDate": 1647620517736,
+      "lastModificationDate": 1647983354134,
       "contentHash": "00d16c7395a8502e64ec2e578218731d",
       "sourceName": "contracts/INodeType.sol",
       "solcConfig": {
@@ -131,7 +131,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/IPolarNode.sol": {
-      "lastModificationDate": 1647620517736,
+      "lastModificationDate": 1647983354134,
       "contentHash": "5492a0896396ef872c113219bf26980f",
       "sourceName": "contracts/IPolarNode.sol",
       "solcConfig": {
@@ -166,7 +166,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/IPolarLuckyBox.sol": {
-      "lastModificationDate": 1647620517736,
+      "lastModificationDate": 1647983354134,
       "contentHash": "2f855f7a3c90e7673e6d85a3e541f195",
       "sourceName": "contracts/IPolarLuckyBox.sol",
       "solcConfig": {
@@ -201,7 +201,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/ISwapper.sol": {
-      "lastModificationDate": 1647620517736,
+      "lastModificationDate": 1647983354134,
       "contentHash": "fc1da68dcd455edf84b08dfb46be55d7",
       "sourceName": "contracts/ISwapper.sol",
       "solcConfig": {
@@ -236,7 +236,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/Owners.sol": {
-      "lastModificationDate": 1647620517736,
+      "lastModificationDate": 1647983354134,
       "contentHash": "0d7b6cd4ed77218bb58a3da01c8787cc",
       "sourceName": "contracts/Owners.sol",
       "solcConfig": {
@@ -271,7 +271,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/hardhat/console.sol": {
-      "lastModificationDate": 1647620621624,
+      "lastModificationDate": 1647906596758,
       "contentHash": "cc4777addd464ea56fa35b1c45df0591",
       "sourceName": "hardhat/console.sol",
       "solcConfig": {
@@ -306,7 +306,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/Swapper.sol": {
-      "lastModificationDate": 1647620517736,
+      "lastModificationDate": 1647983354130,
       "contentHash": "9d375a61f12fd3143aaa2d92d7e77f06",
       "sourceName": "contracts/Swapper.sol",
       "solcConfig": {
@@ -346,7 +346,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/PaymentSplitter.sol": {
-      "lastModificationDate": 1647620517736,
+      "lastModificationDate": 1647983354134,
       "contentHash": "0a6bb8c6e8d6da8db1f9489612ec7f58",
       "sourceName": "contracts/PaymentSplitter.sol",
       "solcConfig": {
@@ -385,7 +385,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/IJoeRouter02.sol": {
-      "lastModificationDate": 1647620402373,
+      "lastModificationDate": 1647983354134,
       "contentHash": "6a3dca8acf5eeb876bf71c94348ab434",
       "sourceName": "contracts/IJoeRouter02.sol",
       "solcConfig": {
@@ -422,7 +422,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
-      "lastModificationDate": 1647620621204,
+      "lastModificationDate": 1647906595998,
       "contentHash": "995f86e1e2ba482741534d435d7df269",
       "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
       "solcConfig": {
@@ -460,7 +460,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/utils/Address.sol": {
-      "lastModificationDate": 1647620620868,
+      "lastModificationDate": 1647906595554,
       "contentHash": "a8d6f1154bf88980c18dd20fb009967d",
       "sourceName": "@openzeppelin/contracts/utils/Address.sol",
       "solcConfig": {
@@ -495,7 +495,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1647620620892,
+      "lastModificationDate": 1647906595610,
       "contentHash": "a06a83834de6f8eb27f6ed608d030ac2",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
@@ -530,7 +530,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1647620621108,
+      "lastModificationDate": 1647906595930,
       "contentHash": "5f4c7678e2e69875dbd2ec01d3d288c1",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
@@ -565,7 +565,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/IJoeRouter01.sol": {
-      "lastModificationDate": 1647620402373,
+      "lastModificationDate": 1647983354134,
       "contentHash": "aa9954e334a8050e13228b88399949d5",
       "sourceName": "contracts/IJoeRouter01.sol",
       "solcConfig": {
@@ -600,8 +600,8 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/PolarNode.sol": {
-      "lastModificationDate": 1647620517736,
-      "contentHash": "b28d5ccf603f418c4df42b815157de29",
+      "lastModificationDate": 1647983354134,
+      "contentHash": "ea70575d8357883158a0680c1da7d03e",
       "sourceName": "contracts/PolarNode.sol",
       "solcConfig": {
         "version": "0.8.2",
@@ -642,7 +642,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol": {
-      "lastModificationDate": 1647620621016,
+      "lastModificationDate": 1647906595778,
       "contentHash": "81722bd5f5980edd45a9a72c4119225a",
       "sourceName": "@openzeppelin/contracts/token/ERC721/ERC721.sol",
       "solcConfig": {
@@ -685,7 +685,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol": {
-      "lastModificationDate": 1647620621036,
+      "lastModificationDate": 1647906595810,
       "contentHash": "83ed5aa64da2c3471bc878a446c8fa8d",
       "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
       "solcConfig": {
@@ -723,7 +723,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/utils/Counters.sol": {
-      "lastModificationDate": 1647620620896,
+      "lastModificationDate": 1647906595610,
       "contentHash": "a21834c04c11733a9018196d6b1b0e89",
       "sourceName": "@openzeppelin/contracts/utils/Counters.sol",
       "solcConfig": {
@@ -758,7 +758,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
-      "lastModificationDate": 1647620621168,
+      "lastModificationDate": 1647906595978,
       "contentHash": "cbba874af15bc1c65a1c82aebec1a0fe",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
@@ -795,7 +795,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/IHandler.sol": {
-      "lastModificationDate": 1647620517736,
+      "lastModificationDate": 1647983354134,
       "contentHash": "72285823890c31586de0d26abfcbc2c4",
       "sourceName": "contracts/IHandler.sol",
       "solcConfig": {
@@ -830,7 +830,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol": {
-      "lastModificationDate": 1647620621116,
+      "lastModificationDate": 1647906595942,
       "contentHash": "937105c04c9b4b689f8ee2d6d161994d",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721.sol",
       "solcConfig": {
@@ -867,7 +867,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol": {
-      "lastModificationDate": 1647620621120,
+      "lastModificationDate": 1647906595946,
       "contentHash": "c327b62ee5bcacfdd977bc3888fba3a4",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol",
       "solcConfig": {
@@ -902,7 +902,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
-      "lastModificationDate": 1647620621120,
+      "lastModificationDate": 1647906595946,
       "contentHash": "a17d56fe0dfcceb68cd8a527b934b0ae",
       "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol",
       "solcConfig": {
@@ -939,7 +939,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/utils/Strings.sol": {
-      "lastModificationDate": 1647620621228,
+      "lastModificationDate": 1647906596002,
       "contentHash": "babfde9e032d8044f461325c13ca07d7",
       "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
       "solcConfig": {
@@ -974,7 +974,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
-      "lastModificationDate": 1647620620952,
+      "lastModificationDate": 1647906595702,
       "contentHash": "31c485b4e552cc1bdeb99edb8303011e",
       "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
       "solcConfig": {
@@ -1011,7 +1011,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
-      "lastModificationDate": 1647620621096,
+      "lastModificationDate": 1647906595922,
       "contentHash": "caf880149ceb95d7355b976d61c278a8",
       "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
@@ -1046,7 +1046,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol": {
-      "lastModificationDate": 1647620621116,
+      "lastModificationDate": 1647906595942,
       "contentHash": "7f51e22462d5504275d59669973f83ed",
       "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol",
       "solcConfig": {
@@ -1083,8 +1083,8 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/PolarLuckyBox.sol": {
-      "lastModificationDate": 1647874921214,
-      "contentHash": "b7f38af11133a65a7873ba68988b05dd",
+      "lastModificationDate": 1647983354134,
+      "contentHash": "e16d25bd29548c517dbcb2fdeb40aa6e",
       "sourceName": "contracts/PolarLuckyBox.sol",
       "solcConfig": {
         "version": "0.8.2",
@@ -1126,8 +1126,8 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/PolarMarketPlace.sol": {
-      "lastModificationDate": 1647620517736,
-      "contentHash": "b636e698ee618d3576b02742bd2d3d95",
+      "lastModificationDate": 1647983354134,
+      "contentHash": "37234c147f27876b4bec12daeb755af5",
       "sourceName": "contracts/PolarMarketPlace.sol",
       "solcConfig": {
         "version": "0.8.2",
@@ -1157,6 +1157,7 @@
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "@openzeppelin/contracts/security/ReentrancyGuard.sol",
         "./Owners.sol",
+        "./IPolarNft.sol",
         "hardhat/console.sol"
       ],
       "versionPragmas": [
@@ -1167,7 +1168,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol": {
-      "lastModificationDate": 1647620621180,
+      "lastModificationDate": 1647906595986,
       "contentHash": "402cec08d80c01e96ba8d27963975f8d",
       "sourceName": "@openzeppelin/contracts/security/ReentrancyGuard.sol",
       "solcConfig": {
@@ -1202,8 +1203,8 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/NodeType.sol": {
-      "lastModificationDate": 1647874921214,
-      "contentHash": "49fdf867b2abc775a7630c616e58b740",
+      "lastModificationDate": 1647983354134,
+      "contentHash": "6a6b35e50b7a3ada4de3fd2a62d38264",
       "sourceName": "contracts/NodeType.sol",
       "solcConfig": {
         "version": "0.8.2",
@@ -1241,7 +1242,7 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/IOld.sol": {
-      "lastModificationDate": 1647620517736,
+      "lastModificationDate": 1647983354134,
       "contentHash": "da3b4fe9388714c5bad4bb3b2eed71d1",
       "sourceName": "contracts/IOld.sol",
       "solcConfig": {
@@ -1326,8 +1327,8 @@
       ]
     },
     "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/Old.sol": {
-      "lastModificationDate": 1647874921214,
-      "contentHash": "9b3a83262b6961193a1039823afdce21",
+      "lastModificationDate": 1647983354134,
+      "contentHash": "27279f8dcfbbf8c03685b347b9eec599",
       "sourceName": "contracts/Old.sol",
       "solcConfig": {
         "version": "0.8.2",
@@ -1408,6 +1409,41 @@
         "SafeMath",
         "SafeMathInt",
         "SafeMathUint"
+      ]
+    },
+    "/home/palra/Documents/Perso/dapp-polarnodes.finance/hardhat/contracts/IPolarNft.sol": {
+      "lastModificationDate": 1647983354134,
+      "contentHash": "e02213eb31a9829a800872615efb13c6",
+      "sourceName": "contracts/IPolarNft.sol",
+      "solcConfig": {
+        "version": "0.8.2",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IPolarNft"
       ]
     }
   }

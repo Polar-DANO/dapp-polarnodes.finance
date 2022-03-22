@@ -39,6 +39,24 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_nft",
+        "type": "address"
+      },
+      {
+        "internalType": "string[]",
+        "name": "names",
+        "type": "string[]"
+      }
+    ],
+    "name": "deleteMapPrice",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "fee",
     "outputs": [
@@ -217,6 +235,56 @@
   },
   {
     "inputs": [],
+    "name": "getNftPricesAddressAll",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "iStart",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "iEnd",
+        "type": "uint256"
+      }
+    ],
+    "name": "getNftPricesAddressBetweenIndexes",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getNftPricesSize",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getNftSize",
     "outputs": [
       {
@@ -330,6 +398,95 @@
   {
     "inputs": [],
     "name": "getOwnersSize",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_nft",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "iStart",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "iEnd",
+        "type": "uint256"
+      }
+    ],
+    "name": "getPricesOfBetweenIndexes",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "offerPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "auctionPrice",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PolarMarketPlace.MinPrices[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_nft",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "iStart",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "iEnd",
+        "type": "uint256"
+      }
+    ],
+    "name": "getPricesOfKeysBetweenIndexes",
+    "outputs": [
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_nft",
+        "type": "address"
+      }
+    ],
+    "name": "getPricesOfSize",
     "outputs": [
       {
         "internalType": "uint256",
@@ -604,6 +761,34 @@
       }
     ],
     "name": "setIsBlacklistedNft",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_nft",
+        "type": "address"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_names",
+        "type": "string[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "_offerPrices",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "_auctionPrices",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "setMinPrices",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

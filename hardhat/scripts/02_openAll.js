@@ -26,7 +26,7 @@ async function caller() {
 	await main(handler, nt, polarNode, polarLuckyBox, swapper)
 }
 
-async function main(handler, nt, polarNode, polarLuckyBox, swapper) {
+async function main(handler, nt, polarNode, polarLuckyBox, swapper, marketPlace) {
 	const [owner,metamask,payees,distri] = await getWallets();
 	
 	let res, estimatedGas, args;
@@ -168,6 +168,25 @@ async function main(handler, nt, polarNode, polarLuckyBox, swapper) {
 	res = await swapper.openSwapClaimRewardsNodeType();
 	console.log("\t\tswapper.openSwapClaimRewardsNodeType() =", res);
 	
+	console.log("\tPolarMarketPlace Open");
+	estimatedGas = await marketPlace.connect(owner).estimateGas.setOpenOffer(true);
+	res = await marketPlace.connect(owner).setOpenOffer(true,
+		{ gasLimit: estimatedGas.toNumber() + 50000 }
+	);
+	await res.wait()
+	console.log("\t\tmarketPlace.setOpenOffer(true)");
+	res = await marketPlace.openOffer();
+	console.log("\t\tmarketPlace.openOffer() =", res);
+	
+	estimatedGas = await marketPlace.connect(owner).estimateGas.setOpenAuction(true);
+	res = await marketPlace.connect(owner).setOpenAuction(true,
+		{ gasLimit: estimatedGas.toNumber() + 50000 }
+	);
+	await res.wait()
+	console.log("\t\tmarketPlace.setOpenAuction(true)");
+	res = await marketPlace.openAuction();
+	console.log("\t\tmarketPlace.openAuction() =", res);
+
 	console.log();
 }
 

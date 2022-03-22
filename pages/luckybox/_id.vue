@@ -2,7 +2,9 @@
   <div
     class="node-card flex flex-col mx-auto md:mx-[64px] mt-[30px] md:mt-[100px]"
   >
-    <div class="node-card__header">Buy {{ name }} 📦</div>
+    <div class="node-card__header">
+      Buy {{ name }} 📦
+    </div>
     <div class="mt-8 mb-16 mx-16">
       <div class="node-card__subtitle">
         Buy a Lucky Box with $POLAR tokens for your chance to win a random
@@ -14,13 +16,15 @@
             <source
               :src="require('../../assets/PACK/LUCKY_BOX_NEUTRAL_ANIM.mp4')"
               type="video/mp4"
-            />
+            >
             Your browser does not support the video tag.
           </video>
         </VCol>
         <VCol cols="12" md="6">
           <div class="text-center">
-            <div class="node-card__odds">Odds:</div>
+            <div class="node-card__odds">
+              Odds:
+            </div>
             <div class="node-card__odds__outlined py-4 inline-block mt-2">
               <VRow
                 v-for="chance in chances"
@@ -28,9 +32,13 @@
                 justify="center"
                 no-gutters
               >
-                <VCol class="text-right"> {{ chance.key }}: </VCol>
+                <VCol class="text-right">
+                  {{ chance.key }}:
+                </VCol>
                 <VDivider vertical dark class="mx-4" />
-                <VCol class="text-left"> {{ chance.value }}% Chance </VCol>
+                <VCol class="text-left">
+                  {{ chance.value }}% Chance
+                </VCol>
               </VRow>
             </div>
 
@@ -104,135 +112,133 @@ import { abi as POLAR } from "~/hardhat/artifacts/contracts/PolarNode.sol/PolarN
 import { WalletModule } from "~/store";
 import { LUCKY_BOX_BY_INDEX, LuckyBoxId } from "~/models/constants";
 
-const ethers = require("ethers");
-const { Token, PolarToken, Owner } = require("~/hardhat/scripts/address.js");
+const ethers = require('ethers')
+const { Token } = require('~/hardhat/scripts/address.js')
 
 @Component({})
 export default class Create extends Vue {
-  public name: string | null = null;
-  public quantity = 1;
-  private cost = 0;
+  public name: string | null = null
+  public quantity = 1
+  private cost = 0
   public chances = [
-    { key: "Fuji", value: 20 },
-    { key: "Mont Blanc", value: 20 },
-    { key: "Killimanjaro", value: 20 },
-    { key: "Ushuaia", value: 20 },
-    { key: "Everest", value: 20 },
-  ];
+    { key: 'Fuji', value: 20 },
+    { key: 'Mont Blanc', value: 20 },
+    { key: 'Killimanjaro', value: 20 },
+    { key: 'Ushuaia', value: 20 },
+    { key: 'Everest', value: 20 }
+  ]
 
-  public isApprove = true;
+  public isApprove = true
 
-  private dailyEarningPerNode = 0;
-  private tax: number | null = null;
-  private polar: any;
-  private pnode: any;
+  private dailyEarningPerNode = 0
+  private tax: number | null = null
+  private polar: any
+  private pnode: any
 
-  private async created() {
-    const luckyBoxIndex = this.$route.params.id as LuckyBoxId;
+  private created () {
+    const luckyBoxIndex = this.$route.params.id as LuckyBoxId
 
     if (LUCKY_BOX_BY_INDEX[luckyBoxIndex]) {
-      const { name, cost } = LUCKY_BOX_BY_INDEX[luckyBoxIndex];
+      const { name, cost } = LUCKY_BOX_BY_INDEX[luckyBoxIndex]
 
-      this.name = name;
-      this.cost = cost;
+      this.name = name
+      this.cost = cost
     } else {
-      this.$router.push("/nodes");
+      this.$router.push('/nodes')
     }
   }
 
-  public onRemove() {
+  public onRemove () {
     if (this.quantity > 1) {
-      this.quantity--;
+      this.quantity--
     }
   }
 
-  public onAdd() {
-    this.quantity++;
+  public onAdd () {
+    this.quantity++
   }
 
-  public onError(err: { message: string } | null): void {
+  public onError (err: { message: string } | null): void {
     if (err) {
       const inAppAlert = this.$root.$refs.alert as unknown as Record<
         string,
         Function
-      >;
+      >
 
-      if (err.message.includes("User denied transaction signature")) {
-        inAppAlert.MustSign();
-      } else if (err.message.includes("Global limit reached")) {
-        inAppAlert.MaxReached();
+      if (err.message.includes('User denied transaction signature')) {
+        inAppAlert.MustSign()
+      } else if (err.message.includes('Global limit reached')) {
+        inAppAlert.MaxReached()
       } else if (
-        err.message.includes("Creation with pending limit reached for user")
+        err.message.includes('Creation with pending limit reached for user')
       ) {
-        inAppAlert.UserMaxReached();
-      } else if (err.message.includes("Balance too low for creation")) {
-        inAppAlert.NeedBalance();
-      } else if (err.message.includes("nodeTypeName does not exist")) {
-        inAppAlert.NodesName();
-      } else if (err.message.includes("Blacklisted address")) {
-        inAppAlert.NodesBlacklist();
-      } else if (err.message.includes("fInsufficient Pending")) {
-        inAppAlert.noLiquidity();
-      } else if (err.message.includes("Balance too low for creation.")) {
-        inAppAlert.NeedBalance();
-      } else if (err.message.includes("Node creation not authorized yet")) {
-        inAppAlert.NotAuthorized();
+        inAppAlert.UserMaxReached()
+      } else if (err.message.includes('Balance too low for creation')) {
+        inAppAlert.NeedBalance()
+      } else if (err.message.includes('nodeTypeName does not exist')) {
+        inAppAlert.NodesName()
+      } else if (err.message.includes('Blacklisted address')) {
+        inAppAlert.NodesBlacklist()
+      } else if (err.message.includes('fInsufficient Pending')) {
+        inAppAlert.noLiquidity()
+      } else if (err.message.includes('Balance too low for creation.')) {
+        inAppAlert.NeedBalance()
+      } else if (err.message.includes('Node creation not authorized yet')) {
+        inAppAlert.NotAuthorized()
       } else if (
-        err.message.includes("futur and rewardsPool cannot create node")
+        err.message.includes('futur and rewardsPool cannot create node')
       ) {
-        inAppAlert.NotFutur();
-      } else if (err.message.includes("Max already reached")) {
-        inAppAlert.MaxReached();
+        inAppAlert.NotFutur()
+      } else if (err.message.includes('Max already reached')) {
+        inAppAlert.MaxReached()
       } else if (
         err.message.includes(
-          "MetaMask Tx Signature: User denied transaction signature."
+          'MetaMask Tx Signature: User denied transaction signature.'
         )
       ) {
-        inAppAlert.UserReject();
+        inAppAlert.UserReject()
       } else {
-        inAppAlert.OtherError();
+        inAppAlert.OtherError()
       }
     }
-
-    return;
   }
 
-  public async onApprove() {
+  public async onApprove () {
     try {
       await this.polar.approve(
         Token,
         ethers.BigNumber.from(
-          "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+          '115792089237316195423570985008687907853269984665640564039457584007913129639935'
         )
-      );
-      this.isApprove = false;
+      )
+      this.isApprove = false
     } catch (err: any) {
-      this.onError(err);
+      this.onError(err)
     }
   }
 
-  public async onBuy() {
+  public onBuy () {
     try {
-      alert("buy");
+      alert('buy')
     } catch (err: any) {
-      this.onError(err);
+      this.onError(err)
     }
   }
 
-  get dataBlocks() {
-    const { cost, quantity } = this;
+  get dataBlocks () {
+    const { cost, quantity } = this
 
-    return [{ key: "Cost:", value: cost * quantity, unit: "$POLAR" }];
+    return [{ key: 'Cost:', value: cost * quantity, unit: '$POLAR' }]
   }
 
-  get dailyEarning() {
-    const { quantity, dailyEarningPerNode } = this;
-    return (dailyEarningPerNode * quantity).toFixed(2);
+  get dailyEarning () {
+    const { quantity, dailyEarningPerNode } = this
+    return (dailyEarningPerNode * quantity).toFixed(2)
   }
 
-  get roi() {
-    const { dailyEarningPerNode, cost } = this;
-    return ((dailyEarningPerNode / cost) * 100).toFixed(2);
+  get roi () {
+    const { dailyEarningPerNode, cost } = this
+    return ((dailyEarningPerNode / cost) * 100).toFixed(2)
   }
 }
 </script>

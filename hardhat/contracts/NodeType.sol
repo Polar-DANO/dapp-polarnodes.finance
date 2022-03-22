@@ -54,6 +54,11 @@ contract NodeType is Owners {
 	uint public isBoostedTokenRate;
 	uint public noClaimRewardAmount;
 	uint public noClaimTimeReference;
+	uint public globalTax;
+	uint public claimTimeReference;
+	uint public claimTimeRate;
+	uint public maxMultiObtaining;
+	uint public maxMultiClaim;
 
 	bool public canBeBoostedNftToken = true;
 	bool public canBeBoostedNftLevelUp = false;
@@ -96,7 +101,7 @@ contract NodeType is Owners {
 		require(bytes(_name).length > 0, "NodeType: Name cannot be empty");
 		name = _name;
 
-		require(values.length == 17, "NodeType: Values.length mismatch");
+		require(values.length == 22, "NodeType: Values.length mismatch");
 		maxCount = values[0];
 		price = values[1];
 		claimTime = values[2];
@@ -122,6 +127,11 @@ contract NodeType is Owners {
 
 		noClaimTimeReference = values[15];
 		noClaimRewardAmount = values[16];
+		globalTax = values[17];
+		claimTimeReference = values[18];
+		claimTimeRate = values[19];
+		maxMultiObtaining = values[20];
+		maxMultiClaim = values[20];
 
 		handler = _handler;
 		old = _old;
@@ -449,6 +459,27 @@ contract NodeType is Owners {
 		require(_new > 0, "NodeType: NoClaimTimeReference must be greater than zero");
 		noClaimTimeReference = _new;
 	}
+	
+	function setGlobalTax(uint _new) external onlyOwners {
+		globalTax = _new;
+	}
+	
+	function setClaimTimeReference(uint _new) external onlyOwners {
+		require(_new > 0, "NodeType: Claim Time Reference cannot be zero");
+		claimTimeReference = _new;
+	}
+	
+	function setClaimTimeRate(uint _new) external onlyOwners {
+		claimTimeRate = _new;
+	}
+	
+	function setMaxMultiObtaining(uint _new) external onlyOwners {
+		maxMultiObtaining = _new;
+	}
+	
+	function setMaxMultiClaim(uint _new) external onlyOwners {
+		maxMultiClaim = _new;
+	}
 
 	function setCanBeBoostedNftToken(bool _new) external onlyOwners {
 		canBeBoostedNftToken = _new;
@@ -626,6 +657,29 @@ contract NodeType is Owners {
 			no[i - iStart] = nodeOwners[i];
 		return no;
 	}
+	
+	function calculateUserRewardsBatch(
+		address user,
+		uint[] memory tokenIds
+	) 
+		external 
+		view
+		returns(uint, uint) 
+	{
+		uint rewardsTotal;
+		uint feesTotal;
+		User storage u = userOf[user];
+
+		for (uint i = 0; i < tokenIds.length; i++) {
+			require(u.inserted[tokenIds[i]], "NodeType: User doesnt own this node");
+			Node memory userNode = u.values[tokenIds[i]];
+			(uint rewards, uint fees) = _calculateNodeRewards(userNode);
+			rewardsTotal += rewards;
+			feesTotal += fees;
+		}
+
+		return (rewardsTotal, feesTotal);
+	}
 
 	// public
 	function calculateUserRewards(address user) public view returns(uint, uint) {
@@ -664,7 +718,7 @@ contract NodeType is Owners {
 	}
 
 	function _generatePseudoRandom(address user) internal returns(uint) {
-		uint r = uint(keccak256(abi.encodePacked(user, msg.sender, block.difficulty, block.timestamp)));
+		uint r = uint(keccak256(abi.encodePacked(nonce, user, block.difficulty, block.timestamp)));
 		unchecked { nonce++; }
 		return r % 10000;
 	}
@@ -714,12 +768,18 @@ contract NodeType is Owners {
 
 		rewardsTotal = rewardAmount * (block.timestamp - node.lastClaimTime) / claimTime;
 
-		if ((block.timestamp - node.obtainingTime) / obtainingTimeReference > 0)
-			rewardsTotal = rewardsTotal * 
-				(10000 + obtainingTimeRate * 
-				((block.timestamp - node.obtainingTime) / obtainingTimeReference))
-				/ 10000;
+		uint multi = (block.timestamp - node.obtainingTime) / obtainingTimeReference;
+		if (multi > 0) {
+			multi = multi <= maxMultiObtaining ? multi : maxMultiObtaining;
+			rewardsTotal = rewardsTotal * (10000 + obtainingTimeRate * multi) / 10000;
+		}
 		
+		multi = (block.timestamp - node.lastClaimTime) / claimTimeReference;
+		if (multi > 0) {
+			multi = multi <= maxMultiClaim ? multi : maxMultiClaim;
+			rewardsTotal = rewardsTotal * (10000 + claimTimeRate * multi) / 10000;
+		}
+
 		if (node.isBoostedAirDropRate > 0)
 			rewardsTotal = rewardsTotal * (10000 + node.isBoostedAirDropRate) / 10000;
 
@@ -736,7 +796,10 @@ contract NodeType is Owners {
 			rewardsTotal += noClaimRewardAmount;
 
 		if (rewardAmount * (block.timestamp - node.creationTime) / claimTime < price)
-			fees = rewardsTotal * claimTaxRoi / 10000;
+			fees += rewardsTotal * claimTaxRoi / 10000;
+		
+		if (globalTax > 0)
+			fees += rewardsTotal * globalTax / 10000;
 
 		return (rewardsTotal - fees, fees);
 	}

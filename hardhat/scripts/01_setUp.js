@@ -23,7 +23,7 @@ async function caller() {
 	await main(handler, nt, polarNode, polarLuckyBox, swapper);
 }
 
-async function main(handler, nt, polarNode, polarLuckyBox, swapper) {
+async function main(handler, nt, polarNode, polarLuckyBox, swapper, marketPlace) {
 	const [owner,metamask,payees,distri] = await getWallets();
 	
 	let res, estimatedGas, args;
@@ -204,6 +204,33 @@ async function main(handler, nt, polarNode, polarLuckyBox, swapper) {
 	res = await swapper.getMapPathSize();
 	console.log("\t\tswapper.getMapPathSize() =", res.toNumber());
 
+	console.log("\tMarketPlace Nft Min Prices");
+	res = await marketPlace.getNftPricesSize();
+	console.log("\t\tmarketPlace.getNftPricesSize() =", res.toNumber());
+	args = [polarNode.address, params.MinPricesNode.names, 
+		params.MinPricesNode.offerPrices, params.MinPricesNode.auctionPrices];
+	estimatedGas = await marketPlace.connect(owner).estimateGas.setMinPrices(...args);
+	res = await marketPlace.connect(owner).setMinPrices(...args, { 
+		gasLimit: estimatedGas.toNumber() + 50000 
+	});
+	console.log("\t\tmarketPlace().setMinPrices()");
+	await res.wait();
+
+	args = [polarLuckyBox.address, params.MinPricesLucky.names, 
+		params.MinPricesLucky.offerPrices, params.MinPricesLucky.auctionPrices];
+	estimatedGas = await marketPlace.connect(owner).estimateGas.setMinPrices(...args);
+	res = await marketPlace.connect(owner).setMinPrices(...args, { 
+		gasLimit: estimatedGas.toNumber() + 50000 
+	});
+	console.log("\t\tmarketPlace().setMinPrices()");
+	await res.wait();
+	res = await marketPlace.getNftPricesSize();
+	console.log("\t\tmarketPlace.getNftPricesSize() =", res.toNumber());
+	res = await marketPlace.getPricesOfKeysBetweenIndexes(polarNode.address,0,5);
+	console.log("\t\tmarketPlace.getPricesOfKeysBetweenIndexes(polarNode,0,5) =", res);
+	res = await marketPlace.getPricesOfKeysBetweenIndexes(polarLuckyBox.address,0,4);
+	console.log("\t\tmarketPlace.getPricesOfKeysBetweenIndexes(polarLuckyBox,0,4) =", res);
+	
 	console.log();
 }
 

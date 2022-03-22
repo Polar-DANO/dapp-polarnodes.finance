@@ -7,6 +7,8 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "generate": "nuxt generate"
   },
   "dependencies": {
@@ -33,9 +35,12 @@
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@nuxt/types": "^2.15.8",
     "@nuxt/typescript-build": "^2.1.0",
+    "@nuxtjs/eslint-config": "^9.0.0",
+    "@nuxtjs/eslint-config-typescript": "^9.0.0",
     "@nuxtjs/vuetify": "^1.12.1",
     "@openzeppelin/hardhat-upgrades": "^1.12.0",
     "chai": "^4.3.4",
+    "eslint": "^8.11.0",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.5.2",
     "hardhat": "^2.8.0",
