@@ -213,7 +213,7 @@ import { WalletModule } from '~/store'
 import { URL_TO_NAME, NODENAME_TO_VIDEO, Url, PAYOUTS_PER_DAY } from '~/models/constants'
 
 const ethers = require('ethers')
-const { Token, Handler } = require('~/hardhat/scripts/address.js')
+const { Token, Handler, Swapper } = require('~/hardhat/scripts/address.js')
 
 @Component({})
 export default class Create extends Vue {
@@ -255,8 +255,6 @@ export default class Create extends Vue {
       )
       const signer = provider.getSigner()
       this.polar = new ethers.Contract(Token, POLAR_TOKEN_ABI, signer)
-      const allowance = (await this.polar.allowance(WalletModule.walletaddress, Handler))
-      this.isApprove = allowance.gte(this.totalCost || 0)
       this.handlerContract = new ethers.Contract(Handler, HANDLER_ABI, signer)
       const nodeTypeAddress = await this.handlerContract.getNodeTypesAddress(
         this.nodeNftName
@@ -278,6 +276,8 @@ export default class Create extends Vue {
       this.maxLevelUpGlobal = await this.nodeTypeContract.maxLevelUpTotal()
       this.maxCreationPendingUser = await this.nodeTypeContract.maxCreationPendingUser()
       this.maxCreationPendingGlobal = await this.nodeTypeContract.maxCreationPendingTotal()
+
+      await this.computeAllowance()
     } catch (err) {
       console.log(err)
     }
@@ -295,6 +295,7 @@ export default class Create extends Vue {
 
   public onError (err: { message: string } | null): void {
     if (err) {
+      console.error(err)
       const inAppAlert = this.$root.$refs.alert as unknown as Record<
         string,
         Function
@@ -338,13 +339,16 @@ export default class Create extends Vue {
     }
   }
 
+  private async computeAllowance () {
+    const allowance = (await this.polar.allowance(WalletModule.walletaddress, Handler))
+    this.isApprove = allowance.lt(this.totalCost || 0) // allowance < totalCost, BigNumber safe arithmetic
+  }
+
   public async onApprove () {
     try {
       await this.polar.approve(
         Handler,
-        ethers.BigNumber.from(
-          '115792089237316195423570985008687907853269984665640564039457584007913129639935'
-        )
+        ethers.BigNumber.from('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
       )
       this.isApprove = false
     } catch (err: any) {
@@ -354,7 +358,7 @@ export default class Create extends Vue {
 
   public async onCreate () {
     try {
-      await this.handlerContract.createNodeWithTokens(this.nodeNftName, this.quantity)
+      await this.handlerContract.createNodesWithTokens(Token, this.nodeNftName, this.quantity, '', { gasLimit: 30000000 })
     } catch (err: any) {
       this.onError(err)
     }
