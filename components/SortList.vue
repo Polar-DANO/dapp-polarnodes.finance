@@ -14,7 +14,7 @@
       ></v-select>
     </div>
   </div>
-  <div class="w-[28%]"></div>
+  <div class="w-[10%]"></div>
   <div class="flex justify-end items-center gap-4">
     <div class="border-solid rounded-[14px] border-[#00C6ED] border-[2px] p-[15px]">
       <span class="text-[white] text-[14px]">Floor Price:</span>
