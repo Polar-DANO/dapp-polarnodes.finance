@@ -68,7 +68,7 @@
             </div>
           </div>
           <button
-            class="text-white text-center font-normal text-[14px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px]"
+            class="text-white text-center font-normal text-[14px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px]" @click="$emit('sellModal')"
           >
             <div class="text-[16px] font-[600] py-[8px] text-center">Sell</div>
           </button>
