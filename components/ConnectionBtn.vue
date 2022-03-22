@@ -123,7 +123,7 @@ import Web3 from "web3"
 import WalletConnectProvider from "@walletconnect/web3-provider"
 import {WalletModule} from '~/store'
 import AlertComponents from '~/components/AlertComponents.vue'
-import Defalut from "~/layouts/default.vue"
+import Default from "~/layouts/default.vue"
 import detectEthereumProvider from '@metamask/detect-provider'
 
 declare let window: any;
@@ -167,7 +167,7 @@ export default class ConnectionBtn extends Vue {
       window.ethereum.on('networkChanged', async function(networkId : any){
         console.log('networkChanged',networkId)
         if(networkId != 0xa86a) {            
-          (self.$root.$refs.alert as Defalut).WrongNetwork()
+          (self.$root.$refs.alert as Default).WrongNetwork()
           await self.sleep(1500)          
         }
       });
@@ -208,7 +208,7 @@ export default class ConnectionBtn extends Vue {
                 this.walletAddress = accounts[0]
                 this.isLoggIn = true
                 this.dialog = false                          
-                await (this.$root.$refs.alert as Defalut).WalletConnectOk()                              
+                await (this.$root.$refs.alert as Default).WalletConnectOk()                              
                 return
               } else {                            
                 this.wrongNetwork = true
@@ -250,7 +250,7 @@ export default class ConnectionBtn extends Vue {
                               this.walletAddress = accounts[0]
                               this.isLoggIn = true
                               this.dialog = false                          
-                              await (this.$root.$refs.alert as Defalut).WalletConnectOk()                              
+                              await (this.$root.$refs.alert as Default).WalletConnectOk()                              
                               return
                             } else {                            
                               this.wrongNetwork = true
