@@ -79,7 +79,7 @@
           $640
             <button
               class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px] my-[10px] ml-[16px]"
-              @click="()=> nftSellSectionModal = true"
+              @click="()=> nftSellModal = true"
             >
               <div>Manage</div>
             </button>
@@ -89,10 +89,10 @@
       </table>
     </div>
     <div v-if="nftSellSectionModal">
-      <NFTSellSectionModal @closeModal="()=>nftSellSectionModal=false" @sellModal="clickedSellModal" />
+      <NFTSellSectionModal @closeModal="()=>nftSellSectionModal=false"/>
     </div>
     <div v-if="nftSellModal">
-      <NFTSellModal @closeSellModal="()=>nftSellModal=false" />
+      <NFTSellModal @closeSellModal="()=>nftSellModal=false" @sellModal="clickedSellSectionModal" />
     </div>
   </div>
 </template>
@@ -120,9 +120,9 @@ export default class NodeTable extends Vue {
     this.nodeData = this.$props.items;
   }
 
-  private clickedSellModal() {
-    this.nftSellSectionModal = false;
-    this.nftSellModal = true;
+  private clickedSellSectionModal() {
+    this.nftSellSectionModal = true;
+    this.nftSellModal = false;
   }
   public onError(err: { message: string } | null): void {
     if (err) {
