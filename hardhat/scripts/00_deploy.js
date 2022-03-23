@@ -4,7 +4,6 @@ const address = require('./address')
 const params = require('./params')
 const { getWallets } = require('./utils/getWallets')
 const { getContracts } = require('./utils/getContracts')
-const earlySetUp = require('./00_earlySetUp')
 
 async function replaceInFile (searchPattern, newLine, filePath) {
   return new Promise((resolve, error) => {

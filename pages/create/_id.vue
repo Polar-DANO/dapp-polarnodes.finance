@@ -340,14 +340,14 @@ export default class Create extends Vue {
   }
 
   private async computeAllowance () {
-    const allowance = (await this.polar.allowance(WalletModule.walletaddress, Handler))
+    const allowance = (await this.polar.allowance(WalletModule.walletaddress, Swapper))
     this.isApprove = allowance.lt(this.totalCost || 0) // allowance < totalCost, BigNumber safe arithmetic
   }
 
   public async onApprove () {
     try {
       await this.polar.approve(
-        Handler,
+        Swapper,
         ethers.BigNumber.from('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
       )
       this.isApprove = false
@@ -358,7 +358,7 @@ export default class Create extends Vue {
 
   public async onCreate () {
     try {
-      await this.handlerContract.createNodesWithTokens(Token, this.nodeNftName, this.quantity, '', { gasLimit: 30000000 })
+      await this.handlerContract.createNodesWithTokens(Token, this.nodeNftName, this.quantity, '')
     } catch (err: any) {
       this.onError(err)
     }
