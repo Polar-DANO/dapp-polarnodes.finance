@@ -31,14 +31,16 @@ import { Component, Vue } from 'nuxt-property-decorator'
 
 import axios from 'axios'
 
-import { abi as NODER } from '~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json'
-import { abi as POLAR } from '~/hardhat/artifacts/contracts/PolarNodes.sol/PolarNodes.json'
+import { abi as HANDLER_ABI } from '~/hardhat/artifacts/contracts/Handler.sol/Handler.json'
+import { abi as POLAR_TOKEN_ABI } from '~/hardhat/artifacts/contracts/Polar.sol/Polar.json'
+import { abi as NODE_TYPE_ABI } from '~/hardhat/artifacts/contracts/NodeType.sol/NodeType.json'
+import { PAYOUTS_PER_DAY } from '~/models/constants'
 
 import { WalletModule } from '~/store'
 
 const {
-  Token,
-  PolarToken
+  Token: PolarTokenAddr,
+  Handler: HandlerAddr
 } = require('~/hardhat/scripts/address.js')
 
 declare let window: any
@@ -101,15 +103,20 @@ export default class IndexVue extends Vue {
     }
   ]
 
-  private getFromattedNb (nb : any) : string {
+  private getFormattedNb (nb : any) : string {
     nb = nb.toLocaleString()
-    if (!nb.includes('.')) { return nb } else if (nb.indexOf('.') === nb.length - 2) { return nb.substr(0, nb.indexOf('.') + 2) + '0' }
-    return nb.substr(0, nb.indexOf('.') + 3)
+    if (!nb.includes('.')) {
+      return nb
+    } else if (nb.indexOf('.') === nb.length - 2) {
+      return nb.substr(0, nb.indexOf('.') + 2) + '0'
+    }
+
+    return nb
   }
 
   public ProtocolData () : void {
     const params = {
-      contract_addresses: PolarToken,
+      contract_addresses: '0x6c1c0319d8ddcb0ffe1a68c5b3829fd361587db4',
       vs_currencies: 'usd',
       include_market_cap: true,
       include_24hr_vol: true,
@@ -125,9 +132,9 @@ export default class IndexVue extends Vue {
           (response : any) => {
             const keyArray = Object.keys(response.data)
 
-            this.protocolStats[0].price = this.getFromattedNb(response.data[keyArray[0]].usd)
-            this.protocolStats[0].percentage = this.getFromattedNb(response.data[keyArray[0]].usd_24h_change)
-            this.protocolStats[1].price = this.getFromattedNb(response.data[keyArray[0]].usd * 1000000)
+            this.protocolStats[0].price = this.getFormattedNb(response.data[keyArray[0]].usd)
+            this.protocolStats[0].percentage = this.getFormattedNb(response.data[keyArray[0]].usd_24h_change)
+            this.protocolStats[1].price = this.getFormattedNb(response.data[keyArray[0]].usd * 1000000)
           }
         )
     } catch {
@@ -148,65 +155,49 @@ export default class IndexVue extends Vue {
       )
 
       const signer = provider.getSigner()
-      // const userAddress = await signer.getAddress();
 
-      const pnode = new ethers.Contract(Token, NODER, signer)
-      const polar = new ethers.Contract(PolarToken, POLAR, signer)
-      // const rewardManage = new ethers.Contract(Reward, NODER, signer);
+      const handlerContract = new ethers.Contract(HandlerAddr, HANDLER_ABI, signer)
+      const polarTokenContract = new ethers.Contract(PolarTokenAddr, POLAR_TOKEN_ABI, signer)
 
-      let tmp = await pnode.getTotalCreatedNodes()
-      this.protocolStats[3].price = parseInt(tmp._hex, 16).toString()
+      const totalCreatedNodes = await handlerContract.getTotalCreatedNodes()
+      this.protocolStats[3].price = totalCreatedNodes.toString()
 
       if (WalletModule.walletaddress) {
-        tmp = await pnode.getTotalCreatedNodesOf(WalletModule.walletaddress)
-        this.personalStats[0].price = parseInt(tmp._hex, 16).toString()
+        const totalNodes = await handlerContract.getTotalNodesOf(WalletModule.walletaddress)
+        this.personalStats[0].price = totalNodes.toString()
 
-        tmp = await polar.balanceOf(WalletModule.walletaddress)
-        this.personalStats[1].price = this.getFromattedNb(ethers.utils.formatEther(tmp._hex))
+        const polarBalance = await polarTokenContract.balanceOf(WalletModule.walletaddress)
+        this.personalStats[1].price = this.getFormattedNb(ethers.utils.formatEther(polarBalance))
       }
 
       // dailyrewards
-      tmp = await pnode.getNodeTypesSize()
-      const nodeSize = parseInt(tmp._hex, 16)
+      const nodeSize = (await handlerContract.getNodeTypesSize()).toNumber()
 
-      const tempNodeName: any = []
-      let nodeName: any = []
-      const tempCounter: any = []
-      const nodeCounter: any = []
-      const tempNodeReward: any = []
-      const perNodeReward: any = []
-      for (let i = 0; i < nodeSize; i++) {
-        tempNodeName.push(pnode.getNodeTypeNameAtIndex(i))
-      }
-      await Promise.all(tempNodeName).then((res) => {
-        nodeName = res
-      })
-      for (let i = 0; i < nodeSize; i++) {
-        tempNodeReward.push(pnode.getNodeTypeAll(nodeName[i]))
-      }
-      await Promise.all(tempNodeReward).then((res) => {
-        for (const index in res) {
-          perNodeReward[index] = ethers.utils.formatEther(res[index][2]._hex)
-        }
-      })
+      const nodeName: string[] = await handlerContract.getNodeTypesBetweenIndexes(0, nodeSize)
+      const nodes = await Promise.all(
+        nodeName.map(async (name, index) => {
+          const nodeTypeAddress = await handlerContract.getNodeTypesAddress(name)
+          const nodeTypeContract = new ethers.Contract(nodeTypeAddress, NODE_TYPE_ABI, signer)
 
-      for (let i = 0; i < nodeSize; i++) {
-        tempCounter.push(pnode.getNodeTypeOwnerNumber(nodeName[i], WalletModule.walletaddress))
-      }
-      await Promise.all(tempCounter).then((res) => {
-        for (const index in res) {
-          nodeCounter[index] = parseInt(res[index]._hex, 16)
-        }
-      })
-      let rewardPerClaim = 0
-      for (let i = 0; i < nodeSize; i++) {
-        rewardPerClaim += perNodeReward[i] * nodeCounter[i] * 6
-      }
-      this.personalStats[2].price = this.getFromattedNb(rewardPerClaim)
+          return {
+            index,
+            name,
+            address: nodeTypeAddress,
+            contract: nodeTypeContract,
+            rewardAmount: await nodeTypeContract.rewardAmount(),
+            userCount: (WalletModule.walletaddress)
+              ? await nodeTypeContract.getTotalNodesNumberOf(WalletModule.walletaddress)
+              : ethers.BigNumber.from(0)
+          }
+        })
+      )
+
+      const rewardPerClaim = nodes.reduce((acc, node) => acc.add(node.rewardAmount.mul(node.userCount).mul(PAYOUTS_PER_DAY)), ethers.BigNumber.from(0))
+      this.personalStats[2].price = this.getFormattedNb(ethers.utils.formatEther(rewardPerClaim))
 
       // pendingrewards
-      tmp = await pnode.calculateAllClaimableRewards(WalletModule.walletaddress)
-      this.personalStats[3].price = this.getFromattedNb(ethers.utils.formatEther(tmp._hex))
+      const [rewards, _fees] = await handlerContract.getClaimableRewardsOf(WalletModule.walletaddress)
+      this.personalStats[3].price = this.getFormattedNb(ethers.utils.formatEther(rewards._hex))
     }
   }
 

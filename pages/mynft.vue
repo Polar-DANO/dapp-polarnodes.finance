@@ -18,7 +18,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { mapGetters } from 'vuex'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+import axios from 'axios'
+
+import { abi as NODER } from '~/hardhat/artifacts/contracts/Handler.sol/Handler.json'
+import { abi as POLAR } from '~/hardhat/artifacts/contracts/PolarNode.sol/PolarNode.json'
+import { WalletModule } from '~/store'
+
+const {
+  Token,
+  PolarToken
+} = require('~/hardhat/scripts/address.js')
+
+declare let window: any
 
 @Component
 export default class Mynft extends Vue {

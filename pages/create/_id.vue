@@ -206,13 +206,14 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import { NodeNftNames } from '~/models/types'
-import { abi as NODER } from '~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json'
-import { abi as POLAR } from '~/hardhat/artifacts/contracts/PolarNodes.sol/PolarNodes.json'
+import { abi as HANDLER_ABI } from '~/hardhat/artifacts/contracts/Handler.sol/Handler.json'
+import { abi as NODE_TYPE_ABI } from '~/hardhat/artifacts/contracts/NodeType.sol/NodeType.json'
+import { abi as POLAR_TOKEN_ABI } from '~/hardhat/artifacts/contracts/Polar.sol/Polar.json'
 import { WalletModule } from '~/store'
-import { URL_TO_NAME, NODENAME_TO_VIDEO, Url } from '~/models/constants'
+import { URL_TO_NAME, NODENAME_TO_VIDEO, Url, PAYOUTS_PER_DAY } from '~/models/constants'
 
 const ethers = require('ethers')
-const { Token, PolarToken } = require('~/hardhat/scripts/address.js')
+const { Token, Handler, Swapper } = require('~/hardhat/scripts/address.js')
 
 @Component({})
 export default class Create extends Vue {
@@ -223,40 +224,62 @@ export default class Create extends Vue {
   public isLevelUpSelected = false
   public video: string | null = null
 
-  private dailyEarningPerNode = 0
-  private cost = 0
+  private dailyEarningPerNode = ethers.BigNumber.from(0)
+  private cost = ethers.BigNumber.from(0)
   private tax: number | null = null
   private polar: any
-  private pnode: any
+  private handlerContract: any
+  private nodeTypeContract: any
+
+  private totalCreatedNodes = 0
+  private maxSlots: number | null = null
+  private maxCreationPendingGlobal: number | null = null
+  private maxCreationPendingUser: number | null = null
+  private maxLevelUpGlobal: number | null = null
+  private maxLevelUpUser: number | null = null
 
   private async created () {
     const nodeNftName = URL_TO_NAME[this.$route.params.id as Url]
     this.video = NODENAME_TO_VIDEO[nodeNftName]
 
-    if (nodeNftName) {
-      this.nodeNftName = nodeNftName
-      try {
-        const provider = new ethers.providers.Web3Provider(
-          window.ethereum,
-          'any'
-        )
-        const signer = provider.getSigner()
-        this.polar = new ethers.Contract(PolarToken, POLAR, signer)
-        this.isApprove =
-          (await this.polar.allowance(WalletModule.walletaddress, Token)) === 0
-        this.pnode = new ethers.Contract(Token, NODER, signer)
-
-        const nodeData = await this.pnode.getNodeTypeAll(nodeNftName)
-
-        this.cost = ethers.utils.formatEther(nodeData[0]._hex)
-        this.dailyEarningPerNode =
-          ethers.utils.formatEther(nodeData[2]._hex) * 6
-        this.tax = parseInt(nodeData[6]._hex, 16) + 1
-      } catch (err) {
-        console.log(err)
-      }
-    } else {
+    if (!nodeNftName) {
       this.$router.push('/nodes')
+      return
+    }
+
+    this.nodeNftName = nodeNftName
+    try {
+      const provider = new ethers.providers.Web3Provider(
+        window.ethereum,
+        'any'
+      )
+      const signer = provider.getSigner()
+      this.polar = new ethers.Contract(Token, POLAR_TOKEN_ABI, signer)
+      this.handlerContract = new ethers.Contract(Handler, HANDLER_ABI, signer)
+      const nodeTypeAddress = await this.handlerContract.getNodeTypesAddress(
+        this.nodeNftName
+      )
+
+      this.nodeTypeContract = new ethers.Contract(
+        nodeTypeAddress,
+        NODE_TYPE_ABI,
+        signer
+      )
+
+      this.cost = await this.nodeTypeContract.price()
+      this.dailyEarningPerNode = (await this.nodeTypeContract.rewardAmount()).mul(PAYOUTS_PER_DAY)
+      this.tax = (await this.nodeTypeContract.claimTaxRoi()).div(100)
+
+      this.totalCreatedNodes = await this.nodeTypeContract.totalCreatedNodes()
+      this.maxSlots = await this.nodeTypeContract.maxCount()
+      this.maxLevelUpUser = await this.nodeTypeContract.maxLevelUpUser()
+      this.maxLevelUpGlobal = await this.nodeTypeContract.maxLevelUpTotal()
+      this.maxCreationPendingUser = await this.nodeTypeContract.maxCreationPendingUser()
+      this.maxCreationPendingGlobal = await this.nodeTypeContract.maxCreationPendingTotal()
+
+      await this.computeAllowance()
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -272,6 +295,7 @@ export default class Create extends Vue {
 
   public onError (err: { message: string } | null): void {
     if (err) {
+      console.error(err)
       const inAppAlert = this.$root.$refs.alert as unknown as Record<
         string,
         Function
@@ -315,13 +339,16 @@ export default class Create extends Vue {
     }
   }
 
+  private async computeAllowance () {
+    const allowance = (await this.polar.allowance(WalletModule.walletaddress, Handler))
+    this.isApprove = allowance.lt(this.totalCost || 0) // allowance < totalCost, BigNumber safe arithmetic
+  }
+
   public async onApprove () {
     try {
       await this.polar.approve(
-        Token,
-        ethers.BigNumber.from(
-          '115792089237316195423570985008687907853269984665640564039457584007913129639935'
-        )
+        Handler,
+        ethers.BigNumber.from('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
       )
       this.isApprove = false
     } catch (err: any) {
@@ -331,7 +358,7 @@ export default class Create extends Vue {
 
   public async onCreate () {
     try {
-      await this.pnode.createNodeWithTokens(this.nodeNftName, this.quantity)
+      await this.handlerContract.createNodesWithTokens(Token, this.nodeNftName, this.quantity, '', { gasLimit: 30000000 })
     } catch (err: any) {
       this.onError(err)
     }
@@ -341,33 +368,41 @@ export default class Create extends Vue {
     alert('level up')
   }
 
+  get totalCost () {
+    return this.cost.mul(this.quantity)
+  }
+
   get dataBlocks () {
-    const { cost, roi, tax, quantity } = this
+    const { totalCost, roi, tax } = this
     return [
-      { key: 'Cost:', value: cost * quantity, unit: '$POLAR' },
-      { key: 'ROI / day:', value: roi, unit: '%' },
+      { key: 'Cost:', value: ethers.utils.formatEther(totalCost), unit: '$POLAR' },
+      { key: 'ROI / day:', value: roi.toFixed(2), unit: '%' },
       { key: 'Claim Tax:', value: tax, unit: '%' }
     ]
   }
 
   get detailsBlocks () {
     return [
-      { key: 'Max Slots:', value: '0 / 0' },
-      { key: 'Max Level Up User:', value: 0 },
-      { key: 'Max Level Up Global:', value: 0 },
-      { key: 'Max Creation Pending User:', value: 0 },
-      { key: 'Max Creation Pending Global:', value: 0 }
+      { key: 'Max Slots:', value: `${this.totalCreatedNodes} / ${this.maxSlots}` },
+      { key: 'Max Level Up User:', value: this.maxLevelUpUser },
+      { key: 'Max Level Up Global:', value: this.maxLevelUpGlobal },
+      { key: 'Max Creation Pending User:', value: this.maxCreationPendingUser },
+      { key: 'Max Creation Pending Global:', value: this.maxCreationPendingGlobal }
     ]
   }
 
   get dailyEarning () {
     const { quantity, dailyEarningPerNode } = this
-    return (dailyEarningPerNode * quantity).toFixed(2)
+    return ethers.utils.formatEther(dailyEarningPerNode.mul(quantity))
   }
 
   get roi () {
     const { dailyEarningPerNode, cost } = this
-    return ((dailyEarningPerNode / cost) * 100).toFixed(2)
+    if (cost.eq(0)) {
+      return 0
+    }
+
+    return (ethers.utils.formatEther(dailyEarningPerNode) / ethers.utils.formatEther(cost)) * 100
   }
 }
 </script>
@@ -453,7 +488,6 @@ export default class Create extends Vue {
 }
 
 .node-card__details-block {
-  max-width: 300px;
   margin-left: auto !important;
   margin-right: auto !important;
 }

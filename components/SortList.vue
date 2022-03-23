@@ -34,8 +34,8 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "nuxt-property-decorator";
 
-import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
-import Default from "~/layouts/default.vue";
+import { abi as NODER } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
+import Default from "~/layouts/default.vue"
 
 const { Token } = require("~/hardhat/scripts/address.js");
 

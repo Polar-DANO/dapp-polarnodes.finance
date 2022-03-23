@@ -106,8 +106,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import { LUCKY_BOX_BY_INDEX, LuckyBoxId } from '~/models/constants'
+import { Component, Prop, Vue } from "nuxt-property-decorator";
+import { abi as NODER } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
+import { abi as POLAR } from "~/hardhat/artifacts/contracts/PolarNode.sol/PolarNode.json";
+import { WalletModule } from "~/store";
+import { LUCKY_BOX_BY_INDEX, LuckyBoxId } from "~/models/constants";
 
 const ethers = require('ethers')
 const { Token } = require('~/hardhat/scripts/address.js')

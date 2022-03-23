@@ -110,7 +110,7 @@
         dismissible        
         transition="scale-transition"
       >
-        You need to connect on the Avalanche Network
+        You need to connect to the Avalanche Network
       </v-alert>
   </v-dialog>  
 </template>
@@ -203,7 +203,7 @@ export default class ConnectionBtn extends Vue {
             await this.metamaskProvider.request({
               method: 'eth_chainId'
             }).then(async(chainId : any) => {
-              if (chainId == 0xa86a || chainId == 0x1) {                             
+              if (chainId == 0xa86a || chainId == 0x1 || chainId == 0x539) {                             
                 WalletModule.setAddress(accounts[0])
                 this.walletAddress = accounts[0]
                 this.isLoggIn = true
@@ -235,63 +235,6 @@ export default class ConnectionBtn extends Vue {
       this.dialog = false
       return
     }
-    /*await detectEthereumProvider().then(async(metamaskProvider : any)=> {
-      if (metamaskProvider || this.$device.isMobile) {
-          try {
-              console.log(metamaskProvider);
-              await ethereum.request({ method: 'eth_requestAccounts' }).then(async(accounts : any)=>{
-              const provider = new ethers.providers.Web3Provider(ethereum)
-              if(provider) {
-                  try {                            
-                      await this.wallet_addAvalanche(provider).then(async(res : any)=> {                      
-                        await provider.send("eth_chainId", []).then(async(chainId : any) => {                        
-                            if (chainId == 0xa86a || chainId == 0x1) {                             
-                              WalletModule.setAddress(accounts[0])
-                              this.walletAddress = accounts[0]
-                              this.isLoggIn = true
-                              this.dialog = false                          
-                              await (this.$root.$refs.alert as Default).WalletConnectOk()                              
-                              return
-                            } else {                            
-                              this.wrongNetwork = true
-                              await this.sleep(1500)
-                              this.wrongNetwork = false
-                              this.dialog = false                           
-                              return
-                            }
-                        });
-                      });
-                  } catch(err) {                                        
-                      this.wrongNetwork = true
-                      await this.sleep(1500)
-                      this.wrongNetwork = false
-                      this.dialog = false               
-                  }
-              } else {              
-                this.noProvider = true
-                await this.sleep(1500)
-                this.noProvider = false
-                this.dialog = false
-                return
-              }
-            })            
-          } catch(err) {            
-              console.log(err)
-              alert(err)
-              this.acceptMetamask = true
-              await this.sleep(1500)
-              this.acceptMetamask = false
-              this.dialog = false      
-              return
-          }
-      } else {
-          this.noProvider = true
-          await this.sleep(1500)
-          this.noProvider = false
-          this.dialog = false
-          return
-      }
-    })*/
   }
 
   public async wallet_addAvalanche(provider : any) {
@@ -306,19 +249,19 @@ export default class ConnectionBtn extends Vue {
             decimals: 18
         },
     },])*/
-    await provider.request({
-      method : "wallet_addEthereumChain",
-      params : [{
-        chainId: "0xa86a",
-        chainName: "Avalanche Network",
-        rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
-        blockExplorerUrls: ["https://snowtrace.io/"],
-        nativeCurrency: {
-            name: "AVAX",
-            symbol: "AVAX",
-            decimals: 18
-        },
-    },]})
+    // await provider.request({
+    //   method : "wallet_addEthereumChain",
+    //   params : [{
+    //     chainId: "0xa86a",
+    //     chainName: "Avalanche Network",
+    //     rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
+    //     blockExplorerUrls: ["https://snowtrace.io/"],
+    //     nativeCurrency: {
+    //         name: "AVAX",
+    //         symbol: "AVAX",
+    //         decimals: 18
+    //     },
+    // },]})
   }
 
   public async requestWalletAccounts() {    

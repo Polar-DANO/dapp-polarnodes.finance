@@ -13,14 +13,14 @@
     </div>
     <span class="mt-[64px] text-[24px] text-white">Create Node 🗻️</span>
     <div
-      v-if="nodeNameList && nodeNameList.length > 0"
+      v-if="nodeNames && nodeNames.length > 0"
       class="md:flex flex-wrap gap-2 md:gap-[12px] my-[32px]"
       style="color: white"
     >
       <NodeNft
-        v-for="(node, i) of nodeNameList"
-        :key="`${node.nodeValue}-${i}`"
-        :name="node.nodeValue"
+        v-for="(node, i) of nodeNames"
+        :key="`${node}-${i}`"
+        :name="node"
       />
     </div>
     <div
@@ -48,15 +48,16 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import * as ethers from 'ethers'
 import AlertComponents from '~/components/AlertComponents.vue'
 
-import { abi as NODER } from '~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json'
-import { abi as POLAR } from '~/hardhat/artifacts/contracts/PolarNodes.sol/PolarNodes.json'
+import { abi as HANDLER_ABI } from '~/hardhat/artifacts/contracts/Handler.sol/Handler.json'
+import { abi as POLAR_TOKEN_ABI } from '~/hardhat/artifacts/contracts/Polar.sol/Polar.json'
 import Default from '~/layouts/default.vue'
 import { WalletModule } from '~/store'
 import { luckyBoxes } from '~/models/constants'
 
-const { Token, PolarToken } = require('~/hardhat/scripts/address.js')
+import { Token as PolarToken, Handler } from '~/hardhat/scripts/address'
 
 declare let window: any
 
@@ -85,50 +86,29 @@ export default class Nodes extends Vue {
     }
   ]
 
-  private nodeData = [
-    {
-      nodeType: 'test1',
-      nodeCounter: 3
-    },
-    {
-      nodeType: 'test2',
-      nodeCounter: 4
-    },
-    {
-      nodeType: 'test3',
-      nodeCounter: 5
-    }
-  ]
-
   public luckyBoxesList = luckyBoxes
 
-  private nodeNameList: any = []
-  private nodeCounter: any = []
-  private counterTemp: any = []
-  private myNodeList: any = []
-  private nodeInst: any
+  private nodeNames: any = []
 
-  private getFromattedNb (nb: any): string {
-    nb = nb.toLocaleString()
-    if (!nb.includes('.')) { return nb } else if (nb.indexOf('.') === nb.length - 2) { return nb.substr(0, nb.indexOf('.') + 2) + '0' }
-    return nb.substr(0, nb.indexOf('.') + 3)
-  }
-
-  private created (): void {
+  private created () {
     this.listenConnectEvent()
     this.intervalFetchData()
   }
 
-  public intervalFetchData (): void {
-    setInterval(() => {
+  private intervalFetchDataInterval?: ReturnType<typeof setInterval>
+
+  public intervalFetchData () {
+    this.intervalFetchDataInterval = setInterval(() => {
       this.listenConnectEvent()
     }, 15000)
   }
 
-  private async listenConnectEvent (): Promise<void> {
-    if (window.ethereum) {
-      const ethers = require('ethers')
+  public beforeDestroy () {
+    if (this.intervalFetchDataInterval) { clearInterval(this.intervalFetchDataInterval) }
+  }
 
+  private async listenConnectEvent () {
+    if (window.ethereum) {
       const provider = new ethers.providers.Web3Provider(
         window.ethereum,
         'any'
@@ -136,77 +116,22 @@ export default class Nodes extends Vue {
       try {
         const signer = provider.getSigner()
 
-        const pnode = new ethers.Contract(Token, NODER, signer)
-        const polar = new ethers.Contract(PolarToken, POLAR, signer)
+        const handlerContract = new ethers.Contract(Handler, HANDLER_ABI, signer)
+        const polar = new ethers.Contract(PolarToken, POLAR_TOKEN_ABI, signer)
 
-        let tmp
-        if (WalletModule.walletaddress) {
-          tmp = await pnode.calculateAllClaimableRewards(
-            WalletModule.walletaddress
-          )
+        const totalNodes = await handlerContract.getTotalCreatedNodes()
+        this.nodeStation[0].price = totalNodes.toString()
+        this.nodeStation[1].price = (WalletModule.walletaddress)
+          ? (await handlerContract.getTotalNodesOf(WalletModule.walletaddress)).toString()
+          : '-'
+        this.nodeStation[2].price = (WalletModule.walletaddress)
+          ? ethers.utils.formatEther(await polar.balanceOf(WalletModule.walletaddress))
+          : '-'
 
-          const totalNodes = await pnode.getTotalCreatedNodes()
-          this.nodeStation[0].price = parseInt(totalNodes._hex, 16).toString()
-
-          tmp = await pnode.getTotalCreatedNodesOf(WalletModule.walletaddress)
-          this.nodeStation[1].price = parseInt(tmp._hex, 16).toString()
-          tmp = await polar.balanceOf(WalletModule.walletaddress)
-          this.nodeStation[2].price = this.getFromattedNb(
-            ethers.utils.formatEther(tmp._hex)
-          )
-        }
-        tmp = await pnode.getNodeTypesSize()
-        const nodeSize = parseInt(tmp._hex, 16)
-
-        const tempNodeNameList = []
-        for (let i = 0; i < nodeSize; i++) {
-          tempNodeNameList.push(pnode.getNodeTypeNameAtIndex(i))
-        }
-        await Promise.all(tempNodeNameList).then((res) => {
-          this.nodeNameList = []
-          for (let i = 0; i < res.length; i++) {
-            this.nodeInst = {
-              nodeNameList: res[i] + ' (Level ' + (i + 1) + ')',
-              nodeValue: res[i].toString()
-            }
-            this.nodeNameList.push(this.nodeInst)
-          }
-        })
-
-        const tempCounter = []
-
-        for (let i = 0; i < this.nodeNameList.length; i++) {
-          tempCounter.push(
-            pnode.getNodeTypeOwnerNumber(
-              this.nodeNameList[i].nodeValue,
-              WalletModule.walletaddress
-            )
-          )
-        }
-
-        await Promise.all(tempCounter).then((res: any) => {
-          for (const index in res) { this.nodeCounter[index] = parseInt(res[index]._hex, 16) }
-        })
-
-        this.myNodeList = []
-        let index = 0
-        for (let i = 0; i < this.nodeNameList.length; i++) {
-          if (this.nodeCounter[i] !== 0) {
-            this.counterTemp = {
-              nodeIndex: i + 1,
-              nodeType: this.nodeNameList[i].nodeValue,
-              nodeCounter: this.nodeCounter[i]
-            }
-            for (let j = 0; j < this.nodeCounter[i]; j++) {
-              const temp = {
-                nodeNameList: this.nodeNameList[i].nodeValue,
-                index: index++
-              }
-              this.myNodeList.push(temp)
-            }
-          }
-        }
+        const nodeSize = (await handlerContract.getNodeTypesSize()).toNumber()
+        this.nodeNames = await handlerContract.getNodeTypesBetweenIndexes(0, nodeSize)
       } catch (err) {
+        console.error(err);
         (this.$root.$refs.alert as Default).AcceptMetamask()
       }
     }

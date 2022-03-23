@@ -27,11 +27,12 @@
 import { PropType } from "vue";
 import { Component, Vue } from "nuxt-property-decorator";
 import { NodeNftNames } from "~/models/types";
-import { abi as NODER } from "~/hardhat/artifacts/contracts/NODERewardManager.sol/NODERewardManager.json";
-import { NAME_TO_URL, NODENAME_TO_IMAGE } from "~/models/constants";
+import { abi as HANDLER_ABI } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
+import { abi as NODE_TYPE_ABI } from "~/hardhat/artifacts/contracts/NodeType.sol/NodeType.json";
+import { NAME_TO_URL, NODENAME_TO_IMAGE, PAYOUTS_PER_DAY } from "~/models/constants";
 
 const ethers = require("ethers");
-const { Token, PolarToken, Owner } = require("~/hardhat/scripts/address.js");
+const { Handler } = require("~/hardhat/scripts/address.js");
 
 @Component({
   props: {
@@ -58,13 +59,21 @@ export default class NodeNft extends Vue {
         "any"
       );
       const signer = provider.getSigner();
-      const pnode = new ethers.Contract(Token, NODER, signer);
-      const nodeData = await pnode.getNodeTypeAll(this.$props.name);
+      const handlerContract = new ethers.Contract(Handler, HANDLER_ABI, signer);
+      const nodeTypeAddress = handlerContract.getNodeTypesAddress(
+        this.$props.name
+      );
 
-      this.cost = ethers.utils.formatEther(nodeData[0]._hex);
-      this.claimTax = parseInt(nodeData[6]._hex, 16) + 1;
+      const nodeTypeContract = new ethers.Contract(
+        nodeTypeAddress,
+        NODE_TYPE_ABI,
+        signer
+      );
+
+      this.cost = ethers.utils.formatEther(await nodeTypeContract.price());
+      this.claimTax = (await nodeTypeContract.claimTaxRoi()).div(100).toNumber();
       this.dailyEarnings = (
-        parseFloat(ethers.utils.formatEther(nodeData[2]._hex)) * 6
+        parseFloat(ethers.utils.formatEther((await nodeTypeContract.rewardAmount()).mul(PAYOUTS_PER_DAY)))
       ).toFixed(2);
     } catch (err) {
       console.log(err);
