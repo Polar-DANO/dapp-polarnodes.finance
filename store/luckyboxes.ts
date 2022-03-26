@@ -11,7 +11,9 @@ export const state = () => ({
 export type State = ReturnType<typeof state>;
 
 export const getters: GetterTree<State, {}> = {
-  typeById: state => (id: number) => state.luckyBoxTypes?.[id] ?? null
+  typeByName: state => (name: string) => state.luckyBoxTypes?.find(type => type.name === name) ?? null,
+  typeById: state => (id: number) => state.luckyBoxTypes?.[id] ?? null,
+  byTokenId: state => (tokenId: BigNumber) => state.myLuckyBoxes?.find(luckyBox => luckyBox.tokenId.eq(tokenId)) ?? null
 }
 
 export const mutations: MutationTree<State> = {
@@ -100,5 +102,24 @@ export const actions: ActionTree<State, {}> = {
     }))
 
     commit('setMyLuckyBoxes', luckyBoxes)
+  },
+
+  async reveal ({ dispatch, rootGetters }, tokenIds: BigNumber[]) {
+    const userAddress = rootGetters['wallet/address']
+    if (!userAddress) {
+      throw new Error('Current user address not found')
+    }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
+    const tx = await this.$contracts.handler.createNodesWithLuckyBoxes(
+      tokenIds
+    )
+
+    await tx.wait()
+    dispatch('loadMyLuckyBoxes')
+    dispatch('nft/loadNFTs', null, { root: true })
   }
 }

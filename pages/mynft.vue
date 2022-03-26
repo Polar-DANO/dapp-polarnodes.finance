@@ -69,17 +69,14 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
     }
   }
 
-  private clearInterval: number | null = null
   created () {
-    this.clearInterval = setInterval(() => {
+    const interval = setInterval(() => {
       this.$fetch()
     }, 10000)
-  }
 
-  beforeUnmount () {
-    if (this.clearInterval) {
-      clearInterval(this.clearInterval)
-    }
+    this.$once('hook:beforeDestroy', () => {
+      clearInterval(interval)
+    })
   }
 }
 </script>

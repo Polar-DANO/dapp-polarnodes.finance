@@ -3,7 +3,7 @@
     <div class="bg-[#00C6ED] text-[white] rounded-t-[20px] text-[18px] md:text-[24px] p-[16px]">
       Sell {{ nft.nodeType }} #{{ nft.tokenId }} NFT 🗻️
       <div class="cursor-pointer inline absolute right-0 md:px-[100px]">
-        <v-btn class="mr-[20px]" icon @click="$emit('closeModal')">
+        <v-btn class="mr-[20px]" icon @click="$emit('closeSellModal')">
           <v-icon class="text-white">
             mdi-close
           </v-icon>

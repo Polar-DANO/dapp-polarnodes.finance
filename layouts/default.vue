@@ -65,14 +65,14 @@ export default class Default extends Vue {
   }
 
   errorCaptured (error) {
-    if (error?.code === -32603) {
+    console.error(error)
+    if (error?.code === -32603 && error?.data?.message) {
       this.error = error.data.message
     } else {
       this.error = error?.message ?? error
     }
 
     const replaced = Object.entries(IF_INCLUDE_ERROR_MSG).find(([key]) => this.error.includes(key))
-
     if (replaced) {
       this.error = replaced[1]
     }

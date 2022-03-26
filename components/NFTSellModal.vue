@@ -120,10 +120,10 @@ export default class NFTSellModal extends Vue {
     return NodeType.roi(this.nodeType)
   }
 
-  onClaim () {
+  async onClaim () {
     try {
       this.isClaimBtnLoading = true
-      this.$store.dispatch('nft/claimRewards', [this.nft])
+      await this.$store.dispatch('nft/claimRewards', [this.nft])
     } finally {
       this.isClaimBtnLoading = false
     }

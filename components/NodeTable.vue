@@ -90,7 +90,7 @@
       </table>
     </div>
     <div v-if="nftSellSectionModal">
-      <NFTSellSectionModal :nft="selectedNft" @closeModal="()=>nftSellSectionModal=false" />
+      <NFTSellSectionModal :nft="selectedNft" @closeSellModal="()=>nftSellSectionModal=false" />
     </div>
     <div v-if="nftSellModal">
       <NFTSellModal :nft="selectedNft" @closeSellModal="()=>nftSellModal=false" @sellModal="clickedSellSectionModal" />

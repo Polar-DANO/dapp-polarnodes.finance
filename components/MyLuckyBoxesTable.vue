@@ -35,13 +35,13 @@
           <td>
             <button
               class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px] my-[10px] ml-[16px]"
-              @click="()=>{}"
+              @click="() => onReveal(lb.tokenId)"
             >
               <div>Reveal</div>
             </button>
             <button
               class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px] my-[10px] ml-[16px]"
-              @click="()=>{}"
+              @click="()=> onList(lb.tokenId)"
             >
               <div>List on Marketplace</div>
             </button>
@@ -60,5 +60,12 @@ import { Component, Vue } from 'nuxt-property-decorator'
   }
 })
 export default class NodeTable extends Vue {
+  async onReveal (tokenId) {
+    await this.$store.dispatch('luckyboxes/reveal', [tokenId])
+  }
+
+  onList (tokenId) {
+    this.$router.push(`/luckybox/list/${tokenId._hex}`)
+  }
 }
 </script>
