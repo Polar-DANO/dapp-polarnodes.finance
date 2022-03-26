@@ -36,11 +36,11 @@
       style="color: white"
     >
       <NodeNftLuckyBox
-        v-for="({ index, name, cost }, i) of luckyBoxesList"
-        :key="`${name}-${i}`"
-        :index="index"
+        v-for="({ id, name, price }) of luckyBoxesList"
+        :key="`${name}-${id}`"
+        :index="id"
         :name="name"
-        :cost="cost"
+        :cost="price"
       />
     </div>
   </div>
@@ -48,93 +48,45 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import * as ethers from 'ethers'
-import AlertComponents from '~/components/AlertComponents.vue'
 
-import { abi as HANDLER_ABI } from '~/hardhat/artifacts/contracts/Handler.sol/Handler.json'
-import { abi as POLAR_TOKEN_ABI } from '~/hardhat/artifacts/contracts/Polar.sol/Polar.json'
-import Default from '~/layouts/default.vue'
-import { WalletModule } from '~/store'
-import { luckyBoxes } from '~/models/constants'
-
-import { Token as PolarToken, Handler } from '~/hardhat/scripts/address'
-
-declare let window: any
-
-@Component({
-  components: { AlertComponents }
-})
+@Component
 export default class Nodes extends Vue {
-  public nodeStation = [
-    {
-      icon: require('../assets/img/nodesIcon/totalnodes_icon.svg'),
-      title: 'Total Nodes',
-      price: '0',
-      percentage: '0'
-    },
-    {
-      icon: require('../assets/img/nodesIcon/mynodes_icon.svg'),
-      title: 'My Nodes',
-      price: '0',
-      percentage: '0'
-    },
-    {
-      icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
-      title: 'My $POLAR Balance',
-      price: '0',
-      percentage: '0'
-    }
-  ]
-
-  public luckyBoxesList = luckyBoxes
-
-  private nodeNames: any = []
-
-  private created () {
-    this.listenConnectEvent()
-    this.intervalFetchData()
-  }
-
-  private intervalFetchDataInterval?: ReturnType<typeof setInterval>
-
-  public intervalFetchData () {
-    this.intervalFetchDataInterval = setInterval(() => {
-      this.listenConnectEvent()
-    }, 15000)
-  }
-
-  public beforeDestroy () {
-    if (this.intervalFetchDataInterval) { clearInterval(this.intervalFetchDataInterval) }
-  }
-
-  private async listenConnectEvent () {
-    if (window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum,
-        'any'
-      )
-      try {
-        const signer = provider.getSigner()
-
-        const handlerContract = new ethers.Contract(Handler, HANDLER_ABI, signer)
-        const polar = new ethers.Contract(PolarToken, POLAR_TOKEN_ABI, signer)
-
-        const totalNodes = await handlerContract.getTotalCreatedNodes()
-        this.nodeStation[0].price = totalNodes.toString()
-        this.nodeStation[1].price = (WalletModule.walletaddress)
-          ? (await handlerContract.getTotalNodesOf(WalletModule.walletaddress)).toString()
-          : '-'
-        this.nodeStation[2].price = (WalletModule.walletaddress)
-          ? ethers.utils.formatEther(await polar.balanceOf(WalletModule.walletaddress))
-          : '-'
-
-        const nodeSize = (await handlerContract.getNodeTypesSize()).toNumber()
-        this.nodeNames = await handlerContract.getNodeTypesBetweenIndexes(0, nodeSize)
-      } catch (err) {
-        console.error(err);
-        (this.$root.$refs.alert as Default).AcceptMetamask()
+  get nodeStation () {
+    return [
+      {
+        icon: require('../assets/img/nodesIcon/totalnodes_icon.svg'),
+        title: 'Total Nodes',
+        price: this.$store.getters['nodes/totalCreated'],
+        percentage: null
+      },
+      {
+        icon: require('../assets/img/nodesIcon/mynodes_icon.svg'),
+        title: 'My Nodes',
+        price: this.$store.getters['nodes/myTotalCreated'],
+        percentage: null
+      },
+      {
+        icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
+        title: 'My $POLAR Balance',
+        price: this.$store.state.polar.balance,
+        percentage: null
       }
-    }
+    ]
+  }
+
+  get luckyBoxesList () {
+    return this.$store.state.luckyboxes.luckyBoxTypes ?? []
+  }
+
+  get nodeNames () {
+    return this.$store.getters['nodes/nodeTypesNames']
+  }
+
+  async fetch () {
+    await this.$store.dispatch('wallet/loadAddress')
+    this.$store.dispatch('polar/loadBalance')
+    this.$store.dispatch('nodes/loadNodeTypes')
+    this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
   }
 }
 </script>

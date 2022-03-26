@@ -65,7 +65,7 @@
               </div>
             </div>
             <div class="mt-8 d-flex align-center node-card__details__options">
-              <VCheckbox hide-details class="mr-1" color="#00c6ed" />
+              <VCheckbox v-model="isPendingRewardsSelected" hide-details class="mr-1" color="#00c6ed" />
               Create this Mountain NFT with Pending Rewards
             </div>
             <div class="mt-1 d-flex align-center node-card__details__options">
@@ -80,9 +80,9 @@
           </div>
         </VCol>
         <VCol cols="12" md="6" class="mt-8">
-          <div v-if="!isLevelUpSelected" class="text-center">
+          <div v-if="createMode === 'FROM_TOKENS'" class="text-center">
             <div class="node-card__outlined pa-5">
-              Earn {{ dailyEarning }} $POLAR per day
+              Earn {{ totalDailyEarning }} $POLAR per day
             </div>
             <VSelect
               class="node-card__outlined node-card__select centered-input mt-4"
@@ -91,6 +91,9 @@
               dense
               hide-details
               outlined
+              :items="payWithTokens"
+              :value="selectedToken"
+              @input="onSelectedTokenInput"
             />
             <div class="node-card__content inline-block my-5">
               <VRow
@@ -133,6 +136,7 @@
               class="node-card__outlined node-card__button pa-2"
               dark
               text
+              :loading="isBtnLoading"
               @click="onApprove"
             >
               Approve
@@ -143,6 +147,7 @@
               dark
               text
               :disabled="quantity < 1"
+              :loading="isBtnLoading"
               @click="onCreate"
             >
               Create
@@ -157,8 +162,24 @@
               class="node-card__outlined centered-input mt-4"
               placeholder="Select Mountain NFT(s)"
               dense
+              multiple
               hide-details
               outlined
+              :items="nfts"
+              :value="selectedNfts"
+              @input="onSelectedNftInput"
+            />
+
+            <VSelect
+              class="node-card__outlined node-card__select centered-input mt-4"
+              width="200px"
+              placeholder="Buy With"
+              dense
+              hide-details
+              outlined
+              :items="payWithTokens"
+              :value="selectedToken"
+              @input="onSelectedTokenInput"
             />
 
             <div class="mt-4 text-left node-card__danger-text">
@@ -177,11 +198,30 @@
               to the price of the target NFT. Be careful!
             </div>
 
+            <div class="node-card__content inline-block">
+              <div class="mt-6 mb-1 d-flex justify-center items-center">
+                <VBtn small rounded color="#00c6ed" dark @click="onRemove">
+                  -
+                </VBtn>
+                <div class="mx-auto">
+                  <VTextField
+                    v-model.number="quantity"
+                    dark
+                    class="centered-input"
+                  />
+                </div>
+                <VBtn small rounded color="#00c6ed" dark @click="onAdd">
+                  +
+                </VBtn>
+              </div>
+            </div>
+
             <VBtn
               v-if="isApprove"
               class="node-card__outlined node-card__button pa-2"
               dark
               text
+              :loading="isBtnLoading"
               @click="onApprove"
             >
               Approve
@@ -192,9 +232,11 @@
               dark
               text
               :disabled="quantity < 1"
-              @click="onLevelUp"
+              :loading="isBtnLoading"
+              @click="onCreate"
             >
-              Level Up
+              <span v-if="createMode === 'LEVEL_UP'">Level Up</span>
+              <span v-else>Create</span>
             </VBtn>
           </div>
         </VCol>
@@ -205,82 +247,126 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import { NodeNftNames } from '~/models/types'
-import { abi as HANDLER_ABI } from '~/hardhat/artifacts/contracts/Handler.sol/Handler.json'
-import { abi as NODE_TYPE_ABI } from '~/hardhat/artifacts/contracts/NodeType.sol/NodeType.json'
-import { abi as POLAR_TOKEN_ABI } from '~/hardhat/artifacts/contracts/Polar.sol/Polar.json'
-import { WalletModule } from '~/store'
-import { URL_TO_NAME, NODENAME_TO_VIDEO, Url, PAYOUTS_PER_DAY } from '~/models/constants'
+import * as ethers from 'ethers'
+import { URL_TO_NAME, NODENAME_TO_VIDEO, Url } from '~/models/constants'
+import * as NodeType from '~/models/NodeType'
+import { Token } from '~/hardhat/scripts/address'
 
-const ethers = require('ethers')
-const { Token, Handler, Swapper } = require('~/hardhat/scripts/address.js')
+const CreateMode = {
+  FROM_TOKENS: 'FROM_TOKENS',
+  FROM_NFT: 'FROM_NFT',
+  LEVEL_UP: 'LEVEL_UP'
+}
 
-@Component({})
+@Component
 export default class Create extends Vue {
-  public nodeNftName: NodeNftNames | null = null
   public quantity = 1
-  public isApprove = true
   public isDetailsOpen = false
-  public isLevelUpSelected = false
-  public video: string | null = null
+  public createMode: CreateMode = CreateMode.FROM_TOKENS
+  public selectedToken = Token
+  public selectedNfts = []
+  public isBtnLoading = false
 
-  private dailyEarningPerNode = ethers.BigNumber.from(0)
-  private cost = ethers.BigNumber.from(0)
-  private tax: number | null = null
-  private polar: any
-  private handlerContract: any
-  private nodeTypeContract: any
+  public get isLevelUpSelected () {
+    return this.createMode === CreateMode.LEVEL_UP
+  }
 
-  private totalCreatedNodes = 0
-  private maxSlots: number | null = null
-  private maxCreationPendingGlobal: number | null = null
-  private maxCreationPendingUser: number | null = null
-  private maxLevelUpGlobal: number | null = null
-  private maxLevelUpUser: number | null = null
+  public set isLevelUpSelected (newVal: boolean) {
+    this.createMode = newVal ? CreateMode.LEVEL_UP : CreateMode.FROM_TOKENS
+  }
 
-  private async created () {
-    const nodeNftName = URL_TO_NAME[this.$route.params.id as Url]
-    this.video = NODENAME_TO_VIDEO[nodeNftName]
+  public get isPendingRewardsSelected () {
+    return this.createMode === CreateMode.FROM_NFT
+  }
 
-    if (!nodeNftName) {
+  public set isPendingRewardsSelected (newVal: boolean) {
+    this.createMode = newVal ? CreateMode.FROM_NFT : CreateMode.FROM_TOKENS
+  }
+
+  async created () {
+    if (!this.nodeNftName) {
       this.$router.push('/nodes')
-      return
     }
 
-    this.nodeNftName = nodeNftName
-    try {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum,
-        'any'
-      )
-      const signer = provider.getSigner()
-      this.polar = new ethers.Contract(Token, POLAR_TOKEN_ABI, signer)
-      this.handlerContract = new ethers.Contract(Handler, HANDLER_ABI, signer)
-      const nodeTypeAddress = await this.handlerContract.getNodeTypesAddress(
-        this.nodeNftName
-      )
+    await this.$store.dispatch('wallet/loadAddress')
+  }
 
-      this.nodeTypeContract = new ethers.Contract(
-        nodeTypeAddress,
-        NODE_TYPE_ABI,
-        signer
-      )
+  async fetch () {
+    this.$store.dispatch('polar/loadAllowance')
+    await this.$store.dispatch('nodes/loadNodeTypes')
+    await this.$store.dispatch('nft/loadNFTs')
+  }
 
-      this.cost = await this.nodeTypeContract.price()
-      this.dailyEarningPerNode = (await this.nodeTypeContract.rewardAmount()).mul(PAYOUTS_PER_DAY)
-      this.tax = (await this.nodeTypeContract.claimTaxRoi()).div(100)
+  get nodeType () {
+    return this.$store.getters['nodes/nodeTypeByName'](this.nodeNftName)
+  }
 
-      this.totalCreatedNodes = await this.nodeTypeContract.totalCreatedNodes()
-      this.maxSlots = await this.nodeTypeContract.maxCount()
-      this.maxLevelUpUser = await this.nodeTypeContract.maxLevelUpUser()
-      this.maxLevelUpGlobal = await this.nodeTypeContract.maxLevelUpTotal()
-      this.maxCreationPendingUser = await this.nodeTypeContract.maxCreationPendingUser()
-      this.maxCreationPendingGlobal = await this.nodeTypeContract.maxCreationPendingTotal()
+  get dailyEarningPerNode () {
+    return this.nodeType ? NodeType.dailyRewardPerNode(this.nodeType) : null
+  }
 
-      await this.computeAllowance()
-    } catch (err) {
-      console.log(err)
-    }
+  get cost () {
+    return this.nodeType?.cost
+  }
+
+  get tax () {
+    return this.nodeType?.claimTax
+  }
+
+  get totalCreatedNodes () {
+    return this.nodeType?.totalCreatedNodes
+  }
+
+  get maxSlots () {
+    return this.nodeType?.maxSlots
+  }
+
+  get maxCreationPendingGlobal () {
+    return this.nodeType?.maxCreationPendingGlobal
+  }
+
+  get maxCreationPendingUser () {
+    return this.nodeType?.maxCreationPendingUser
+  }
+
+  get maxLevelUpGlobal () {
+    return this.nodeType?.maxLevelUpGlobal
+  }
+
+  get maxLevelUpUser () {
+    return this.nodeType?.maxLevelUpUser
+  }
+
+  get nodeNftName () {
+    return URL_TO_NAME[this.$route.params.id as Url]
+  }
+
+  get video () {
+    return NODENAME_TO_VIDEO[this.nodeNftName]
+  }
+
+  public onSelectedTokenInput (token: string) {
+    this.selectedToken = token
+  }
+
+  get payWithTokens () {
+    return [
+      { text: '$POLAR', value: Token }
+    ]
+  }
+
+  public onSelectedNftInput (nfts: any[]) {
+    this.selectedNfts = nfts
+  }
+
+  get nfts () {
+    return this.$store.getters['nft/byNodeType'].flatMap(({ nodeType, nfts }) => {
+      if (nfts.length === 0) {
+        return []
+      }
+
+      return [{ header: nodeType }, ...nfts.map(nft => ({ text: `${nodeType} #${nft.tokenId}`, value: { ...nft, nodeType } }))]
+    })
   }
 
   public onRemove () {
@@ -339,41 +425,70 @@ export default class Create extends Vue {
     }
   }
 
-  private async computeAllowance () {
-    const allowance = (await this.polar.allowance(WalletModule.walletaddress, Swapper))
-    this.isApprove = allowance.lt(this.totalCost || 0) // allowance < totalCost, BigNumber safe arithmetic
+  get isApprove () {
+    return !this.$store.getters['polar/hasEnoughAllowance'](this.totalCost)
   }
 
   public async onApprove () {
     try {
-      await this.polar.approve(
-        Swapper,
-        ethers.BigNumber.from('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
-      )
-      this.isApprove = false
+      this.isBtnLoading = true
+      await this.$store.dispatch('polar/requestAllowance')
     } catch (err: any) {
       this.onError(err)
+    } finally {
+      this.isBtnLoading = false
     }
   }
 
   public async onCreate () {
     try {
-      await this.handlerContract.createNodesWithTokens(Token, this.nodeNftName, this.quantity, '')
+      this.isBtnLoading = true
+
+      if (this.createMode === CreateMode.FROM_TOKENS) {
+        await this.$store.dispatch('nodes/createNodesFromToken', {
+          nodeTypeName: this.nodeNftName,
+          count: this.quantity,
+          token: this.selectedToken
+        })
+
+        this.$router.push('/mynft')
+      }
+
+      if (this.createMode === CreateMode.FROM_NFT) {
+        await this.$store.dispatch('nodes/createNodesWithPendingRewards', {
+          selectedNodes: this.selectedNfts,
+          tokenOut: this.selectedToken,
+          nodeTypeTo: this.nodeNftName,
+          count: this.quantity
+        })
+
+        this.$router.push('/mynft')
+      }
+
+      if (this.createMode === CreateMode.LEVEL_UP) {
+        await this.$store.dispatch('nodes/createNodesLevelUp', {
+          selectedNodes: this.selectedNfts,
+          tokenOut: this.selectedToken,
+          nodeTypeTo: this.nodeNftName,
+          count: this.quantity
+        })
+
+        this.$router.push('/mynft')
+      }
     } catch (err: any) {
       this.onError(err)
+    } finally {
+      this.isBtnLoading = false
     }
   }
 
-  public onLevelUp () {
-    alert('level up')
-  }
-
   get totalCost () {
-    return this.cost.mul(this.quantity)
+    return this.cost?.mul(this.quantity) ?? ethers.BigNumber.from(0)
   }
 
   get dataBlocks () {
     const { totalCost, roi, tax } = this
+    if (!this.nodeType) { return [] }
     return [
       { key: 'Cost:', value: ethers.utils.formatEther(totalCost), unit: '$POLAR' },
       { key: 'ROI / day:', value: roi.toFixed(2), unit: '%' },
@@ -382,6 +497,7 @@ export default class Create extends Vue {
   }
 
   get detailsBlocks () {
+    if (!this.nodeType) { return [] }
     return [
       { key: 'Max Slots:', value: `${this.totalCreatedNodes} / ${this.maxSlots}` },
       { key: 'Max Level Up User:', value: this.maxLevelUpUser },
@@ -391,18 +507,15 @@ export default class Create extends Vue {
     ]
   }
 
-  get dailyEarning () {
+  get totalDailyEarning () {
+    if (!this.nodeType) { return 0 }
     const { quantity, dailyEarningPerNode } = this
-    return ethers.utils.formatEther(dailyEarningPerNode.mul(quantity))
+    return ethers.utils.formatEther(dailyEarningPerNode?.mul(quantity))
   }
 
   get roi () {
-    const { dailyEarningPerNode, cost } = this
-    if (cost.eq(0)) {
-      return 0
-    }
-
-    return (ethers.utils.formatEther(dailyEarningPerNode) / ethers.utils.formatEther(cost)) * 100
+    if (!this.nodeType) { return 0 }
+    return NodeType.roi(this.nodeType)
   }
 }
 </script>

@@ -12,49 +12,57 @@
       />
     </div>
     <div class="md:mt-[40px]">
-      <NodeTable :items="myNodeData" />
+      <MyLuckyBoxesTable v-if="luckyBoxes.length > 0" :items="luckyBoxes" />
+      <NodeTable :items="nfts" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex'
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
-
-import axios from 'axios'
-
-import { abi as NODER } from '~/hardhat/artifacts/contracts/Handler.sol/Handler.json'
-import { abi as POLAR } from '~/hardhat/artifacts/contracts/PolarNode.sol/PolarNode.json'
-import { WalletModule } from '~/store'
-
-const {
-  Token,
-  PolarToken
-} = require('~/hardhat/scripts/address.js')
-
-declare let window: any
+import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class Mynft extends Vue {
-  public nodeStation = [
-    {
-      icon: require('../assets/img/nodesIcon/totalnodes_icon.svg'),
-      title: 'Pending Rewards',
-      price: '0',
-      percentage: '0'
-    },
-    {
-      icon: require('../assets/img/nodesIcon/mynodes_icon.svg'),
-      title: 'My Nodes',
-      price: '0',
-      percentage: '0'
-    },
-    {
-      icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
-      title: 'My $POLAR Balance',
-      price: '0',
-      percentage: '0'
-    }
-  ]
+  get nodeStation () {
+    return [
+      {
+        icon: require('../assets/img/nodesIcon/totalnodes_icon.svg'),
+        title: 'Pending Rewards',
+        price: this.$store.getters['nodes/totalPendingRewards'],
+        percentage: null
+      },
+      {
+        icon: require('../assets/img/nodesIcon/mynodes_icon.svg'),
+        title: 'My Nodes',
+        price: this.$store.getters['nodes/myTotalCreated'],
+        percentage: null
+      },
+      {
+        icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
+        title: 'My $POLAR Balance',
+        price: this.$store.state.polar.balance,
+        percentage: null
+      }
+    ]
+  }
+
+  get nfts () {
+    return this.$store.getters['nft/byCreationDateDesc'] ?? []
+  }
+
+  get luckyBoxes () {
+    return this.$store.state.luckyboxes.myLuckyBoxes ?? []
+  }
+
+  async fetch () {
+    await this.$store.dispatch('wallet/loadAddress')
+
+    this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
+    this.$store.dispatch('luckyboxes/loadMyLuckyBoxes')
+    this.$store.dispatch('polar/loadBalance')
+
+    await this.$store.dispatch('nodes/loadNodeTypes')
+    this.$store.dispatch('nft/loadNFTs')
+  }
 }
 </script>
