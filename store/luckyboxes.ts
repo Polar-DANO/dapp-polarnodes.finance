@@ -29,6 +29,10 @@ export const mutations: MutationTree<State> = {
 
 export const actions: ActionTree<State, {}> = {
   async loadLuckyBoxTypes ({ commit }) {
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
     const luckyBoxesSize = await this.$contracts.luckyBoxes.getBoxSize()
     const results = {
       names: (await this.$contracts.luckyBoxes.getMapKeysBetweenIndexes(0, luckyBoxesSize)) as string[],
@@ -58,6 +62,10 @@ export const actions: ActionTree<State, {}> = {
       throw new Error('Current user address not found')
     }
 
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
     const tx = await this.$contracts.handler.createLuckyBoxesWithTokens(
       this.$addresses.Token,
       luckyBox.name,
@@ -74,8 +82,17 @@ export const actions: ActionTree<State, {}> = {
     if (!userAddress) {
       throw new Error('Current user address not found')
     }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
     const luckyBoxesTokens: BigNumber[] = await this.$contracts.luckyBoxes.tokensOfOwner(userAddress)
     const luckyBoxes = await Promise.all(luckyBoxesTokens.map(async (tokenId) => {
+      if (!this.$contracts) {
+        throw new Error('Contracts not loaded')
+      }
+
       return {
         tokenId,
         type: await this.$contracts.luckyBoxes.tokenIdsToType(tokenId)

@@ -27,10 +27,6 @@ export function dailyRewardPerNode (node: NodeType) {
   return node.rewardAmount.mul(PAYOUTS_PER_DAY)
 }
 
-export function pendingRewardsPerUser (node: NodeType) {
-  return node.userRewards?.mul(node.userCount ?? 0)
-}
-
 export function roi (node: NodeType) {
   if (node.cost.eq(0)) {
     return Infinity

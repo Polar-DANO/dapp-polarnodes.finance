@@ -89,6 +89,9 @@ export const actions: ActionTree<State, {}> = {
 
     const offersByNft = await Promise.all(
       Object.entries(supportedNfts).map(async ([nftType, nftAddress]): Promise<Offer[]> => {
+        if (!this.$contracts) {
+          throw new Error('Contracts not loaded')
+        }
         const offerSize = await this.$contracts.marketplace.getOfferOfSize(nftAddress)
         const offers: any[] = await this.$contracts.marketplace.getOfferOfBetweenIndexes(nftAddress, 0, offerSize)
 
@@ -113,6 +116,9 @@ export const actions: ActionTree<State, {}> = {
 
     const auctionsByNft = await Promise.all(
       Object.entries(supportedNfts).map(async ([nftType, nftAddress]): Promise<Auction[]> => {
+        if (!this.$contracts) {
+          throw new Error('Contracts not loaded')
+        }
         const auctionSize = await this.$contracts.marketplace.getAuctionOfSize(nftAddress)
         const auctions: any[] = await this.$contracts.marketplace.getAuctionOfBetweenIndexes(nftAddress, 0, auctionSize)
 
@@ -151,6 +157,10 @@ export const actions: ActionTree<State, {}> = {
       throw new Error('NFT type is not supported')
     }
 
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
     const tx = await this.$contracts.marketplace.sellOfferItem(
       supportedNfts[nftType],
       tokenId,
@@ -170,6 +180,10 @@ export const actions: ActionTree<State, {}> = {
     const supportedNfts = getSupportedNfts(this.$addresses)
     if (!supportedNfts[nftType]) {
       throw new Error('NFT type is not supported')
+    }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
     }
 
     const tx = await this.$contracts.marketplace.sellAuctionItem(

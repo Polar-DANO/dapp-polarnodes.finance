@@ -20,7 +20,7 @@ export const getters: GetterTree<State, {}> = {
   ) ?? null,
   totalPendingRewards: state => state.nodeTypes?.reduce(
     (total, node) =>
-      total.add(NodeType.pendingRewardsPerUser(node) ?? 0),
+      total.add(node?.userRewards ?? 0),
     ethers.BigNumber.from(0)
   ) ?? null
 }
@@ -52,11 +52,19 @@ interface CreateNodesWithPendingArgs {
 
 export const actions: ActionTree<State, {}> = {
   async loadNodeTypes ({ commit, dispatch, rootGetters }) {
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
     const nodeSize = (await this.$contracts.handler.getNodeTypesSize()).toNumber()
     const nodeTypesNames: string[] = await this.$contracts.handler.getNodeTypesBetweenIndexes(0, nodeSize)
 
     const nodeTypes = await Promise.all(
       nodeTypesNames.map(async (name, index): Promise<NodeType.NodeType> => {
+        if (!this.$contracts) {
+          throw new Error('Contracts not loaded')
+        }
+
         const nodeTypeContract = await this.$contracts.nodeTypeByName(name)
         const userAddress = rootGetters['wallet/address']
 
@@ -86,11 +94,17 @@ export const actions: ActionTree<State, {}> = {
     await dispatch('loadNodeTypes')
   },
   async loadUserRewardsByNodeType ({ commit, getters, rootGetters }, nodeTypeName: string) {
+    const userAddress = rootGetters['wallet/address']
+    if (!userAddress) {
+      commit('setUserRewardsForNodeType', { nodeTypeName, rewards: null, fees: null })
+    }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
     const nodeType = getters.nodeTypeByName(nodeTypeName)
     if (!nodeType) { throw new Error(`Node type ${nodeTypeName} not found in state`) }
-
-    const userAddress = rootGetters['wallet/address']
-    if (!userAddress) { return }
 
     const nodeTypeContract = await this.$contracts.nodeTypeByName(nodeType.name)
 
@@ -99,11 +113,19 @@ export const actions: ActionTree<State, {}> = {
   },
 
   async createNodesFromToken ({ dispatch }, { nodeTypeName, count, token }) {
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
     await this.$contracts.handler.createNodesWithTokens(token, nodeTypeName, count, '')
-    dispatch('loadNodeTypeByName', nodeTypeName)
+    dispatch('nft/loadByNodeTypeName', nodeTypeName)
   },
 
   async createNodesWithPendingRewards ({ dispatch }, { selectedNodes, tokenOut, nodeTypeTo, count }: CreateNodesWithPendingArgs) {
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
     if (selectedNodes.length === 0) { return }
 
     const tokenIdsPerNodeType = selectedNodes.reduce((acc, { tokenId, nodeType }) => {
@@ -125,11 +147,15 @@ export const actions: ActionTree<State, {}> = {
       count
     )
 
-    dispatch('loadNodeTypes')
+    dispatch('nft/loadNFTs')
   },
 
   async createNodesLevelUp ({ dispatch }, { selectedNodes, tokenOut, nodeTypeTo, count }: CreateNodesWithPendingArgs) {
     if (selectedNodes.length === 0) { return }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
 
     const tokenIdsPerNodeType = selectedNodes.reduce((acc, { tokenId, nodeType }) => {
       if (!acc[nodeType]) { acc[nodeType] = [] }
@@ -150,6 +176,6 @@ export const actions: ActionTree<State, {}> = {
       count
     )
 
-    dispatch('loadNodeTypes')
+    dispatch('nft/loadNFTs')
   }
 }

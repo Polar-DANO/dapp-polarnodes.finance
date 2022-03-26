@@ -231,7 +231,7 @@
               class="node-card__outlined node-card__button pa-2"
               dark
               text
-              :disabled="quantity < 1"
+              :disabled="quantity < 1 || selectedNfts.length === 0"
               :loading="isBtnLoading"
               @click="onCreate"
             >
@@ -275,6 +275,7 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   }
 
   async reactiveFetch () {
+    if (!this.isWalletConnected) { return }
     await {
       allowance: await this.$store.dispatch('polar/loadAllowance'),
       nodes: await (async () => {
@@ -382,51 +383,51 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
     this.quantity++
   }
 
-  public onError (err: { message: string } | null): void {
-    if (err) {
-      console.error(err)
-      const inAppAlert = this.$root.$refs.alert as unknown as Record<
-        string,
-        Function
-      >
+  // public onError (err: { message: string } | null): void {
+  //   if (err) {
+  //     console.error(err)
+  //     const inAppAlert = this.$root.$refs.alert as unknown as Record<
+  //       string,
+  //       Function
+  //     >
 
-      if (err.message.includes('User denied transaction signature')) {
-        inAppAlert.MustSign()
-      } else if (err.message.includes('Global limit reached')) {
-        inAppAlert.MaxReached()
-      } else if (
-        err.message.includes('Creation with pending limit reached for user')
-      ) {
-        inAppAlert.UserMaxReached()
-      } else if (err.message.includes('Balance too low for creation')) {
-        inAppAlert.NeedBalance()
-      } else if (err.message.includes('nodeTypeName does not exist')) {
-        inAppAlert.NodesName()
-      } else if (err.message.includes('Blacklisted address')) {
-        inAppAlert.NodesBlacklist()
-      } else if (err.message.includes('fInsufficient Pending')) {
-        inAppAlert.noLiquidity()
-      } else if (err.message.includes('Balance too low for creation.')) {
-        inAppAlert.NeedBalance()
-      } else if (err.message.includes('Node creation not authorized yet')) {
-        inAppAlert.NotAuthorized()
-      } else if (
-        err.message.includes('futur and rewardsPool cannot create node')
-      ) {
-        inAppAlert.NotFutur()
-      } else if (err.message.includes('Max already reached')) {
-        inAppAlert.MaxReached()
-      } else if (
-        err.message.includes(
-          'MetaMask Tx Signature: User denied transaction signature.'
-        )
-      ) {
-        inAppAlert.UserReject()
-      } else {
-        inAppAlert.OtherError()
-      }
-    }
-  }
+  //     if (err.message.includes('User denied transaction signature')) {
+  //       inAppAlert.MustSign()
+  //     } else if (err.message.includes('Global limit reached')) {
+  //       inAppAlert.MaxReached()
+  //     } else if (
+  //       err.message.includes('Creation with pending limit reached for user')
+  //     ) {
+  //       inAppAlert.UserMaxReached()
+  //     } else if (err.message.includes('Balance too low for creation')) {
+  //       inAppAlert.NeedBalance()
+  //     } else if (err.message.includes('nodeTypeName does not exist')) {
+  //       inAppAlert.NodesName()
+  //     } else if (err.message.includes('Blacklisted address')) {
+  //       inAppAlert.NodesBlacklist()
+  //     } else if (err.message.includes('fInsufficient Pending')) {
+  //       inAppAlert.noLiquidity()
+  //     } else if (err.message.includes('Balance too low for creation.')) {
+  //       inAppAlert.NeedBalance()
+  //     } else if (err.message.includes('Node creation not authorized yet')) {
+  //       inAppAlert.NotAuthorized()
+  //     } else if (
+  //       err.message.includes('futur and rewardsPool cannot create node')
+  //     ) {
+  //       inAppAlert.NotFutur()
+  //     } else if (err.message.includes('Max already reached')) {
+  //       inAppAlert.MaxReached()
+  //     } else if (
+  //       err.message.includes(
+  //         'MetaMask Tx Signature: User denied transaction signature.'
+  //       )
+  //     ) {
+  //       inAppAlert.UserReject()
+  //     } else {
+  //       inAppAlert.OtherError()
+  //     }
+  //   }
+  // }
 
   get isApprove () {
     return !this.$store.getters['polar/hasEnoughAllowance'](this.totalCost)
@@ -436,8 +437,6 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
     try {
       this.isBtnLoading = true
       await this.$store.dispatch('polar/requestAllowance')
-    } catch (err: any) {
-      this.onError(err)
     } finally {
       this.isBtnLoading = false
     }
@@ -478,8 +477,6 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
 
         this.$router.push('/mynft')
       }
-    } catch (err: any) {
-      this.onError(err)
     } finally {
       this.isBtnLoading = false
     }

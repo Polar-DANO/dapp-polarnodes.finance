@@ -40,11 +40,8 @@ export const getters: GetterTree<State, {}> = {
 }
 
 export const mutations: MutationTree<State> = {
-  setNFTsForNodeType (state, { nodeType, nfts }: { nodeType: string, nfts: NFT[] }) {
-    state.nfts = {
-      ...state.nfts,
-      [nodeType]: nfts
-    }
+  setNFTs (state, nfts: Record<string, NFT[]>) {
+    state.nfts = nfts
   },
 
   resetNFTs (state) {
@@ -53,31 +50,40 @@ export const mutations: MutationTree<State> = {
 }
 
 export const actions: ActionTree<State, {}> = {
-  async loadByNodeTypeName ({ commit, rootGetters }, nodeTypeName: string) {
-    const nodeType: NodeType | undefined = rootGetters['nodes/nodeTypeByName'](nodeTypeName)
-    const userAddress = rootGetters['wallet/address']
 
-    if (!userAddress || !nodeType) {
-      commit('setNFTsForNodeType', { nodeType, nfts: [] })
+  async loadNFTs ({ commit, rootGetters }) {
+    const nodeTypeNames: string[] | undefined = rootGetters['nodes/nodeTypesNames']
+    if (!nodeTypeNames || nodeTypeNames.length === 0) {
+      commit('resetNFTs')
       return
     }
 
-    const nodeTypeContract = await this.$contracts.nodeTypeByName(nodeTypeName)
+    const nftsIndexByNodeType = await Promise.all(nodeTypeNames.map(async (nodeTypeName) => {
+      const nodeType: NodeType | undefined = rootGetters['nodes/nodeTypeByName'](nodeTypeName)
+      const userAddress = rootGetters['wallet/address']
 
-    const totalCount = await nodeTypeContract.getTotalNodesNumberOf(userAddress)
-    const tokenIds: BigNumber[] = await nodeTypeContract.getTokenIdsOfBetweenIndexes(userAddress, 0, totalCount)
+      if (!userAddress || !nodeType) {
+        return null
+      }
 
-    const { nfts, pendingRewards } = {
-      nfts: await Promise.all(tokenIds.map(async (tokenId) => {
-        const nft = await nodeTypeContract.getNodeFromTokenId(tokenId)
-        return { nft, tokenId }
-      })),
-      pendingRewards: await nodeTypeContract.calculateUserRewardsBatch(userAddress, tokenIds) as [BigNumber[], BigNumber[]]
-    }
+      if (!this.$contracts) {
+        throw new Error('Contracts not loaded')
+      }
 
-    commit('setNFTsForNodeType', {
-      nodeType: nodeType.name,
-      nfts: nfts.map(({ nft, tokenId }, idx): NFT => {
+      const nodeTypeContract = await this.$contracts.nodeTypeByName(nodeTypeName)
+
+      const totalCount = await nodeTypeContract.getTotalNodesNumberOf(userAddress)
+      const tokenIds: BigNumber[] = await nodeTypeContract.getTokenIdsOfBetweenIndexes(userAddress, 0, totalCount)
+
+      const { nfts, pendingRewards } = {
+        nfts: await Promise.all(tokenIds.map(async (tokenId) => {
+          const nft = await nodeTypeContract.getNodeFromTokenId(tokenId)
+          return { nft, tokenId }
+        })),
+        pendingRewards: await nodeTypeContract.calculateUserRewardsBatch(userAddress, tokenIds) as [BigNumber[], BigNumber[]]
+      }
+
+      return nfts.map(({ nft, tokenId }, idx): NFT => {
         return {
           owner: nft.owner,
           nodeType: nodeType.name,
@@ -93,25 +99,28 @@ export const actions: ActionTree<State, {}> = {
           userPendingFees: pendingRewards[1][idx]
         }
       })
-    })
-  },
-
-  async loadNFTs ({ dispatch, commit, rootGetters }) {
-    const nodeTypeNames: string[] | undefined = rootGetters['nodes/nodeTypesNames']
-    if (!nodeTypeNames || nodeTypeNames.length === 0) {
-      commit('resetNFTs')
-      return
-    }
-
-    await Promise.all(nodeTypeNames.map(async (nodeTypeName) => {
-      await dispatch('loadByNodeTypeName', nodeTypeName)
     }))
+
+    const entries = nftsIndexByNodeType
+      .map((nfts, idx) => {
+        return [
+          nodeTypeNames[idx],
+          nfts
+        ]
+      })
+      .filter(([, nfts]) => nfts !== null)
+
+    commit('setNFTs', Object.fromEntries(entries))
   },
 
   async claimRewards ({ dispatch, rootGetters }, nfts: NFT[]) {
     const userAddress = rootGetters['wallet/address']
     if (!userAddress) {
       throw new Error('You must connect your wallet')
+    }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
     }
 
     const groupped = nfts.reduce((nodeTypeGroups, nft) => {
@@ -130,10 +139,7 @@ export const actions: ActionTree<State, {}> = {
     )
 
     await tx.wait()
-
-    Object.keys(groupped).forEach((nodeTypeName) => {
-      dispatch('loadByNodeTypeName', nodeTypeName)
-    })
+    dispatch('loadNFTs')
   },
 
   async claimAll ({ dispatch, rootGetters }) {
@@ -142,13 +148,16 @@ export const actions: ActionTree<State, {}> = {
       throw new Error('You must connect your wallet')
     }
 
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
     const tx = await this.$contracts.handler.claimRewardsAll(
       this.$addresses.Token,
       userAddress
     )
 
     await tx.wait()
-
     dispatch('loadNFTs')
   }
 }

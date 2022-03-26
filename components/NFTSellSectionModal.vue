@@ -63,20 +63,16 @@
               </div>
             </div>
           </div>
-          <button
-            class="text-white text-center font-normal text-[14px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px]"
+          <v-btn
+            class="text-[16px] font-[600] py-[5px] text-center text-white border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] w-full"
+            dark
+            text
+            :disabled="selectedSellMode === null"
+            :loading="isListBtnLoading"
+            @click="onList"
           >
-            <v-btn
-              class="text-[16px] font-[600] py-[5px] text-center"
-              dark
-              text
-              :disabled="selectedSellMode === null"
-              :loading="isListBtnLoading"
-              @click="onList"
-            >
-              List
-            </v-btn>
-          </button>
+            List
+          </v-btn>
         </div>
       </div>
     </div>

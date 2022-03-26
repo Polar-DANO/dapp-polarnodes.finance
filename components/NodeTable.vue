@@ -133,49 +133,47 @@ export default class NodeTable extends Vue {
       this.isClaimAllBtnLoading = true
       await this.$store.dispatch('nft/claimAll')
       this.$router.push('/nodes')
-    } catch (e) {
-      this.onError(e)
     } finally {
       this.isClaimAllBtnLoading = false
     }
   }
 
-  public onError (err: { message: string } | null): void {
-    if (err) {
-      const inAppAlert = this.$root.$refs.alert as unknown as Record<
-        string,
-        Function
-      >
+  // public onError (err: { message: string } | null): void {
+  //   if (err) {
+  //     const inAppAlert = this.$root.$refs.alert as unknown as Record<
+  //       string,
+  //       Function
+  //     >
 
-      if (err.message.includes('User denied transaction signature')) {
-        inAppAlert.MustSign()
-      } else if (err.message.includes('GET REWARD OF: NO NODE OWNER')) {
-        inAppAlert.NoOwner()
-      } else if (err.message.includes('MANIA CSHT: Blacklisted address')) {
-        inAppAlert.NodesBlacklist()
-      } else if (
-        err.message.includes('MANIA CSHT:  creation from the zero address')
-      ) {
-        inAppAlert.MustSign()
-      } else if (
-        err.message.includes(
-          'MANIA CSHT: futur and rewardsPool cannot cashout rewards'
-        )
-      ) {
-        inAppAlert.MustSign()
-      } else if (
-        err.message.includes(
-          "MANIA CSHT: You don't have enough reward to cash out"
-        )
-      ) {
-        inAppAlert.MustSign()
-      } else if (err.message.includes('Nothing to claim')) {
-        inAppAlert.NoClaim()
-      } else {
-        inAppAlert.OtherError()
-      }
-    }
-  }
+  //     if (err.message.includes('User denied transaction signature')) {
+  //       inAppAlert.MustSign()
+  //     } else if (err.message.includes('GET REWARD OF: NO NODE OWNER')) {
+  //       inAppAlert.NoOwner()
+  //     } else if (err.message.includes('MANIA CSHT: Blacklisted address')) {
+  //       inAppAlert.NodesBlacklist()
+  //     } else if (
+  //       err.message.includes('MANIA CSHT:  creation from the zero address')
+  //     ) {
+  //       inAppAlert.MustSign()
+  //     } else if (
+  //       err.message.includes(
+  //         'MANIA CSHT: futur and rewardsPool cannot cashout rewards'
+  //       )
+  //     ) {
+  //       inAppAlert.MustSign()
+  //     } else if (
+  //       err.message.includes(
+  //         "MANIA CSHT: You don't have enough reward to cash out"
+  //       )
+  //     ) {
+  //       inAppAlert.MustSign()
+  //     } else if (err.message.includes('Nothing to claim')) {
+  //       inAppAlert.NoClaim()
+  //     } else {
+  //       inAppAlert.OtherError()
+  //     }
+  //   }
+  // }
 
   public formatEther (bn) {
     if (ethers.BigNumber.isBigNumber(bn)) {

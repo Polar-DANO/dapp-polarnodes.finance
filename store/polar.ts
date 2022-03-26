@@ -39,7 +39,7 @@ export const actions: ActionTree<State, {}> = {
   async loadAllowance ({ commit, rootGetters }) {
     const userAddress = rootGetters['wallet/address']
     if (!userAddress) {
-      throw new Error('Current user address not found')
+      commit('setAllowance', null)
     }
 
     if (!this.$contracts) {
