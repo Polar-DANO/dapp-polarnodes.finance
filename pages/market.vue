@@ -21,10 +21,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 
 @Component
-export default class Market extends Vue {
+export default class Mazrket extends WalletReactiveFetch implements IReactiveFetch {
   private selectedItem = null
 
   get isModalOpen () {
@@ -39,9 +40,10 @@ export default class Market extends Vue {
     this.selectedItem = item
   }
 
-  async fetch () {
-    await this.$store.dispatch('wallet/loadAddress')
-    await this.$store.dispatch('marketplace/load')
+  async reactiveFetch () {
+    if (this.isWalletConnected) {
+      await this.$store.dispatch('marketplace/load')
+    }
   }
 }
 </script>

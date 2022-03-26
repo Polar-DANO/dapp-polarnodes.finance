@@ -108,12 +108,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
 import * as LuckyBox from '~/models/LuckyBoxType'
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 
 @Component({})
-export default class Create extends Vue {
+export default class Create extends WalletReactiveFetch implements IReactiveFetch {
   public quantity = 1
   private dailyEarningPerNode = 0
   private tax: number | null = null
@@ -137,15 +138,12 @@ export default class Create extends Vue {
       : []
   }
 
-  private async created () {
-    await this.$store.dispatch('wallet/loadAddress')
-
-    if (!this.luckyBox) {
+  async reactiveFetch () {
+    if (this.isWalletConnected) {
       await this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
-    }
-
-    if (!this.luckyBox) {
-      this.$router.push('/nodes')
+      if (!this.luckyBox) {
+        this.$router.push('/nodes')
+      }
     }
   }
 

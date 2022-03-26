@@ -21,7 +21,7 @@
           </a>
           <!-- </v-btn> -->
         </div>
-        <div v-if="!isLoggIn" class="mt-0">
+        <div v-if="!isLoggedIn" class="mt-0">
           <v-btn
             x-large
             elevation="0"
@@ -35,7 +35,7 @@
             </div>
           </v-btn>
         </div>
-        <div v-if="isLoggIn" class="mt-0">
+        <div v-if="isLoggedIn" class="mt-0">
           <v-btn
             x-large
             elevation="0"
@@ -71,7 +71,7 @@
         <v-btn
           x-large
           class="bg-[#00C6ED] relative justify-start mb-[10px] text-[20px] rounded-[12px] md:w-7/12 w-[280px] normal-case"
-          @click="requestMetaMask"
+          @click="requestMetamask"
         >
           <img class="w-[32px] h-[32px] mr-[10px]" src="~/assets/img/metamask-logo.svg"><span class="text-white">
             MetaMask</span><img
@@ -83,7 +83,7 @@
         <v-btn
           x-large
           class="bg-[#00C6ED] relative justify-start mb-[10px] text-[20px] rounded-[12px] md:w-7/12 w-[280px] normal-case"
-          @click="requestWalletAccounts"
+          @click="requestWalletConnect"
         >
           <img class="w-[32px] h-[32px] mr-[10px]" src="~/assets/img/walletconnect.svg"><span class="text-white">
             Wallet Connect</span><img
@@ -126,200 +126,222 @@
   </v-dialog>
 </template>
 <script lang="ts">
-import { mapGetters } from 'vuex'
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { ethers } from 'ethers'
-import Web3 from 'web3'
-import WalletConnectProvider from '@walletconnect/web3-provider'
-import detectEthereumProvider from '@metamask/detect-provider'
-import Connexion from '~/helpers/connexion.js'
-import { WalletModule } from '~/store'
+import { Component, Vue } from 'nuxt-property-decorator'
 import AlertComponents from '~/components/AlertComponents.vue'
-import Default from '~/layouts/default.vue'
-
-declare let window: any
 
 @Component({
   components: { AlertComponents }
 })
 export default class ConnectionBtn extends Vue {
+  get walletAddress () {
+    return this.$store.getters['wallet/address']
+  }
+
+  get isLoggedIn () {
+    return this.$store.getters['wallet/hasAddress']
+  }
+
+  private dialog = false
+
+  logout () {
+    if (this.$store.getters['wallet/isConnected']) {
+      this.$store.dispatch('wallet/logout')
+    }
+  }
+
+  async requestMetamask () {
+    try {
+      await this.$store.dispatch('wallet/requestMetamask')
+    } catch (e) {
+      console.error(e)
+    }
+
+    this.dialog = false
+  }
+
+  async requestWalletConnect () {
+    try {
+      await this.$store.dispatch('wallet/requestWalletConnect')
+    } catch (e) {
+      console.error(e)
+    }
+
+    this.dialog = false
+  }
+
   private wrongNetwork = false
   private noProvider = false
   private acceptMetamask = false
-  private dialog = false
-  private isLoggIn = false
-  private walletAddress = ''
-  private metamaskProvider : any
 
-  public async sleep (ms : any) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms)
-    })
-  }
+  // public async sleep (ms : any) {
+  //   return new Promise((resolve) => {
+  //     setTimeout(resolve, ms)
+  //   })
+  // }
 
-  public setWalletAddress (address : string) : void {
-    this.walletAddress = address
-  }
+  // public setWalletAddress (address : string) : void {
+  //   this.walletAddress = address
+  // }
 
-  private get loadWalletAddress (): string {
-    return WalletModule.walletaddress
-  }
+  // private get loadWalletAddress (): string {
+  //   return WalletModule.walletaddress
+  // }
 
-  public async created () {
-    const self = this
-    // detect Metamask account change
-    window.ethereum.on('accountsChanged', function (accounts : string[]) {
-      console.log('accountsChanges', accounts)
-      WalletModule.setAddress(accounts[0])
-      self.walletAddress = accounts[0]
-    })
+  // public async created () {
+  //   const self = this
+  //   // detect Metamask account change
+  //   window.ethereum.on('accountsChanged', function (accounts : string[]) {
+  //     console.log('accountsChanges', accounts)
+  //     WalletModule.setAddress(accounts[0])
+  //     self.walletAddress = accounts[0]
+  //   })
 
-    // detect Network account change
-    window.ethereum.on('networkChanged', async function (networkId : any) {
-      console.log('networkChanged', networkId)
-      if (networkId != 0xA86A) {
-        (self.$root.$refs.alert as Default).WrongNetwork()
-        await self.sleep(1500)
-      }
-    })
+  //   // detect Network account change
+  //   window.ethereum.on('networkChanged', async function (networkId : any) {
+  //     console.log('networkChanged', networkId)
+  //     if (networkId != 0xA86A) {
+  //       (self.$root.$refs.alert as Default).WrongNetwork()
+  //       await self.sleep(1500)
+  //     }
+  //   })
 
-    try {
-      WalletModule.loadWalletAddress()
-      if (this.loadWalletAddress) {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-        if (accounts[0] != this.loadWalletAddress) {
-          WalletModule.setAddress(accounts[0])
-          this.walletAddress = accounts[0]
-          console.log(this.walletAddress)
-        } else {
-          this.walletAddress = this.loadWalletAddress
-        }
-        if (this.walletAddress) {
-          this.isLoggIn = true
-        }
-      }
-    } catch {
+  //   try {
+  //     WalletModule.loadWalletAddress()
+  //     if (this.loadWalletAddress) {
+  //       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+  //       if (accounts[0] != this.loadWalletAddress) {
+  //         WalletModule.setAddress(accounts[0])
+  //         this.walletAddress = accounts[0]
+  //         console.log(this.walletAddress)
+  //       } else {
+  //         this.walletAddress = this.loadWalletAddress
+  //       }
+  //       if (this.walletAddress) {
+  //         this.isLoggedIn = true
+  //       }
+  //     }
+  //   } catch {
 
-    }
-  }
+  //   }
+  // }
 
-  public async requestMetaMask () {
-    this.metamaskProvider = await detectEthereumProvider({
-      mustBeMetaMask: true
-    })
-    if (this.metamaskProvider) {
-      try {
-        await this.metamaskProvider.request({ method: 'eth_requestAccounts' }).then(async (accounts:any) => {
-          await this.wallet_addAvalanche(this.metamaskProvider).then(async (res : any) => {
-            await this.metamaskProvider.request({
-              method: 'eth_chainId'
-            }).then(async (chainId : any) => {
-              if (chainId == 0xA86A || chainId == 0x1 || chainId == 0x539) {
-                WalletModule.setAddress(accounts[0])
-                this.walletAddress = accounts[0]
-                this.isLoggIn = true
-                this.dialog = false
-                await (this.$root.$refs.alert as Default).WalletConnectOk()
-              } else {
-                this.wrongNetwork = true
-                await this.sleep(1500)
-                this.wrongNetwork = false
-                this.dialog = false
-              }
-            })
-          })
-        })
-      } catch (err) {
-        console.log(err)
-        this.acceptMetamask = true
-        await this.sleep(1500)
-        this.acceptMetamask = false
-        this.dialog = false
-      }
-    } else {
-      this.noProvider = true
-      await this.sleep(1500)
-      this.noProvider = false
-      this.dialog = false
-    }
-  }
+  // public async requestMetamask () {
+  //   this.d = await detectEthereumProvider({
+  //     mustBeMetaMask: true
+  //   })
+  //   if (this.d) {
+  //     try {
+  //       await this.d.request({ method: 'eth_requestAccounts' }).then(async (accounts:any) => {
+  //         await this.wallet_addAvalanche(this.d).then(async (res : any) => {
+  //           await this.d.request({
+  //             method: 'eth_chainId'
+  //           }).then(async (chainId : any) => {
+  //             if (chainId == 0xA86A || chainId == 0x1 || chainId == 0x539) {
+  //               WalletModule.setAddress(accounts[0])
+  //               this.walletAddress = accounts[0]
+  //               this.isLoggedIn = true
+  //               this.dialog = false
+  //               await (this.$root.$refs.alert as Default).WalletConnectOk()
+  //             } else {
+  //               this.wrongNetwork = true
+  //               await this.sleep(1500)
+  //               this.wrongNetwork = false
+  //               this.dialog = false
+  //             }
+  //           })
+  //         })
+  //       })
+  //     } catch (err) {
+  //       console.log(err)
+  //       this.acceptMetamask = true
+  //       await this.sleep(1500)
+  //       this.acceptMetamask = false
+  //       this.dialog = false
+  //     }
+  //   } else {
+  //     this.noProvider = true
+  //     await this.sleep(1500)
+  //     this.noProvider = false
+  //     this.dialog = false
+  //   }
+  // }
 
-  public async wallet_addAvalanche (provider : any) {
-    /* await provider.send("wallet_addEthereumChain", [{
-        chainId: "0xa86a",
-        chainName: "Avalanche Network",
-        rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
-        blockExplorerUrls: ["https://snowtrace.io/"],
-        nativeCurrency: {
-            name: "AVAX",
-            symbol: "AVAX",
-            decimals: 18
-        },
-    },]) */
-    // await provider.request({
-    //   method : "wallet_addEthereumChain",
-    //   params : [{
-    //     chainId: "0xa86a",
-    //     chainName: "Avalanche Network",
-    //     rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
-    //     blockExplorerUrls: ["https://snowtrace.io/"],
-    //     nativeCurrency: {
-    //         name: "AVAX",
-    //         symbol: "AVAX",
-    //         decimals: 18
-    //     },
-    // },]})
-  }
+  // public async wallet_addAvalanche (provider : any) {
+  //   /* await provider.send("wallet_addEthereumChain", [{
+  //       chainId: "0xa86a",
+  //       chainName: "Avalanche Network",
+  //       rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
+  //       blockExplorerUrls: ["https://snowtrace.io/"],
+  //       nativeCurrency: {
+  //           name: "AVAX",
+  //           symbol: "AVAX",
+  //           decimals: 18
+  //       },
+  //   },]) */
+  //   // await provider.request({
+  //   //   method : "wallet_addEthereumChain",
+  //   //   params : [{
+  //   //     chainId: "0xa86a",
+  //   //     chainName: "Avalanche Network",
+  //   //     rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
+  //   //     blockExplorerUrls: ["https://snowtrace.io/"],
+  //   //     nativeCurrency: {
+  //   //         name: "AVAX",
+  //   //         symbol: "AVAX",
+  //   //         decimals: 18
+  //   //     },
+  //   // },]})
+  // }
 
-  public async requestWalletAccounts () {
-    const web3Provider = new WalletConnectProvider({
-      rpc: {
-        97: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
-        56: 'https://bsc-dataseed1.binance.org/'
-      },
-      bridge: 'https://bridge.myhostedserver.com',
-      qrcodeModalOptions: {
-        mobileLinks: [
-          'metamask',
-          'trust'
-        ]
-      }
-    })
+  // public async requestWalletConnect () {
+  //   const web3Provider = new WalletConnectProvider({
+  //     rpc: {
+  //       97: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+  //       56: 'https://bsc-dataseed1.binance.org/'
+  //     },
+  //     bridge: 'https://bridge.myhostedserver.com',
+  //     qrcodeModalOptions: {
+  //       mobileLinks: [
+  //         'metamask',
+  //         'trust'
+  //       ]
+  //     }
+  //   })
 
-    // const web3 = new Web3(web3Provider);
+  //   // const web3 = new Web3(web3Provider);
 
-    await web3Provider.enable().then(async (res) => {
-      // this.dialog = false
-      // const accounts = await web3.eth.getAccounts();
-      await this.wallet_addAvalanche(web3Provider).then(async (res) => {
-        /*
-          await web3Provider.send("eth_chainId", []).then(async(res : any) => {
-            if (res == 0xa86a) {
-              WalletModule.setAddress(accounts[0])
-              this.walletAddress = accounts[0]
-              this.isLoggIn = true
-              return
-            } else {
-              this.wrongNetwork = true
-              await this.sleep(1500)
-              this.wrongNetwork = false
-              return
-            }
-          }); */
-      })
-      /* if(accounts) {
-          console.log(accounts);
-        } */
-    })
-  }
+  //   await web3Provider.enable().then(async (res) => {
+  //     // this.dialog = false
+  //     // const accounts = await web3.eth.getAccounts();
+  //     await this.wallet_addAvalanche(web3Provider).then(async (res) => {
+  //       /*
+  //         await web3Provider.send("eth_chainId", []).then(async(res : any) => {
+  //           if (res == 0xa86a) {
+  //             WalletModule.setAddress(accounts[0])
+  //             this.walletAddress = accounts[0]
+  //             this.isLoggedIn = true
+  //             return
+  //           } else {
+  //             this.wrongNetwork = true
+  //             await this.sleep(1500)
+  //             this.wrongNetwork = false
+  //             return
+  //           }
+  //         }); */
+  //     })
+  //     /* if(accounts) {
+  //         console.log(accounts);
+  //       } */
+  //   })
+  // }
 
-  public logout () {
-    WalletModule.clearWallet()
-    this.isLoggIn = false
-  }
+  // public logout () {
+  //   WalletModule.clearWallet()
+  //   this.isLoggedIn = false
+  // }
 
-  public buyPolar () {
+  // public buyPolar () {
 
-  }
+  // }
 }
 </script>

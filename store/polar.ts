@@ -24,16 +24,26 @@ export const mutations: MutationTree<State> = {
 
 export const actions: ActionTree<State, {}> = {
   async loadBalance ({ commit, rootGetters }) {
-    const addr = rootGetters['wallet/address']
-    if (!addr) { return }
+    const userAddress = rootGetters['wallet/address']
+    if (!userAddress) {
+      throw new Error('Current user address not found')
+    }
 
-    commit('setBalance', await this.$contracts.polar.balanceOf(addr))
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
+    commit('setBalance', await this.$contracts.polar.balanceOf(userAddress))
   },
 
   async loadAllowance ({ commit, rootGetters }) {
     const userAddress = rootGetters['wallet/address']
     if (!userAddress) {
       throw new Error('Current user address not found')
+    }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
     }
 
     commit('setAllowance', await this.$contracts.polar.allowance(userAddress, this.$addresses.Swapper))
@@ -43,6 +53,10 @@ export const actions: ActionTree<State, {}> = {
     const userAddress = rootGetters['wallet/address']
     if (!userAddress) {
       throw new Error('Current user address not found')
+    }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
     }
 
     const tx = await this.$contracts.polar.approve(

@@ -27,12 +27,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 
 @Component({
   layout: 'page'
 })
-export default class IndexVue extends Vue {
+export default class IndexVue extends WalletReactiveFetch implements IReactiveFetch {
   get protocolStats () {
     return [
       {
@@ -91,23 +92,17 @@ export default class IndexVue extends Vue {
     ]
   }
 
-  private get walletAddress () {
-    return this.$store.state.wallet.address
-  }
-
-  private get hasAddress () {
-    return this.$store.state.wallet.hasAddress
-  }
-
-  private get polarBalance () {
-    return this.$store.state.polar.balanceAsEthers
-  }
-
-  private async created () {
-    await this.$store.dispatch('wallet/loadAddress')
-    this.$store.dispatch('coingecko/loadCoinData')
-    this.$store.dispatch('polar/loadBalance')
-    this.$store.dispatch('nodes/loadNodeTypes')
+  reactiveFetch () {
+    return Promise.all([
+      this.$store.dispatch('coingecko/loadCoinData'),
+      ...(
+        (this.isWalletConnected)
+          ? [
+              this.$store.dispatch('polar/loadBalance'),
+              this.$store.dispatch('nodes/loadNodeTypes')
+            ]
+          : [])
+    ])
   }
 }
 </script>

@@ -19,10 +19,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 
 @Component
-export default class Mynft extends Vue {
+export default class Mynft extends WalletReactiveFetch implements IReactiveFetch {
   get nodeStation () {
     return [
       {
@@ -54,15 +55,18 @@ export default class Mynft extends Vue {
     return this.$store.state.luckyboxes.myLuckyBoxes ?? []
   }
 
-  async fetch () {
-    await this.$store.dispatch('wallet/loadAddress')
-
-    this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
-    this.$store.dispatch('luckyboxes/loadMyLuckyBoxes')
-    this.$store.dispatch('polar/loadBalance')
-
-    await this.$store.dispatch('nodes/loadNodeTypes')
-    this.$store.dispatch('nft/loadNFTs')
+  async reactiveFetch () {
+    if (this.isWalletConnected) {
+      await {
+        lbTypes: await this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
+        myLbs: await this.$store.dispatch('luckyboxes/loadMyLuckyBoxes'),
+        polarBalance: await this.$store.dispatch('polar/loadBalance'),
+        myNFTs: await (async () => {
+          await this.$store.dispatch('nodes/loadNodeTypes')
+          await this.$store.dispatch('nft/loadNFTs')
+        })()
+      }
+    }
   }
 }
 </script>

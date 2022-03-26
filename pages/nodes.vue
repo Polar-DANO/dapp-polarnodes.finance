@@ -47,10 +47,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 
 @Component
-export default class Nodes extends Vue {
+export default class Nodes extends WalletReactiveFetch implements IReactiveFetch {
   get nodeStation () {
     return [
       {
@@ -82,11 +83,14 @@ export default class Nodes extends Vue {
     return this.$store.getters['nodes/nodeTypesNames']
   }
 
-  async fetch () {
-    await this.$store.dispatch('wallet/loadAddress')
-    this.$store.dispatch('polar/loadBalance')
-    this.$store.dispatch('nodes/loadNodeTypes')
-    this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
+  async reactiveFetch () {
+    if (this.isWalletConnected) {
+      return await Promise.all([
+        this.$store.dispatch('polar/loadBalance'),
+        this.$store.dispatch('nodes/loadNodeTypes'),
+        this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
+      ])
+    }
   }
 }
 </script>

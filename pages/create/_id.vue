@@ -246,11 +246,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
 import { URL_TO_NAME, NODENAME_TO_VIDEO, Url } from '~/models/constants'
 import * as NodeType from '~/models/NodeType'
 import { Token } from '~/hardhat/scripts/address'
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 
 const CreateMode = {
   FROM_TOKENS: 'FROM_TOKENS',
@@ -259,13 +260,29 @@ const CreateMode = {
 }
 
 @Component
-export default class Create extends Vue {
+export default class Create extends WalletReactiveFetch implements IReactiveFetch {
   public quantity = 1
   public isDetailsOpen = false
   public createMode: CreateMode = CreateMode.FROM_TOKENS
   public selectedToken = Token
   public selectedNfts = []
   public isBtnLoading = false
+
+  created () {
+    if (!this.nodeNftName) {
+      this.$router.push('/nodes')
+    }
+  }
+
+  async reactiveFetch () {
+    await {
+      allowance: await this.$store.dispatch('polar/loadAllowance'),
+      nodes: await (async () => {
+        await this.$store.dispatch('nodes/loadNodeTypes')
+        await this.$store.dispatch('nft/loadNFTs')
+      })()
+    }
+  }
 
   public get isLevelUpSelected () {
     return this.createMode === CreateMode.LEVEL_UP
@@ -281,20 +298,6 @@ export default class Create extends Vue {
 
   public set isPendingRewardsSelected (newVal: boolean) {
     this.createMode = newVal ? CreateMode.FROM_NFT : CreateMode.FROM_TOKENS
-  }
-
-  async created () {
-    if (!this.nodeNftName) {
-      this.$router.push('/nodes')
-    }
-
-    await this.$store.dispatch('wallet/loadAddress')
-  }
-
-  async fetch () {
-    this.$store.dispatch('polar/loadAllowance')
-    await this.$store.dispatch('nodes/loadNodeTypes')
-    await this.$store.dispatch('nft/loadNFTs')
   }
 
   get nodeType () {
