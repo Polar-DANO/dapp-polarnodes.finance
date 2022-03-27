@@ -1,4 +1,4 @@
-/*export const strict = false;
+/* export const strict = false;
 
 export const state = () => ({
     address: {
@@ -24,24 +24,7 @@ export const getters = {
     },
 };
 
-
 export const mutations = {};
 
 export const actions = {};
 */
-
-import { Store } from 'vuex'
-import { getModule } from 'nuxt-property-decorator'
-import { registerStoragePersistPlugins } from './plugins'
-import Wallet from '~/store/wallet'
-
-let WalletModule: Wallet
-
-const initializer = (store: Store<{}>) => {
-  WalletModule = getModule<Wallet>(Wallet, store)
-}
-export const plugins = [initializer, registerStoragePersistPlugins]
-
-export {
-    WalletModule
-}

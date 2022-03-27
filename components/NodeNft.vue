@@ -1,12 +1,14 @@
 <template>
   <div class="node-nft" @click="onSelectNode">
-    <div class="node-nft__title">{{ name }}</div>
+    <div class="node-nft__title">
+      {{ name }}
+    </div>
     <div class="node-nft__blue-text my-1">
       Earn {{ dailyEarnings }} $POLAR / day
     </div>
     <div class="divider mt-2" />
 
-    <img :src="image" class="node-image" />
+    <img :src="image" class="node-image">
 
     <div class="divider" />
 
@@ -24,60 +26,45 @@
 </template>
 
 <script lang="ts">
-import { PropType } from "vue";
-import { Component, Vue } from "nuxt-property-decorator";
-import { NodeNftNames } from "~/models/types";
-import { abi as HANDLER_ABI } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
-import { abi as NODE_TYPE_ABI } from "~/hardhat/artifacts/contracts/NodeType.sol/NodeType.json";
-import { NAME_TO_URL, NODENAME_TO_IMAGE, PAYOUTS_PER_DAY } from "~/models/constants";
+import { PropType } from 'vue'
+import { Component, Vue } from 'nuxt-property-decorator'
+import * as eth from 'ethers'
+import * as NodeType from '~/models/NodeType'
+import { NAME_TO_URL, NODENAME_TO_IMAGE } from '~/models/constants'
+import { NodeNftNames } from '~/models/types'
 
-const ethers = require("ethers");
-const { Handler } = require("~/hardhat/scripts/address.js");
+const formatEther = eth.utils.formatEther
 
 @Component({
   props: {
-    name: { type: String as PropType<NodeNftNames> },
-  },
+    name: { type: String as PropType<NodeNftNames> }
+  }
 })
 export default class NodeNft extends Vue {
-  public dailyEarnings: string | null = null;
-  public cost: string | null = null;
-  public claimTax: number | null = null;
-  public image: string | null = null;
-
-  public onSelectNode() {
+  public onSelectNode () {
     this.$router.push(
-      `/create/${NAME_TO_URL[this.$props.name as NodeNftNames]}`
-    );
+      `/create/${NAME_TO_URL[this.$props.name as PropType<NodeNftNames>]}`
+    )
   }
 
-  private async created() {
-    this.image = NODENAME_TO_IMAGE[this.$props.name as NodeNftNames];
-    try {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum,
-        "any"
-      );
-      const signer = provider.getSigner();
-      const handlerContract = new ethers.Contract(Handler, HANDLER_ABI, signer);
-      const nodeTypeAddress = handlerContract.getNodeTypesAddress(
-        this.$props.name
-      );
+  get image () {
+    return NODENAME_TO_IMAGE[this.$props.name as PropType<NodeNftNames>]
+  }
 
-      const nodeTypeContract = new ethers.Contract(
-        nodeTypeAddress,
-        NODE_TYPE_ABI,
-        signer
-      );
+  get nodeType () {
+    return this.$store.getters['nodes/nodeTypeByName'](this.$props.name)
+  }
 
-      this.cost = ethers.utils.formatEther(await nodeTypeContract.price());
-      this.claimTax = (await nodeTypeContract.claimTaxRoi()).div(100).toNumber();
-      this.dailyEarnings = (
-        parseFloat(ethers.utils.formatEther((await nodeTypeContract.rewardAmount()).mul(PAYOUTS_PER_DAY)))
-      ).toFixed(2);
-    } catch (err) {
-      console.log(err);
-    }
+  get dailyEarnings () {
+    return parseFloat(formatEther(NodeType.dailyRewardPerNode(this.nodeType))).toFixed(2)
+  }
+
+  get cost () {
+    return formatEther(this.nodeType.cost)
+  }
+
+  get claimTax () {
+    return this.nodeType.claimTax
   }
 }
 </script>

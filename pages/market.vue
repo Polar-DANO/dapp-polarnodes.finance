@@ -6,79 +6,44 @@
     <SortList />
     <div class="grid md:grid-cols-4 gap-4 mt-[30px]">
       <ItemCard
-        v-for="(item, i) in artList"
-        :key="`art-item-${i}`"
-        :data="item"
+        v-for="(item, i) in items"
+        :key="i"
+        :item="item"
         @click="onClick(item)"
       />
     </div>
     <ItemDetailsModal
       v-if="isModalOpen"
-      :data-detail="selectedData"
+      :data-detail="selectedItem"
       @close="isModalOpen = false"
     />
   </div>
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex'
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
-
-import axios from 'axios'
-
-import { abi as NODER } from '~/hardhat/artifacts/contracts/Handler.sol/Handler.json'
-import { abi as POLAR } from '~/hardhat/artifacts/contracts/PolarNode.sol/PolarNode.json'
-import { WalletModule } from '~/store'
-
-const {
-  Token,
-  PolarToken
-} = require('~/hardhat/scripts/address.js')
-
-declare let window: any
+import { Component } from 'nuxt-property-decorator'
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 
 @Component
-export default class Market extends Vue {
-  private artList = [
-    {
-      src: require('../assets/PACK/FUJI-FIXE.jpg'),
-      video: require('../assets/PACK/FUJI ANIM.mp4'),
-      title: 'Fuji',
-      price: 1.2
-    },
-    {
-      src: require('../assets/PACK/MONT BLANC FIXE.jpg'),
-      video: require('../assets/PACK/MONT BLANC ANIM.mp4'),
-      title: 'Mont Blanc',
-      price: 1.2
-    },
-    {
-      src: require('../assets/PACK/KILIMANDJARO FIXE.jpg'),
-      video: require('../assets/PACK/KILIMANDJARO ANIM.mp4'),
-      title: 'Kilimanjaro',
-      price: 1.2
-    },
-    {
-      src: require('../assets/PACK/USHUAIA RENDER0133.jpg'),
-      video: require('../assets/PACK/USHUAIA ANIM.mp4'),
-      title: 'Ushuaia',
-      price: 1.2
-    },
-    {
-      src: require('../assets/PACK/EVEREST FIXE.jpg'),
-      video: require('../assets/PACK/EVEREST ANIM.mp4'),
-      title: 'Everest',
-      price: 1.2
+export default class Mazrket extends WalletReactiveFetch implements IReactiveFetch {
+  private selectedItem = null
+
+  get isModalOpen () {
+    return this.selectedItem !== null
+  }
+
+  get items () {
+    return this.$store.getters['marketplace/items']
+  }
+
+  private onClick (item) {
+    this.selectedItem = item
+  }
+
+  async reactiveFetch () {
+    if (this.isWalletConnected) {
+      await this.$store.dispatch('marketplace/load')
     }
-  ]
-
-  private isModalOpen = false
-  private selectedData = []
-  public image: string | null = null
-
-  private onClick (val: any) {
-    this.isModalOpen = true
-    this.selectedData = val
   }
 }
 </script>

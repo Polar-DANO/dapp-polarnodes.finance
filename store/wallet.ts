@@ -1,60 +1,53 @@
-import { Module, VuexAction, VuexMutation } from 'nuxt-property-decorator'
-import { VuexModule } from '~/models'
+import { GetterTree, MutationTree, ActionTree } from 'vuex'
 
-@Module({
-  stateFactory: true,
-  namespaced: true,
-  name: 'wallet'
+export const state = () => ({
+  address: null as (string | null),
+  chainId: null as (number | null)
 })
-export default class Wallet extends VuexModule {
-  public address: string = ''
 
-  public get walletaddress (): string {
-    return this.address
-  }
+export type State = ReturnType<typeof state>;
 
-  @VuexMutation
-  public setAddress (address: string): void {
-    this.address = address
-    let jsonData = localStorage.getItem("data");
-    let data = {
-        address : ''
-    };
-    if(jsonData) {
-        data = JSON.parse(jsonData);
-    }                                        
-    data.address = address;
-    localStorage.setItem("data", JSON.stringify(data));    
-  }
+export const getters: GetterTree<State, {}> = {
+  address: store => store.address,
+  isConnected: store => store.chainId !== null,
+  hasAddress: store => store.address !== null
+}
 
-  @VuexMutation
-  public loadWalletAddress() : void {       
-    let jsonData = localStorage.getItem("data");
-    let data = {
-        address : ''
-    };
-    if(jsonData) {
-        data = JSON.parse(jsonData);
-    }                                        
-    this.address = data.address;    
-  }
+export const mutations: MutationTree<State> = {
+  setAddress (state, address: string | null) {
+    state.address = address
+  },
 
-  @VuexMutation
-  public clearWallet() : void {       
-    let jsonData = localStorage.getItem("data");
-    let data = {
-        address : ''
-    };
-    if(jsonData) {
-        data = JSON.parse(jsonData);
-    }                                        
-    data.address = ''
-    this.address = '';
-    localStorage.setItem("data", JSON.stringify(data));   
+  setChainId (state, chainId: number | null) {
+    state.chainId = chainId
+  },
+
+  logout (state) {
+    state.address = null
+    state.chainId = null
   }
-/*
-  @VuexAction  
-  public loggedInUser(): string {
-    return this.address
-  }*/
+}
+
+export const actions: ActionTree<State, {}> = {
+  async logout () {
+    if (this.$logout) {
+      await this.$logout()
+    }
+  },
+
+  async requestMetamask ({ getters }) {
+    if (getters.isConnected) {
+      return
+    }
+
+    await this.$register.metamask()
+  },
+
+  async requestWalletConnect ({ getters }) {
+    if (getters.isConnected) {
+      return
+    }
+
+    await this.$register.walletConnect()
+  }
 }

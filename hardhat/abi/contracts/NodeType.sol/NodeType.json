@@ -125,14 +125,14 @@
     "name": "calculateUserRewardsBatch",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "uint256[]",
         "name": "",
-        "type": "uint256"
+        "type": "uint256[]"
       },
       {
-        "internalType": "uint256",
+        "internalType": "uint256[]",
         "name": "",
-        "type": "uint256"
+        "type": "uint256[]"
       }
     ],
     "stateMutability": "view",
@@ -773,35 +773,6 @@
       }
     ],
     "name": "getTimeRoiOfBetweenIndexes",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "iStart",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "iEnd",
-        "type": "uint256"
-      }
-    ],
-    "name": "getTimesBeforeNoClaimRewardOfBetweenIndexes",
     "outputs": [
       {
         "internalType": "uint256[]",

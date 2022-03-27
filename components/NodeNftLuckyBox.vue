@@ -8,44 +8,36 @@
     <img
       src="../assets/PACK/LUCKY BOX NEUTRAL.jpg"
       class="node-image"
-    />
+    >
 
     <div class="divider" />
 
     <div class="node-nft__footer d-flex align-center justify-center">
       <span class="node-nft__blue-text mr-1">Cost: </span>
-      {{ cost }} $POLAR
+      {{ price ? `${price} $POLAR` : '-' }}
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { PropType } from "vue";
-import { Component, Vue } from "nuxt-property-decorator";
-import { NodeNftNames } from "~/models/types";
-import { abi as NODER } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
-
-const ethers = require("ethers");
-const { Token, PolarToken, Owner } = require("~/hardhat/scripts/address.js");
-
-const NAME_TO_URL = {
-  [NodeNftNames.Fuji]: "fuji",
-  [NodeNftNames.MontBlanc]: "mont-blanc",
-  [NodeNftNames.Kilimanjaro]: "kilimanjaro",
-  [NodeNftNames.Ushuaia]: "ushuaia",
-  [NodeNftNames.Everest]: "everest",
-};
+import { PropType } from 'vue'
+import { Component, Vue } from 'nuxt-property-decorator'
+import * as ethers from 'ethers'
 
 @Component({
   props: {
     index: { type: Number },
     name: { type: String as PropType<NodeNftNames> },
-    cost: { type: Number },
-  },
+    cost: { type: ethers.BigNumber }
+  }
 })
 export default class NodeNft extends Vue {
-  public onSelectNode() {
-    this.$router.push(`/luckybox/${this.$props.index}`);
+  public onSelectNode () {
+    this.$router.push(`/luckybox/${this.$props.index}`)
+  }
+
+  get price () {
+    return this.$props.cost ? ethers.utils.formatEther(this.$props.cost) : null
   }
 }
 </script>

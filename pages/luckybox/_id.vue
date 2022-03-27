@@ -84,6 +84,7 @@
               class="node-card__outlined node-card__button pa-2"
               dark
               text
+              :loading="isBtnLoading"
               @click="onApprove"
             >
               Approve
@@ -93,6 +94,7 @@
               class="node-card__outlined node-card__button pa-2"
               dark
               text
+              :loading="isBtnLoading"
               :disabled="quantity < 1"
               @click="onBuy"
             >
@@ -106,46 +108,55 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "nuxt-property-decorator";
-import { abi as NODER } from "~/hardhat/artifacts/contracts/Handler.sol/Handler.json";
-import { abi as POLAR } from "~/hardhat/artifacts/contracts/PolarNode.sol/PolarNode.json";
-import { WalletModule } from "~/store";
-import { LUCKY_BOX_BY_INDEX, LuckyBoxId } from "~/models/constants";
-
-const ethers = require('ethers')
-const { Token } = require('~/hardhat/scripts/address.js')
+import { Component } from 'nuxt-property-decorator'
+import * as ethers from 'ethers'
+import * as LuckyBox from '~/models/LuckyBoxType'
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 
 @Component({})
-export default class Create extends Vue {
-  public name: string | null = null
+export default class Create extends WalletReactiveFetch implements IReactiveFetch {
   public quantity = 1
-  private cost = 0
-  public chances = [
-    { key: 'Fuji', value: 20 },
-    { key: 'Mont Blanc', value: 20 },
-    { key: 'Killimanjaro', value: 20 },
-    { key: 'Ushuaia', value: 20 },
-    { key: 'Everest', value: 20 }
-  ]
-
-  public isApprove = true
-
   private dailyEarningPerNode = 0
   private tax: number | null = null
   private polar: any
   private pnode: any
+  private isBtnLoading = false
 
-  private created () {
-    const luckyBoxIndex = this.$route.params.id as LuckyBoxId
+  get isApprove () {
+    return this.$store.getters['polar/hasEnoughAllowance'](this.totalCost)
+  }
 
-    if (LUCKY_BOX_BY_INDEX[luckyBoxIndex]) {
-      const { name, cost } = LUCKY_BOX_BY_INDEX[luckyBoxIndex]
+  get luckyBox () {
+    return this.$store.getters['luckyboxes/typeById'](this.$route.params.id)
+  }
 
-      this.name = name
-      this.cost = cost
-    } else {
-      this.$router.push('/nodes')
+  get chances () {
+    return this.luckyBox
+      ? LuckyBox
+        .computeProbabilities(this.luckyBox)
+        .map(item => ({ key: item.nodeType, value: item.probability }))
+      : []
+  }
+
+  async reactiveFetch () {
+    if (this.isWalletConnected) {
+      await this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
+      if (!this.luckyBox) {
+        this.$router.push('/nodes')
+      }
     }
+  }
+
+  get name () {
+    return this.luckyBox?.name
+  }
+
+  get cost () {
+    return this.luckyBox?.price
+  }
+
+  get totalCost () {
+    return this.cost ? this.cost.mul(this.quantity) : ethers.BigNumber.from(0)
   }
 
   public onRemove () {
@@ -158,87 +169,77 @@ export default class Create extends Vue {
     this.quantity++
   }
 
-  public onError (err: { message: string } | null): void {
-    if (err) {
-      const inAppAlert = this.$root.$refs.alert as unknown as Record<
-        string,
-        Function
-      >
+  // public onError (err: { message: string } | null): void {
+  //   if (err) {
+  //     console.error(err)
+  //     const inAppAlert = this.$root.$refs.alert as unknown as Record<
+  //       string,
+  //       Function
+  //     >
 
-      if (err.message.includes('User denied transaction signature')) {
-        inAppAlert.MustSign()
-      } else if (err.message.includes('Global limit reached')) {
-        inAppAlert.MaxReached()
-      } else if (
-        err.message.includes('Creation with pending limit reached for user')
-      ) {
-        inAppAlert.UserMaxReached()
-      } else if (err.message.includes('Balance too low for creation')) {
-        inAppAlert.NeedBalance()
-      } else if (err.message.includes('nodeTypeName does not exist')) {
-        inAppAlert.NodesName()
-      } else if (err.message.includes('Blacklisted address')) {
-        inAppAlert.NodesBlacklist()
-      } else if (err.message.includes('fInsufficient Pending')) {
-        inAppAlert.noLiquidity()
-      } else if (err.message.includes('Balance too low for creation.')) {
-        inAppAlert.NeedBalance()
-      } else if (err.message.includes('Node creation not authorized yet')) {
-        inAppAlert.NotAuthorized()
-      } else if (
-        err.message.includes('futur and rewardsPool cannot create node')
-      ) {
-        inAppAlert.NotFutur()
-      } else if (err.message.includes('Max already reached')) {
-        inAppAlert.MaxReached()
-      } else if (
-        err.message.includes(
-          'MetaMask Tx Signature: User denied transaction signature.'
-        )
-      ) {
-        inAppAlert.UserReject()
-      } else {
-        inAppAlert.OtherError()
-      }
-    }
-  }
+  //     if (err.message.includes('User denied transaction signature')) {
+  //       inAppAlert.MustSign()
+  //     } else if (err.message.includes('Global limit reached')) {
+  //       inAppAlert.MaxReached()
+  //     } else if (
+  //       err.message.includes('Creation with pending limit reached for user')
+  //     ) {
+  //       inAppAlert.UserMaxReached()
+  //     } else if (err.message.includes('Balance too low for creation')) {
+  //       inAppAlert.NeedBalance()
+  //     } else if (err.message.includes('nodeTypeName does not exist')) {
+  //       inAppAlert.NodesName()
+  //     } else if (err.message.includes('Blacklisted address')) {
+  //       inAppAlert.NodesBlacklist()
+  //     } else if (err.message.includes('fInsufficient Pending')) {
+  //       inAppAlert.noLiquidity()
+  //     } else if (err.message.includes('Balance too low for creation.')) {
+  //       inAppAlert.NeedBalance()
+  //     } else if (err.message.includes('Node creation not authorized yet')) {
+  //       inAppAlert.NotAuthorized()
+  //     } else if (
+  //       err.message.includes('futur and rewardsPool cannot create node')
+  //     ) {
+  //       inAppAlert.NotFutur()
+  //     } else if (err.message.includes('Max already reached')) {
+  //       inAppAlert.MaxReached()
+  //     } else if (
+  //       err.message.includes(
+  //         'MetaMask Tx Signature: User denied transaction signature.'
+  //       )
+  //     ) {
+  //       inAppAlert.UserReject()
+  //     } else {
+  //       inAppAlert.OtherError()
+  //     }
+  //   }
+  // }
 
   public async onApprove () {
     try {
-      await this.polar.approve(
-        Token,
-        ethers.BigNumber.from(
-          '115792089237316195423570985008687907853269984665640564039457584007913129639935'
-        )
-      )
-      this.isApprove = false
-    } catch (err: any) {
-      this.onError(err)
+      this.isBtnLoading = true
+      await this.$store.dispatch('polar/requestAllowance')
+    } finally {
+      this.isBtnLoading = false
     }
   }
 
-  public onBuy () {
+  public async onBuy () {
     try {
-      alert('buy')
-    } catch (err: any) {
-      this.onError(err)
+      this.isBtnLoading = true
+      await this.$store.dispatch('luckyboxes/buy', {
+        luckyBox: this.luckyBox,
+        amount: this.quantity
+      })
+
+      this.$router.push('/mynft')
+    } finally {
+      this.isBtnLoading = false
     }
   }
 
   get dataBlocks () {
-    const { cost, quantity } = this
-
-    return [{ key: 'Cost:', value: cost * quantity, unit: '$POLAR' }]
-  }
-
-  get dailyEarning () {
-    const { quantity, dailyEarningPerNode } = this
-    return (dailyEarningPerNode * quantity).toFixed(2)
-  }
-
-  get roi () {
-    const { dailyEarningPerNode, cost } = this
-    return ((dailyEarningPerNode / cost) * 100).toFixed(2)
+    return [{ key: 'Cost:', value: ethers.utils.formatEther(this.totalCost), unit: '$POLAR' }]
   }
 }
 </script>

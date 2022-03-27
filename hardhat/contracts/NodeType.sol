@@ -606,22 +606,6 @@ contract NodeType is Owners {
 		return rois;
 	}
 
-	function getTimesBeforeNoClaimRewardOfBetweenIndexes(
-		address user, 
-		uint iStart, 
-		uint iEnd
-	) 
-		external 
-		view 
-		returns(uint[] memory)
-	{
-		uint[] memory timesBefore = new uint[](iEnd - iStart);
-		User storage u = userOf[user];
-		for (uint256 i = iStart; i < iEnd; i++)
-			timesBefore[i - iStart] = u.values[u.keys[i]].lastClaimTime + noClaimTimeReference;
-		return timesBefore;
-	}
-
 	function getFeaturesSize() external view returns(uint) {
 		return features.length;
 	}
@@ -664,18 +648,18 @@ contract NodeType is Owners {
 	) 
 		external 
 		view
-		returns(uint, uint) 
+		returns(uint[] memory, uint[] memory) 
 	{
-		uint rewardsTotal;
-		uint feesTotal;
+		uint[] memory rewardsTotal = new uint[](tokenIds.length);
+		uint[] memory feesTotal = new uint[](tokenIds.length);
 		User storage u = userOf[user];
 
 		for (uint i = 0; i < tokenIds.length; i++) {
 			require(u.inserted[tokenIds[i]], "NodeType: User doesnt own this node");
 			Node memory userNode = u.values[tokenIds[i]];
 			(uint rewards, uint fees) = _calculateNodeRewards(userNode);
-			rewardsTotal += rewards;
-			feesTotal += fees;
+			rewardsTotal[i] = rewards;
+			feesTotal[i] = fees;
 		}
 
 		return (rewardsTotal, feesTotal);
