@@ -118,7 +118,7 @@ export const actions: ActionTree<State, {}> = {
     }
 
     await this.$contracts.handler.createNodesWithTokens(token, nodeTypeName, count, '')
-    dispatch('nft/loadByNodeTypeName', nodeTypeName)
+    dispatch('nft/loadNFTs', null, { root: true })
   },
 
   async createNodesWithPendingRewards ({ dispatch }, { selectedNodes, tokenOut, nodeTypeTo, count }: CreateNodesWithPendingArgs) {
@@ -147,7 +147,7 @@ export const actions: ActionTree<State, {}> = {
       count
     )
 
-    dispatch('nft/loadNFTs')
+    dispatch('nft/loadNFTs', null, { root: true })
   },
 
   async createNodesLevelUp ({ dispatch }, { selectedNodes, tokenOut, nodeTypeTo, count }: CreateNodesWithPendingArgs) {
@@ -176,6 +176,6 @@ export const actions: ActionTree<State, {}> = {
       count
     )
 
-    dispatch('nft/loadNFTs')
+    dispatch('nft/loadNFTs', null, { root: true })
   }
 }

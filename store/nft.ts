@@ -2,7 +2,7 @@ import { ActionTree, MutationTree, GetterTree } from 'vuex'
 import { BigNumber } from 'ethers'
 import { NodeType } from '~/models/NodeType'
 
-interface NFT {
+export interface NFT {
   owner: string;
   nodeType: string;
   tokenId: number;

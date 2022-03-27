@@ -1,6 +1,6 @@
 require('@nomiclabs/hardhat-waffle')
 require('hardhat-abi-exporter')
-require('hardhat-ethernal')
+// require('hardhat-ethernal')
 
 module.exports = {
   solidity: {

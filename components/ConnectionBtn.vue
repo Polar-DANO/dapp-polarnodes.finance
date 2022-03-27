@@ -127,11 +127,8 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import AlertComponents from '~/components/AlertComponents.vue'
 
-@Component({
-  components: { AlertComponents }
-})
+@Component
 export default class ConnectionBtn extends Vue {
   get walletAddress () {
     return this.$store.getters['wallet/address']
@@ -152,21 +149,17 @@ export default class ConnectionBtn extends Vue {
   async requestMetamask () {
     try {
       await this.$store.dispatch('wallet/requestMetamask')
-    } catch (e) {
-      console.error(e)
+    } finally {
+      this.dialog = false
     }
-
-    this.dialog = false
   }
 
   async requestWalletConnect () {
     try {
       await this.$store.dispatch('wallet/requestWalletConnect')
-    } catch (e) {
-      console.error(e)
+    } finally {
+      this.dialog = false
     }
-
-    this.dialog = false
   }
 
   private wrongNetwork = false

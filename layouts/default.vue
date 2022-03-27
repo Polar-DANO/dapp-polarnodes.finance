@@ -44,7 +44,8 @@ const IF_INCLUDE_ERROR_MSG = {
   'Global limit reached': 'Global limit reached',
   'Creation with pending limit reached for user': 'Creation with pending limit reached for user',
   'Balance too low for creation': 'Balance too low for creation',
-  'Not enough pending': 'You don\'t have enough pending rewards to create a new node'
+  'Not enough pending': 'You don\'t have enough pending rewards to create a new node',
+  'contract call run out of gas': 'Contract call run out of gas, the transaction was reverted'
 }
 
 @Component({
@@ -72,7 +73,7 @@ export default class Default extends Vue {
       this.error = error?.message ?? error
     }
 
-    const replaced = Object.entries(IF_INCLUDE_ERROR_MSG).find(([key]) => this.error.includes(key))
+    const replaced = Object.entries(IF_INCLUDE_ERROR_MSG).find(([key]) => this.error.toLowerCase().includes(key.toLowerCase()))
     if (replaced) {
       this.error = replaced[1]
     }

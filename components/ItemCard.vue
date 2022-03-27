@@ -38,10 +38,10 @@ import { NodeNftNames } from '~/models/types'
 })
 export default class ItemCard extends Vue {
   get nftType () {
-    return this.item.item.nftType
+    return this.$props.item.item.nftType
   }
 
-  get image () {
+  get image () : string {
     const nodeTypeToImage = {
       [NFTType.NodeFuji]: NODENAME_TO_IMAGE[NodeNftNames.Fuji],
       [NFTType.NodeMontBlanc]: NODENAME_TO_IMAGE[NodeNftNames.MontBlanc],

@@ -252,20 +252,21 @@ import { URL_TO_NAME, NODENAME_TO_VIDEO, Url } from '~/models/constants'
 import * as NodeType from '~/models/NodeType'
 import { Token } from '~/hardhat/scripts/address'
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
+import { NFT } from '~/store/nft'
 
 const CreateMode = {
   FROM_TOKENS: 'FROM_TOKENS',
   FROM_NFT: 'FROM_NFT',
   LEVEL_UP: 'LEVEL_UP'
-}
+} as const
 
 @Component
 export default class Create extends WalletReactiveFetch implements IReactiveFetch {
   public quantity = 1
   public isDetailsOpen = false
-  public createMode: CreateMode = CreateMode.FROM_TOKENS
+  public createMode: keyof typeof CreateMode = CreateMode.FROM_TOKENS
   public selectedToken = Token
-  public selectedNfts = []
+  public selectedNfts: NFT[] = []
   public isBtnLoading = false
 
   created () {
@@ -359,12 +360,12 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
     ]
   }
 
-  public onSelectedNftInput (nfts: any[]) {
+  public onSelectedNftInput (nfts: NFT[]) {
     this.selectedNfts = nfts
   }
 
   get nfts () {
-    return this.$store.getters['nft/byNodeType'].flatMap(({ nodeType, nfts }) => {
+    return this.$store.getters['nft/byNodeType'].flatMap(({ nodeType, nfts }: { nodeType: string, nfts: NFT[] }) => {
       if (nfts.length === 0) {
         return []
       }
@@ -510,7 +511,7 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   get totalDailyEarning () {
     if (!this.nodeType) { return 0 }
     const { quantity, dailyEarningPerNode } = this
-    return ethers.utils.formatEther(dailyEarningPerNode?.mul(quantity))
+    return ethers.utils.formatEther(dailyEarningPerNode?.mul(quantity) ?? 0)
   }
 
   get roi () {

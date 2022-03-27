@@ -130,11 +130,11 @@ export default class DataTable extends Vue {
   }
 
   get _price () {
-    if (BigNumber.isBigNumber(this.price)) {
-      return eth.utils.formatEther(this.price)
+    if (BigNumber.isBigNumber(this.$props.price)) {
+      return eth.utils.formatEther(this.$props.price)
     }
 
-    return this.price
+    return this.$props.price
   }
 
   get _percentage () {

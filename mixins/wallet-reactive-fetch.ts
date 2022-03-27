@@ -3,7 +3,7 @@ import Component from 'vue-class-component'
 
 export interface IReactiveFetch {
   // eslint-disable-next-line no-unused-vars
-  reactiveFetch: () => Promise<void>
+  reactiveFetch: () => Promise<any>
 }
 
 @Component({
@@ -24,6 +24,6 @@ export default class WalletReactiveFetch extends Vue {
       throw new Error('reactiveFetch not defined')
     }
 
-    await this.reactiveFetch()
+    return await this.reactiveFetch()
   }
 }

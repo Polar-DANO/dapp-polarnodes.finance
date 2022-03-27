@@ -37,18 +37,18 @@ const formatEther = eth.utils.formatEther
 
 @Component({
   props: {
-    name: { type: String as PropType<NodeNftNames> }
+    name: { type: String }
   }
 })
 export default class NodeNft extends Vue {
   public onSelectNode () {
     this.$router.push(
-      `/create/${NAME_TO_URL[this.$props.name as PropType<NodeNftNames>]}`
+      `/create/${NAME_TO_URL[this.$props.name]}`
     )
   }
 
   get image () {
-    return NODENAME_TO_IMAGE[this.$props.name as PropType<NodeNftNames>]
+    return NODENAME_TO_IMAGE[this.$props.name]
   }
 
   get nodeType () {
