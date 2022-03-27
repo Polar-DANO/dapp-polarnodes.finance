@@ -13,6 +13,7 @@ import { abi as POLAR_ABI } from '~/hardhat/artifacts/contracts/Polar.sol/Polar.
 import { abi as NODE_TYPE_ABI } from '~/hardhat/artifacts/contracts/NodeType.sol/NodeType.json'
 import { abi as POLAR_LUCKY_BOX_ABI } from '~/hardhat/artifacts/contracts/PolarLuckyBox.sol/PolarLuckyBox.json'
 import { abi as POLAR_MARKETPLACE_ABI } from '~/hardhat/artifacts/contracts/PolarMarketPlace.sol/PolarMarketPlace.json'
+import { abi as ERC_721_ABI } from '~/hardhat/artifacts/@openzeppelin/contracts/token/ERC721/ERC721.sol/ERC721.json'
 
 export interface ContractsPlugin {
   $contracts?: {
@@ -22,6 +23,7 @@ export interface ContractsPlugin {
     luckyBoxes: ethers.Contract;
     marketplace: ethers.Contract;
     nodeTypeByName: (name: string) => Promise<ethers.Contract>;
+    erc721: (address: string) => ethers.Contract;
   },
   $register: {
     metamask: () => Promise<void>;
@@ -130,6 +132,9 @@ const ethersPlugin: Plugin = ({ store }, inject) => {
         }
 
         return nameContractsMap[name]
+      },
+      erc721 (address: string) {
+        return new ethers.Contract(address, ERC_721_ABI, signer)
       }
     }
 

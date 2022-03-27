@@ -1,55 +1,21 @@
 import { ActionTree, MutationTree, GetterTree } from 'vuex'
-import { BigNumber } from 'ethers'
 import * as ethers from 'ethers'
 import { ContractsPlugin } from '~/plugins/ethers'
+import { NFTType, Offer, Auction, ItemType } from '~/models/marketplace'
 
-export enum NFTType {
-  NodeFuji = 'Fuji',
-  NodeMontBlanc = 'Mont Blanc',
-  NodeKilimanjaro = 'Kilimanjaro',
-  NodeUshuaia = 'Ushuaia',
-  NodeEverest = 'Everest',
-  LuckyBox = 'luckybox'
-}
+// TODO : move to models
 
 function getSupportedNfts (addresses: ContractsPlugin['$addresses']): Record<NFTType, string> {
   return {
-    [NFTType.NodeFuji]: addresses.NodeType0,
-    [NFTType.NodeMontBlanc]: addresses.NodeType1,
-    [NFTType.NodeKilimanjaro]: addresses.NodeType2,
-    [NFTType.NodeUshuaia]: addresses.NodeType3,
-    [NFTType.NodeEverest]: addresses.NodeType4,
+    [NFTType.Node]: addresses.PolarNode,
     [NFTType.LuckyBox]: addresses.PolarLuckyBox
   }
 }
 
-interface Offer {
-  id: number;
-  owner: string;
-  nftType: NFTType
-  tokenId: BigNumber
-  price: BigNumber
-  creationTime: Date
-}
-
-interface Auction {
-  id: number
-  owner: string
-  nftType: NFTType
-  tokenId: BigNumber
-  currentPrice: BigNumber
-  end: Date
-  creationTime: Date
-}
-
-enum ItemType {
-  Offer = 'offer',
-  Auction = 'auction'
-}
-
 export const state = () => ({
   offers: null as (Offer[] | null),
-  auctions: null as (Auction[] | null)
+  auctions: null as (Auction[] | null),
+  isApprovedForNFTType: {} as Record<NFTType, boolean>
 })
 
 export type State = ReturnType<typeof state>;
@@ -58,19 +24,23 @@ export const getters: GetterTree<State, {}> = {
   items: state => [
     ...(state.offers ?? []).map((offer) => {
       return {
-        type: 'offer',
+        type: ItemType.Offer,
         item: offer
       }
     }),
     ...(state.auctions ?? []).map((auction) => {
       return {
-        type: 'auction',
+        type: ItemType.Auction,
         item: auction
       }
     })
   ].sort((a, b) =>
     a.item.creationTime.getTime() - b.item.creationTime.getTime() || a.item.id - b.item.id
-  )
+  ),
+
+  isApprovedForNFTType: state => (nftType: NFTType) => {
+    return state.isApprovedForNFTType[nftType] ?? false
+  }
 }
 
 export const mutations: MutationTree<State> = {
@@ -80,6 +50,17 @@ export const mutations: MutationTree<State> = {
 
   setAuctions (state, auctions: Auction[]) {
     state.auctions = auctions
+  },
+
+  setApprovedForNftType (state, { nftType, isApproved }: { nftType: NFTType, isApproved: boolean }) {
+    state.isApprovedForNFTType = {
+      ...state.isApprovedForNFTType,
+      [nftType]: !!isApproved
+    }
+  },
+
+  resetApproved (state) {
+    state.isApprovedForNFTType = {} as Record<NFTType, boolean>
   }
 }
 
@@ -195,5 +176,47 @@ export const actions: ActionTree<State, {}> = {
 
     await tx.wait()
     dispatch('loadAuctions')
+  },
+
+  async loadApproveForNftType ({ commit, rootGetters }, nftType: NFTType) {
+    const userAddress = rootGetters['wallet/address']
+    if (!userAddress) {
+      commit('resetApprovedForNftType')
+      return
+    }
+
+    const nftAddress = getSupportedNfts(this.$addresses)[nftType]
+    if (!nftAddress) {
+      throw new Error('NFT type is not supported')
+    }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
+    commit('setApprovedForNftType', {
+      nftType,
+      isApproved: await this.$contracts.erc721(nftAddress).isApprovedForAll(userAddress, this.$addresses.MarketPlace)
+    })
+  },
+
+  async approveForNftType ({ dispatch, rootGetters }, nftType: NFTType) {
+    const userAddress = rootGetters['wallet/address']
+    if (!userAddress) {
+      throw new Error('User address is not defined')
+    }
+
+    const nftAddress = getSupportedNfts(this.$addresses)[nftType]
+    if (!nftAddress) {
+      throw new Error('NFT type is not supported')
+    }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
+    const tx = await this.$contracts.erc721(nftAddress).setApprovalForAll(this.$addresses.MarketPlace, true)
+    await tx.wait()
+    dispatch('loadApproveForNftType', nftType)
   }
 }

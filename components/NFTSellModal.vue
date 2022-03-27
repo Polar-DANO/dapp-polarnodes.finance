@@ -26,7 +26,7 @@
               </div>
               <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[30%]">
                 <div class="p-[10px] md:py-[8px]">
-                  <span class="text-[white] text-[14px] font-[500]">{{ formatBigNumber(nft.userPendingRewards, 4) }} $POLAR</span>
+                  <span class="text-[white] text-[14px] font-[500]">{{ formatBigNumber(pendingRewards, 4) }} $POLAR</span>
                 </div>
               </div>
             </div>
@@ -110,6 +110,10 @@ export default class NFTSellModal extends Vue {
 
   get rewardAmount () {
     return NodeType.dailyRewardPerNode(this.nodeType)
+  }
+
+  get pendingRewards () {
+    return this.nft?.userPendingRewards ?? ethers.BigNumber.from(0)
   }
 
   get claimTax () {

@@ -67,11 +67,11 @@
           class="text-[16px] font-[600] py-[5px] text-center text-white border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] w-full"
           dark
           text
-          :disabled="selectedSellMode === null"
-          :loading="isListBtnLoading"
-          @click="onList"
+          :disabled="selectedSellMode === null && !isApprove"
+          :loading="isBtnLoading"
+          @click="() => isApprove ? onApprove() : onList()"
         >
-          List
+          {{ isApprove ? 'Approve': 'List' }}
         </v-btn>
       </div>
     </div>
@@ -83,7 +83,7 @@
 import { Component } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
-import { NFTType } from '~/store/marketplace'
+import { NFTType } from '~/models/marketplace'
 
 @Component({
   watch: {
@@ -96,14 +96,19 @@ export default class LuckyboxList extends WalletReactiveFetch implements IReacti
   private selectedSellMode: 'fixed' | 'auction' | null = null
   private minimumBid = 100
   private fixedPrice = 100
-  private isListBtnLoading = false
+  private isBtnLoading = false
 
   setDefaultPrices () {
     if (!this.luckyBox) { return }
 
     const luckyBoxType = this.$store.getters['luckyboxes/typeByName'](this.luckyBox.type)
+    if (!luckyBoxType) { return }
     const defaultPrice = parseFloat(ethers.utils.formatEther(luckyBoxType.price))
     this.minimumBid = this.fixedPrice = defaultPrice
+  }
+
+  get isApprove () {
+    return !this.$store.getters['marketplace/isApprovedForNFTType'](NFTType.LuckyBox)
   }
 
   get name () {
@@ -132,11 +137,23 @@ export default class LuckyboxList extends WalletReactiveFetch implements IReacti
 
   async reactiveFetch () {
     if (this.isWalletConnected) {
-      await this.$store.dispatch('luckyboxes/loadMyLuckyBoxes')
+      await Promise.all([
+        this.$store.dispatch('luckyboxes/loadMyLuckyBoxes'),
+        this.$store.dispatch('marketplace/loadApproveForNftType', NFTType.LuckyBox)
+      ])
 
       if (!this.luckyBox) {
         this.$router.push('/mynft')
       }
+    }
+  }
+
+  async onApprove () {
+    try {
+      this.isBtnLoading = true
+      await this.$store.dispatch('marketplace/approveForNftType', NFTType.LuckyBox)
+    } finally {
+      this.isBtnLoading = false
     }
   }
 
@@ -146,7 +163,7 @@ export default class LuckyboxList extends WalletReactiveFetch implements IReacti
     }
 
     try {
-      this.isListBtnLoading = true
+      this.isBtnLoading = true
 
       if (this.selectedSellMode === 'fixed') {
         await this.$store.dispatch('marketplace/sellOffer', {
@@ -165,7 +182,7 @@ export default class LuckyboxList extends WalletReactiveFetch implements IReacti
 
       this.$router.push('/market')
     } finally {
-      this.isListBtnLoading = false
+      this.isBtnLoading = false
     }
   }
 }

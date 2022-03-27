@@ -27,7 +27,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import { NFTType } from '~/store/marketplace'
+import { NFTType } from '~/models/marketplace'
 import { NODENAME_TO_IMAGE, LUCKYBOX_IMAGE } from '~/models/constants'
 import { NodeNftNames } from '~/models/types'
 

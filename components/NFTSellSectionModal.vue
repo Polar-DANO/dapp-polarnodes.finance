@@ -67,11 +67,11 @@
             class="text-[16px] font-[600] py-[5px] text-center text-white border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] w-full"
             dark
             text
-            :disabled="selectedSellMode === null"
-            :loading="isListBtnLoading"
-            @click="onList"
+            :disabled="selectedSellMode === null && !isApprove"
+            :loading="isBtnLoading"
+            @click="() => isApprove ? onApprove() : onList()"
           >
-            List
+            {{ isApprove ? 'Approve' : 'List' }}
           </v-btn>
         </div>
       </div>
@@ -81,18 +81,33 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
+import { NFTType } from '~/models/marketplace'
 
 @Component({
   props: {
     nft: Object
   }
 })
-export default class NFTSellSectionModal extends Vue {
+export default class NFTSellSectionModal extends WalletReactiveFetch implements IReactiveFetch {
   private selectedSellMode: 'fixed' | 'auction' | null = null
   private minimumBid = 100
   private fixedPrice = 100
-  private isListBtnLoading = false
+  private isBtnLoading = false
+
+  async reactiveFetch () {
+    if (this.isWalletConnected) {
+      await Promise.all([
+        this.$store.dispatch('marketplace/loadApproveForNftType', NFTType.Node)
+      ])
+    }
+  }
+
+  get isApprove () {
+    if (!this?.nft?.nodeType) { return false }
+    return !this.$store.getters['marketplace/isApprovedForNFTType'](NFTType.Node)
+  }
 
   get isFixedPrice () {
     return this.selectedSellMode === 'fixed'
@@ -106,23 +121,32 @@ export default class NFTSellSectionModal extends Vue {
     this.selectedSellMode = event ? mode : null
   }
 
+  async onApprove () {
+    try {
+      this.isBtnLoading = true
+      await this.$store.dispatch('marketplace/approveForNftType', NFTType.Node)
+    } finally {
+      this.isBtnLoading = false
+    }
+  }
+
   async onList () {
     if (!this.selectedSellMode) {
       return
     }
 
     try {
-      this.isListBtnLoading = true
+      this.isBtnLoading = true
 
       if (this.selectedSellMode === 'fixed') {
         await this.$store.dispatch('marketplace/sellOffer', {
-          nftType: this.nft.nodeType,
+          nftType: NFTType.Node,
           tokenId: this.nft.tokenId,
           price: this.fixedPrice
         })
       } else {
         await this.$store.dispatch('marketplace/sellAuction', {
-          nftType: this.nft.nodeType,
+          nftType: NFTType.Node,
           tokenId: this.nft.tokenId,
           price: this.fixedPrice,
           end: ~~(new Date().getTime() / 1000) + 604800 // now + 1 week
@@ -131,7 +155,7 @@ export default class NFTSellSectionModal extends Vue {
 
       this.$router.push('/market')
     } finally {
-      this.isListBtnLoading = false
+      this.isBtnLoading = false
     }
   }
 }
