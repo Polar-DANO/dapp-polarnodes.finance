@@ -332,7 +332,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
   }
 
   get isPolarApproved () {
-    return this.$store.getters['polar/hasEnoughMarketplaceAllowance'](this.price)
+    return this.$store.getters['tokens/hasEnoughMarketplaceAllowance'](this.$store.state.tokens.tokens.POLAR.address, this.price)
   }
 
   async onApprove () {
@@ -345,7 +345,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
       }
 
       if (!this.isPolarApproved) {
-        await this.$store.dispatch('polar/requestMarketplaceAllowance')
+        await this.$store.dispatch('tokens/requestMarketplaceAllowance', this.$store.state.tokens.tokens.POLAR.address)
       }
     } finally {
       this.isBtnLoading = false
@@ -356,7 +356,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
     if (this.isWalletConnected) {
       await Promise.all([
         this.$store.dispatch('marketplace/loadApproveForNftType', this.nft.nftType),
-        this.$store.dispatch('polar/loadAllowance')
+        this.$store.dispatch('tokens/loadAllowance', this.$store.state.tokens.tokens.POLAR.address)
       ])
     }
   }

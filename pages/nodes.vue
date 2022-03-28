@@ -69,7 +69,7 @@ export default class Nodes extends WalletReactiveFetch implements IReactiveFetch
       {
         icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
         title: 'My $POLAR Balance',
-        price: this.$store.state.polar.balance,
+        price: this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address),
         percentage: null
       }
     ]
@@ -86,7 +86,7 @@ export default class Nodes extends WalletReactiveFetch implements IReactiveFetch
   async reactiveFetch () {
     if (this.isWalletConnected) {
       return await Promise.all([
-        this.$store.dispatch('polar/loadBalance'),
+        this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),
         this.$store.dispatch('nodes/loadNodeTypes'),
         this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
       ])

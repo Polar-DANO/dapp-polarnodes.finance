@@ -85,6 +85,7 @@
               Earn {{ totalDailyEarning }} $POLAR per day
             </div>
             <VSelect
+              v-model="selectedToken"
               class="node-card__outlined node-card__select centered-input mt-4"
               width="200px"
               placeholder="Buy With"
@@ -92,8 +93,6 @@
               hide-details
               outlined
               :items="payWithTokens"
-              :value="selectedToken"
-              @input="onSelectedTokenInput"
             />
             <div class="node-card__content inline-block my-5">
               <VRow
@@ -260,7 +259,13 @@ const CreateMode = {
   LEVEL_UP: 'LEVEL_UP'
 } as const
 
-@Component
+@Component({
+  watch: {
+    selectedToken: {
+      handler: 'reactiveFetch'
+    }
+  }
+})
 export default class Create extends WalletReactiveFetch implements IReactiveFetch {
   public quantity = 1
   public isDetailsOpen = false
@@ -268,6 +273,10 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   public selectedToken = Token
   public selectedNfts: NFT[] = []
   public isBtnLoading = false
+
+  get availableTokens () {
+    return this.$store.state.tokens.tokens
+  }
 
   created () {
     if (!this.nodeNftName) {
@@ -278,7 +287,7 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   async reactiveFetch () {
     if (!this.isWalletConnected) { return }
     await {
-      allowance: await this.$store.dispatch('polar/loadAllowance'),
+      allowance: await this.$store.dispatch('tokens/loadAllowance', this.selectedToken),
       nodes: await (async () => {
         await this.$store.dispatch('nodes/loadNodeTypes')
         await this.$store.dispatch('nft/loadMyNFTs')
@@ -355,9 +364,12 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   }
 
   get payWithTokens () {
-    return [
-      { text: '$POLAR', value: Token }
-    ]
+    return Object.values(this.$store.state.tokens.tokens).map((token) => {
+      return {
+        text: token.symbol,
+        value: token.address
+      }
+    })
   }
 
   public onSelectedNftInput (nfts: NFT[]) {
@@ -384,60 +396,14 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
     this.quantity++
   }
 
-  // public onError (err: { message: string } | null): void {
-  //   if (err) {
-  //     console.error(err)
-  //     const inAppAlert = this.$root.$refs.alert as unknown as Record<
-  //       string,
-  //       Function
-  //     >
-
-  //     if (err.message.includes('User denied transaction signature')) {
-  //       inAppAlert.MustSign()
-  //     } else if (err.message.includes('Global limit reached')) {
-  //       inAppAlert.MaxReached()
-  //     } else if (
-  //       err.message.includes('Creation with pending limit reached for user')
-  //     ) {
-  //       inAppAlert.UserMaxReached()
-  //     } else if (err.message.includes('Balance too low for creation')) {
-  //       inAppAlert.NeedBalance()
-  //     } else if (err.message.includes('nodeTypeName does not exist')) {
-  //       inAppAlert.NodesName()
-  //     } else if (err.message.includes('Blacklisted address')) {
-  //       inAppAlert.NodesBlacklist()
-  //     } else if (err.message.includes('fInsufficient Pending')) {
-  //       inAppAlert.noLiquidity()
-  //     } else if (err.message.includes('Balance too low for creation.')) {
-  //       inAppAlert.NeedBalance()
-  //     } else if (err.message.includes('Node creation not authorized yet')) {
-  //       inAppAlert.NotAuthorized()
-  //     } else if (
-  //       err.message.includes('futur and rewardsPool cannot create node')
-  //     ) {
-  //       inAppAlert.NotFutur()
-  //     } else if (err.message.includes('Max already reached')) {
-  //       inAppAlert.MaxReached()
-  //     } else if (
-  //       err.message.includes(
-  //         'MetaMask Tx Signature: User denied transaction signature.'
-  //       )
-  //     ) {
-  //       inAppAlert.UserReject()
-  //     } else {
-  //       inAppAlert.OtherError()
-  //     }
-  //   }
-  // }
-
   get isApprove () {
-    return !this.$store.getters['polar/hasEnoughSwapperAllowance'](this.totalCost)
+    return !this.$store.getters['tokens/hasEnoughSwapperAllowance'](this.selectedToken, this.totalCost)
   }
 
   public async onApprove () {
     try {
       this.isBtnLoading = true
-      await this.$store.dispatch('polar/requestSwapperAllowance')
+      await this.$store.dispatch('tokens/requestSwapperAllowance', this.selectedToken)
     } finally {
       this.isBtnLoading = false
     }

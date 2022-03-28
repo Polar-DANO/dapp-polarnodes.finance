@@ -98,7 +98,7 @@ export default class IndexVue extends WalletReactiveFetch implements IReactiveFe
       ...(
         (this.isWalletConnected)
           ? [
-              this.$store.dispatch('polar/loadBalance'),
+              this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),
               this.$store.dispatch('nodes/loadNodeTypes')
             ]
           : [])

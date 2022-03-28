@@ -87,7 +87,8 @@ export default class SortList extends Vue {
     return [
       { text: 'Latest deals', value: ViewType.Latest },
       { text: 'My NFTs', value: ViewType.MyNFTs },
-      { text: 'Value (desc)', value: ViewType.DescValue },
+      { text: '- to + Value', value: ViewType.AscValue },
+      { text: '+ to - Value', value: ViewType.DescValue },
       { text: 'Expiring soon', value: ViewType.ExpiringSoon }
     ]
   }

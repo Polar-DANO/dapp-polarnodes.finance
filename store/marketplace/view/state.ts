@@ -8,6 +8,7 @@ export type NFTTypeFilter = {
 export enum ViewType {
   Latest,
   MyNFTs,
+  AscValue,
   DescValue,
   ExpiringSoon,
 }

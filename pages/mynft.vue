@@ -41,7 +41,7 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
       {
         icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
         title: 'My $POLAR Balance',
-        price: this.$store.state.polar.balance,
+        price: this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address),
         percentage: null
       }
     ]
@@ -60,7 +60,7 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
       await {
         lbTypes: await this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
         myLbs: await this.$store.dispatch('luckyboxes/loadMyLuckyBoxes'),
-        polarBalance: await this.$store.dispatch('polar/loadBalance'),
+        polarBalance: await this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),
         myNFTs: await (async () => {
           await this.$store.dispatch('nodes/loadNodeTypes')
           await this.$store.dispatch('nft/loadMyNFTs')

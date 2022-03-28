@@ -24,22 +24,27 @@ const getValue = (item: Item) => {
   return null
 }
 
+const orderByValue =
+  (asc: boolean) =>
+    (items: Item[]) =>
+      [...items]
+        .filter(item => getValue(item) !== null)
+        .sort((a, b) => {
+          const valueA = getValue(a)
+          const valueB = getValue(b)
+
+          if (valueA === null || valueB === null) {
+            return 0
+          }
+
+          return (valueB.gt(valueA) ? 1 : valueB.lt(valueA) ? -1 : 0) * (asc ? -1 : 1)
+        })
+
 const views: Record<ViewType, (items: Item[], rootGetters: RootGetters) => Item[]> = {
   [ViewType.Latest]: items => [...items].sort((a, b) => b.creationTime.getTime() - a.creationTime.getTime()),
   [ViewType.MyNFTs]: (items, getters) => items.filter(item => item.nft.owner === getters['wallet/address']),
-  [ViewType.DescValue]: items =>
-    [...items]
-      .filter(item => getValue(item) !== null)
-      .sort((a, b) => {
-        const valueA = getValue(a)
-        const valueB = getValue(b)
-
-        if (valueA === null || valueB === null) {
-          return 0
-        }
-
-        return valueB.gt(valueA) ? 1 : valueB.lt(valueA) ? -1 : 0
-      }),
+  [ViewType.AscValue]: orderByValue(true),
+  [ViewType.DescValue]: orderByValue(false),
   [ViewType.ExpiringSoon]: items =>
     items
       .filter((item): item is Auction => item.type === ItemType.Auction)
