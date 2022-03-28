@@ -132,7 +132,6 @@ export default class NodeTable extends Vue {
     try {
       this.isClaimAllBtnLoading = true
       await this.$store.dispatch('nft/claimAll')
-      this.$router.push('/nodes')
     } finally {
       this.isClaimAllBtnLoading = false
     }

@@ -123,7 +123,7 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   private isBtnLoading = false
 
   get isApprove () {
-    return this.$store.getters['polar/hasEnoughAllowance'](this.totalCost)
+    return !this.$store.getters['polar/hasEnoughSwapperAllowance'](this.totalCost)
   }
 
   get luckyBox () {
@@ -218,7 +218,7 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   public async onApprove () {
     try {
       this.isBtnLoading = true
-      await this.$store.dispatch('polar/requestAllowance')
+      await this.$store.dispatch('polar/requestSwapperAllowance')
     } finally {
       this.isBtnLoading = false
     }

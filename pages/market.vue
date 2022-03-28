@@ -6,15 +6,15 @@
     <SortList />
     <div class="grid md:grid-cols-4 gap-4 mt-[30px]">
       <ItemCard
-        v-for="(item, i) in items"
-        :key="i"
+        v-for="(item) in items"
+        :key="`${item.nft.tokenId}-${item.nft.nftType}`"
         :item="item"
         @click="onClick(item)"
       />
     </div>
     <ItemDetailsModal
       v-if="isModalOpen"
-      :data-detail="selectedItem"
+      :item="selectedItem"
       @close="() => selectedItem = null"
     />
   </div>
@@ -34,7 +34,7 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
   }
 
   get items () : Item[] {
-    return this.$store.getters['marketplace/items']
+    return this.$store.getters['marketplace/view/current']
   }
 
   private onClick (item: Item) {
@@ -43,7 +43,11 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
 
   async reactiveFetch () {
     if (this.isWalletConnected) {
-      await this.$store.dispatch('marketplace/load')
+      await Promise.all([
+        this.$store.dispatch('marketplace/load'),
+        this.$store.dispatch('nodes/loadNodeTypes'),
+        this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
+      ])
     }
   }
 }

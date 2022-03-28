@@ -23,7 +23,7 @@ export const getters: GetterTree<State, {}> = {
       .sort(
         (a, b) => (b.creationTime.getTime() - a.creationTime.getTime())
       ),
-  byTokenId: state => (tokenId: string) => state.byTokenId[tokenId]
+  byTokenId: state => (tokenId: BigNumber) => state.byTokenId[tokenId.toString()] ?? null
 }
 
 export const mutations: MutationTree<State> = {
@@ -166,6 +166,7 @@ export const actions: ActionTree<State, {}> = {
     const nodeType = await this.$contracts.polarNodeNft.tokenIdsToType(tokenId)
     if (nodeType === '') {
       commit('setByTokenId', null)
+      return
     }
 
     const nodeTypeContract = await this.$contracts.nodeTypeByName(nodeType)

@@ -82,12 +82,21 @@
 
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
+import * as ethers from 'ethers'
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 import { NFTType } from '~/models/marketplace'
 
 @Component({
   props: {
     nft: Object
+  },
+  watch: {
+    nft: {
+      handler: 'setDefaultPrices'
+    },
+    nodeType: {
+      handler: 'setDefaultPrices'
+    }
   }
 })
 export default class NFTSellSectionModal extends WalletReactiveFetch implements IReactiveFetch {
@@ -95,6 +104,18 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
   private minimumBid = 100
   private fixedPrice = 100
   private isBtnLoading = false
+
+  get nodeType () {
+    return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType)
+  }
+
+  setDefaultPrices () {
+    if (!this.$props.nft) { return }
+    if (!this.nodeType) { return }
+
+    const defaultPrice = parseFloat(ethers.utils.formatEther(this.nodeType.cost))
+    this.minimumBid = this.fixedPrice = defaultPrice
+  }
 
   async reactiveFetch () {
     if (this.isWalletConnected) {

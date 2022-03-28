@@ -431,13 +431,13 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   // }
 
   get isApprove () {
-    return !this.$store.getters['polar/hasEnoughAllowance'](this.totalCost)
+    return !this.$store.getters['polar/hasEnoughSwapperAllowance'](this.totalCost)
   }
 
   public async onApprove () {
     try {
       this.isBtnLoading = true
-      await this.$store.dispatch('polar/requestAllowance')
+      await this.$store.dispatch('polar/requestSwapperAllowance')
     } finally {
       this.isBtnLoading = false
     }

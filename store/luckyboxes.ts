@@ -12,6 +12,7 @@ export const state = () => ({
 export type State = ReturnType<typeof state>;
 
 export const getters: GetterTree<State, {}> = {
+  typesNames: state => state.luckyBoxTypes?.map(type => type.name) ?? null,
   typeByName: state => (name: string) => state.luckyBoxTypes?.find(type => type.name === name) ?? null,
   typeById: state => (id: number) => state.luckyBoxTypes?.[id] ?? null,
   byTokenId: state => (tokenId: BigNumber) => state.byTokenIds[tokenId.toString()] ?? null

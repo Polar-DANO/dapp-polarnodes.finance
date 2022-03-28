@@ -1,7 +1,9 @@
-import { ActionTree, MutationTree, GetterTree } from 'vuex'
+import { ActionTree } from 'vuex'
 import * as ethers from 'ethers'
+import { BigNumber } from 'ethers'
+import { State } from './state'
+import { NFTType, Offer, Auction, ItemType, NFT } from '~/models/marketplace'
 import { ContractsPlugin } from '~/plugins/ethers'
-import { NFTType, Offer, Auction, ItemType, Item } from '~/models/marketplace'
 
 function getSupportedNfts (addresses: ContractsPlugin['$addresses']): Record<NFTType, string> {
   return {
@@ -10,50 +12,7 @@ function getSupportedNfts (addresses: ContractsPlugin['$addresses']): Record<NFT
   }
 }
 
-export const state = () => ({
-  offers: null as (Offer[] | null),
-  auctions: null as (Auction[] | null),
-  isApprovedForNFTType: {} as Record<NFTType, boolean>
-})
-
-export type State = ReturnType<typeof state>;
-
-export const getters: GetterTree<State, {}> = {
-  items: (state): Item[] => [
-    ...(state.offers ?? []),
-    ...(state.auctions ?? [])
-  ].sort((a, b) =>
-    a.creationTime.getTime() - b.creationTime.getTime()
-  ),
-
-  isApprovedForNFTType: state =>
-    (nftType: NFTType): boolean => {
-      return state.isApprovedForNFTType[nftType] ?? false
-    }
-}
-
-export const mutations: MutationTree<State> = {
-  setOffers (state, offers: Offer[]) {
-    state.offers = offers
-  },
-
-  setAuctions (state, auctions: Auction[]) {
-    state.auctions = auctions
-  },
-
-  setApprovedForNftType (state, { nftType, isApproved }: { nftType: NFTType, isApproved: boolean }) {
-    state.isApprovedForNFTType = {
-      ...state.isApprovedForNFTType,
-      [nftType]: !!isApproved
-    }
-  },
-
-  resetApproved (state) {
-    state.isApprovedForNFTType = {} as Record<NFTType, boolean>
-  }
-}
-
-export const actions: ActionTree<State, {}> = {
+const actions: ActionTree<State, {}> = {
   async loadOffers ({ commit }) {
     const supportedNfts = getSupportedNfts(this.$addresses)
 
@@ -121,7 +80,7 @@ export const actions: ActionTree<State, {}> = {
     ])
   },
 
-  async sellOffer ({ dispatch, rootGetters }, { nftType, tokenId, price }: { nftType: NFTType, tokenId: number, price: number }) {
+  async sellOffer ({ dispatch, rootGetters }, { nftType, tokenId, price }: { nftType: NFTType; tokenId: number; price: number; }) {
     const userAddress = rootGetters['wallet/address']
     if (!userAddress) {
       throw new Error('User address is not defined')
@@ -146,7 +105,7 @@ export const actions: ActionTree<State, {}> = {
     dispatch('loadOffers')
   },
 
-  async sellAuction ({ dispatch, rootGetters }, { nftType, tokenId, price, end }: { nftType: NFTType, tokenId: number, price: number, end: number }) {
+  async sellAuction ({ dispatch, rootGetters }, { nftType, tokenId, price, end }: { nftType: NFTType; tokenId: number; price: number; end: number; }) {
     const userAddress = rootGetters['wallet/address']
     if (!userAddress) {
       throw new Error('User address is not defined')
@@ -212,5 +171,95 @@ export const actions: ActionTree<State, {}> = {
     const tx = await this.$contracts.erc721(nftAddress).setApprovalForAll(this.$addresses.MarketPlace, true)
     await tx.wait()
     dispatch('loadApproveForNftType', nftType)
+  },
+
+  async bidAuction ({ dispatch, rootGetters }, { nftType, tokenId, bid }: { nftType: NFTType; tokenId: BigNumber; bid: BigNumber; }) {
+    const userAddress = rootGetters['wallet/address']
+    if (!userAddress) {
+      throw new Error('User address is not defined')
+    }
+
+    const nftAddress = getSupportedNfts(this.$addresses)[nftType]
+    if (!nftAddress) {
+      throw new Error('NFT type is not supported')
+    }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
+    const tx = await this.$contracts.marketplace.purchaseAuctionItem(
+      nftAddress,
+      tokenId,
+      bid
+    )
+
+    await tx.wait()
+    dispatch('loadAuctions')
+  },
+
+  async buyNow ({ dispatch, rootGetters }, { nftType, tokenId }: { nftType: NFTType; tokenId: BigNumber; }) {
+    const userAddress = rootGetters['wallet/address']
+    if (!userAddress) {
+      throw new Error('User address is not defined')
+    }
+
+    const nftAddress = getSupportedNfts(this.$addresses)[nftType]
+    if (!nftAddress) {
+      throw new Error('NFT type is not supported')
+    }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
+    const tx = await this.$contracts.marketplace.purchaseOfferItem(
+      nftAddress,
+      tokenId
+    )
+
+    await tx.wait()
+    dispatch('loadOffers')
+    dispatch('nft/loadMyNFTs', null, { root: true })
+  },
+
+  async recover ({ dispatch, rootGetters }, { nft, type }: { nft: NFT; type: ItemType; }) {
+    const userAddress = rootGetters['wallet/address']
+    if (!userAddress) {
+      throw new Error('User address is not defined')
+    }
+
+    const nftAddress = getSupportedNfts(this.$addresses)[nft.nftType]
+    if (!nftAddress) {
+      throw new Error('NFT type is not supported')
+    }
+
+    const getTx = async () => {
+      if (!this.$contracts) {
+        throw new Error('Contracts not loaded')
+      }
+
+      switch (type) {
+        case ItemType.Offer:
+          return await this.$contracts.marketplace.recoverOfferItem(
+            nftAddress,
+            nft.tokenId
+          )
+        case ItemType.Auction:
+          return await this.$contracts.marketplace.recoverAuctionItem(
+            nftAddress,
+            nft.tokenId
+          )
+        default:
+          throw new Error('Unknown item type')
+      }
+    }
+
+    const tx = await getTx()
+    await tx.wait()
+    dispatch('load')
+    dispatch('nft/loadMyNFTs', null, { root: true })
   }
 }
+
+export default actions

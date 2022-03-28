@@ -23,7 +23,7 @@
   <div
     v-else
     class="md:flex flex-col md:flex-wrap bg-[#17171B] border-solid border-[#00C6ED] border-[1px] rounded-[14px] p-[15px] nftCard"
-    @click="$emit('click', value)"
+    @click="$emit('click', item)"
   >
     <div class="border-solid border-[#00C6ED] border-[2px] rounded-[14px]">
       <div
@@ -42,44 +42,43 @@
     </div>
     <div class="flex justify-between mt-[16px]">
       <div v-if="isOffer" class="flex flex-col">
-        <span class="text-[#00C6ED] text-[12px]">Buy Now</span>
+        <span class="text-[#00C6ED] text-[14px]">
+          <v-icon small color="#00C6ED">mdi-cart-check</v-icon>
+          Buy Now
+        </span>
         <span class="text-[white] text-[16px]">{{ displayPrice }} $POLAR</span>
       </div>
       <div v-if="isAuction" class="flex flex-col">
-        <span class="text-[#00C6ED] text-[12px]">Current Bid</span>
+        <span class="text-[#00C6ED] text-[14px]">
+          <v-icon small color="#00C6ED">mdi-tag-outline</v-icon>
+          Current Bid
+        </span>
         <span class="text-[white] text-[16px]">{{ displayPrice }} $POLAR</span>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
 import { NODENAME_TO_IMAGE, LUCKYBOX_IMAGE } from '~/models/constants'
-import { NFTType } from '~/models/marketplace'
+import { NFTType, ItemType } from '~/models/marketplace'
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 
 @Component({
   props: {
     item: Object
   }
 })
-export default class ItemCard extends Vue {
+export default class ItemCard extends WalletReactiveFetch implements IReactiveFetch {
   private loading = true
 
-  get tokenId () {
-    return this.$props.item.nft.tokenId
-  }
-
   get isAuction () {
-    return this.$props.item.type === 'auction'
+    return this.$props.item.type === ItemType.Auction
   }
 
   get isOffer () {
-    return this.$props.item.type === 'offer'
-  }
-
-  get endDate () {
-    return null
+    return this.$props.item.type === ItemType.Offer
   }
 
   get displayPrice () {
@@ -97,11 +96,17 @@ export default class ItemCard extends Vue {
     return this.$props.item.nft
   }
 
+  get tokenId () {
+    return this.nft.tokenId
+  }
+
   get nodeData () {
+    if (this.nft.nftType !== NFTType.Node) { return null }
     return this.$store.getters['nft/byTokenId'](this.tokenId)
   }
 
   get luckyBoxData () {
+    if (this.nft.nftType !== NFTType.LuckyBox) { return null }
     return this.$store.getters['luckyboxes/byTokenId'](this.tokenId)
   }
 
@@ -116,16 +121,17 @@ export default class ItemCard extends Vue {
     }
   }
 
-  async created () {
-    if (!this.nft) { return }
+  async reactiveFetch () {
+    if (!this.isWalletConnected) { this.loading = true; return }
+
     const nftType = this.nft.nftType
 
     switch (nftType) {
       case NFTType.Node:
-        await this.$store.dispatch('nft/loadByTokenId', this.nft.tokenId)
+        await this.$store.dispatch('nft/loadByTokenId', this.tokenId)
         break
       case NFTType.LuckyBox:
-        await this.$store.dispatch('luckyboxes/loadByTokenId', this.nft.tokenId)
+        await this.$store.dispatch('luckyboxes/loadByTokenId', this.tokenId)
         break
       default:
         throw new Error(`Unsupported NFT Type ${nftType}`)
