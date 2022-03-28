@@ -364,7 +364,7 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   }
 
   get payWithTokens () {
-    return Object.values(this.$store.state.tokens.tokens).map((token) => {
+    return Object.values(this.$store.state.tokens.tokens).map((token: any) => {
       return {
         text: token.symbol,
         value: token.address

@@ -4,13 +4,25 @@
       Polar NFT Market 🛒
     </span>
     <SortList />
-    <div class="grid md:grid-cols-4 gap-4 mt-[30px]">
+    <div v-if="items.length" class="grid md:grid-cols-4 gap-4 mt-[30px]">
       <ItemCard
         v-for="(item) in items"
         :key="`${item.nft.tokenId}-${item.nft.nftType}`"
         :item="item"
         @click="onClick(item)"
       />
+    </div>
+    <div v-else>
+      <v-alert
+        type="info"
+        class="mt-[30px]"
+        :value="true"
+        dismissible
+        outlined
+        dark
+      >
+        No items found matching your search.
+      </v-alert>
     </div>
     <ItemDetailsModal
       v-if="isModalOpen"

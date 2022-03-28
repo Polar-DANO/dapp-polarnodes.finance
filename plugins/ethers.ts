@@ -87,7 +87,8 @@ async function registerWalletConnect () {
   return new ethers.providers.Web3Provider(walletConnect)
 }
 
-function setupListeners (eth: ethers.providers.Web3Provider, store: Store<any>) {
+function setupListeners (w3p: ethers.providers.Web3Provider, store: Store<any>) {
+  const eth = w3p.provider as any
   eth.on('accountsChanged', (accounts: string[]) => {
     if (accounts.length) {
       store.commit('wallet/setAddress', accounts[0])
@@ -109,7 +110,31 @@ function checkConnection (makePlugin: (provider: ethers.providers.Web3Provider) 
   }
 }
 
-const ethersPlugin: Plugin = ({ store }, inject) => {
+async function switchNetwork (provider: ethers.providers.Web3Provider, reqChainId: string) {
+  const network = await provider.getNetwork()
+  const chainId = network.chainId
+
+  if (chainId === parseInt(reqChainId ?? '0xa86a')) {
+    return
+  }
+
+  await (provider.provider as any).request({
+    method: 'wallet_addEthereumChain',
+    params: [{
+      chainId: '0xa86a',
+      chainName: 'Avalanche Network',
+      rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+      blockExplorerUrls: ['https://snowtrace.io/'],
+      nativeCurrency: {
+        name: 'AVAX',
+        symbol: 'AVAX',
+        decimals: 18
+      }
+    }]
+  })
+}
+
+const ethersPlugin: Plugin = ({ store, env }, inject) => {
   const makePlugin = async (provider: ethers.providers.Web3Provider | null) => {
     if (!provider) {
       inject('web3Provider', null)
@@ -118,6 +143,7 @@ const ethersPlugin: Plugin = ({ store }, inject) => {
       return
     }
 
+    await switchNetwork(provider, env.chainId)
     inject('web3Provider', provider)
     const signer = provider.getSigner()
 
@@ -164,8 +190,8 @@ const ethersPlugin: Plugin = ({ store }, inject) => {
   }
 
   const register = {
-    metamask: async () => makePlugin(await registerMetamask()),
-    walletConnect: async () => makePlugin(await registerWalletConnect())
+    metamask: async () => await makePlugin(await registerMetamask()),
+    walletConnect: async () => await makePlugin(await registerWalletConnect())
   }
 
   inject('register', register)

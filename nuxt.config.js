@@ -2,6 +2,9 @@ import colors from 'vuetify/es5/util/colors'
 import i18n from './config/i18n'
 
 export default {
+  env: {
+    chainId: process.env.CHAIN_ID || 41337
+  },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
   server: {

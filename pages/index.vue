@@ -74,7 +74,7 @@ export default class IndexVue extends WalletReactiveFetch implements IReactiveFe
       {
         icon: require('../assets/img/dashboardIcon/polarbalance_icon.svg'),
         title: 'My $POLAR Balance',
-        price: this.$store.state.polar.balance,
+        price: this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address),
         percentage: null
       },
       {
@@ -92,8 +92,8 @@ export default class IndexVue extends WalletReactiveFetch implements IReactiveFe
     ]
   }
 
-  reactiveFetch () {
-    return Promise.all([
+  async reactiveFetch () {
+    await Promise.all([
       this.$store.dispatch('coingecko/loadCoinData'),
       ...(
         (this.isWalletConnected)

@@ -8,7 +8,7 @@ export interface IReactiveFetch {
 
 @Component({
   watch: {
-    isWalletConnected: {
+    walletAddress: {
       handler: 'reactiveFetch'
     }
   }
@@ -17,6 +17,10 @@ export default class WalletReactiveFetch extends Vue {
   [x: string]: any
   protected get isWalletConnected () {
     return this.$store.getters['wallet/isConnected']
+  }
+
+  get walletAddress () {
+    return this.$store.getters['wallet/address']
   }
 
   async fetch () {

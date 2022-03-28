@@ -45,26 +45,22 @@ import { NFTTypeFilter, ViewType } from '~/store/marketplace/view/state'
   watch: {
     selectedNftTypes: {
       handler: 'onSelectedNftTypesChange'
-    },
-    selectedView: {
-      handler: 'onSelectedViewChange'
     }
   }
 })
 export default class SortList extends Vue {
-  // selectedNftTypes: NFTTypeFilter[] = []
-  selectedView: ViewType = ViewType.Latest
+  selectedNftTypes: NFTTypeFilter[] = []
 
-  get selectedNftTypes () {
-    return []
+  get selectedView () {
+    return this.$store.state.marketplace.view.viewType
   }
 
-  set selectedNftTypes (filters) {
+  set selectedView (viewType) {
+    this.$store.commit('marketplace/view/setView', viewType)
+  }
+
+  onSelectedNftTypesChange (filters: NFTTypeFilter[]) {
     this.$store.commit('marketplace/view/setFilter', filters)
-  }
-
-  onSelectedViewChange () {
-    this.$store.commit('marketplace/view/setView', this.selectedView)
   }
 
   get nftTypesSelect () {
