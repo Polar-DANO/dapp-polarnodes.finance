@@ -5,7 +5,7 @@ import { NodeType } from '~/models/NodeType'
 export interface NFT {
   owner: string;
   nodeType: string;
-  tokenId: number;
+  tokenId: BigNumber;
   creationTime: Date;
   lastClaimTime: Date;
   obtainingTime: Date;
@@ -18,43 +18,54 @@ export interface NFT {
 }
 
 export const state = () => ({
-  nfts: {} as Record<string, NFT[]>
+  myNfts: {} as Record<string, NFT[]>,
+  byTokenId: {} as Record<string, NFT | null>
 })
 
 export type State = ReturnType<typeof state>
 
 export const getters: GetterTree<State, {}> = {
-  byNodeTypeAndTokenId: state => (nodeType: string, tokenId: number) => state.nfts[nodeType]?.find(nft => nft.tokenId === tokenId),
-  byNodeType: (state, getters, rootState, rootGetters) => rootGetters['nodes/nodeTypesNames'].map((name: string) => ({
+  myNFTsByNodeType: (state, getters, rootState, rootGetters) => rootGetters['nodes/nodeTypesNames'].map((name: string) => ({
     nodeType: name,
-    nfts: state.nfts[name]
+    nfts: state.myNfts[name]
   })),
-  byCreationDateDesc: state =>
+  myNFTsByCreationDateDesc: state =>
     Object
-      .entries(state.nfts)
+      .entries(state.myNfts)
       .map(([nodeType, nfts]) => nfts.map(nft => ({ ...nft, nodeType })))
       .flat()
       .sort(
-        (a, b) => (b.creationTime.getTime() - a.creationTime.getTime()) || (b.tokenId - a.tokenId)
-      )
+        (a, b) => (b.creationTime.getTime() - a.creationTime.getTime())
+      ),
+  byTokenId: state => (tokenId: string) => state.byTokenId[tokenId]
 }
 
 export const mutations: MutationTree<State> = {
-  setNFTs (state, nfts: Record<string, NFT[]>) {
-    state.nfts = nfts
+  setMyNFTs (state, nfts: Record<string, NFT[]>) {
+    state.myNfts = nfts
   },
 
-  resetNFTs (state) {
-    state.nfts = {}
+  resetMyNFTs (state) {
+    Object.values(state.myNfts).flat().forEach((nft) => {
+      state.byTokenId[nft.tokenId.toString()] = nft
+    })
+    state.myNfts = {}
+  },
+
+  setByTokenId (state, { tokenId, nft }: { tokenId: BigNumber, nft: NFT | null }) {
+    state.byTokenId = {
+      ...state.byTokenId,
+      [tokenId.toString()]: nft
+    }
   }
 }
 
 export const actions: ActionTree<State, {}> = {
 
-  async loadNFTs ({ commit, rootGetters }) {
+  async loadMyNFTs ({ commit, rootGetters }) {
     const nodeTypeNames: string[] | undefined = rootGetters['nodes/nodeTypesNames']
     if (!nodeTypeNames || nodeTypeNames.length === 0) {
-      commit('resetNFTs')
+      commit('resetMyNFTs')
       return
     }
 
@@ -87,7 +98,7 @@ export const actions: ActionTree<State, {}> = {
         return {
           owner: nft.owner,
           nodeType: nodeType.name,
-          tokenId: tokenId.toNumber(),
+          tokenId,
           creationTime: new Date(nft.creationTime.toNumber() * 1000),
           lastClaimTime: new Date(nft.lastClaimTime.toNumber() * 1000),
           obtainingTime: new Date(nft.obtainingTime.toNumber() * 1000),
@@ -110,7 +121,7 @@ export const actions: ActionTree<State, {}> = {
       })
       .filter(([, nfts]) => nfts !== null)
 
-    commit('setNFTs', Object.fromEntries(entries))
+    commit('setMyNFTs', Object.fromEntries(entries))
   },
 
   async claimRewards ({ dispatch, rootGetters }, nfts: NFT[]) {
@@ -129,7 +140,7 @@ export const actions: ActionTree<State, {}> = {
       }
       nodeTypeGroups[nft.nodeType].push(nft.tokenId)
       return nodeTypeGroups
-    }, {} as Record<string, number[]>)
+    }, {} as Record<string, BigNumber[]>)
 
     const tx = await this.$contracts.handler.claimRewardsBatch(
       this.$addresses.Token,
@@ -139,7 +150,7 @@ export const actions: ActionTree<State, {}> = {
     )
 
     await tx.wait()
-    dispatch('loadNFTs')
+    dispatch('loadMyNFTs')
   },
 
   async claimAll ({ dispatch, rootGetters }) {
@@ -158,6 +169,39 @@ export const actions: ActionTree<State, {}> = {
     )
 
     await tx.wait()
-    dispatch('loadNFTs')
+    dispatch('loadMyNFTs')
+  },
+
+  async loadByTokenId ({ commit }, tokenId: BigNumber) {
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
+    const nodeType = await this.$contracts.polarNodeNft.tokenIdsToType(tokenId)
+    if (nodeType === '') {
+      commit('setByTokenId', null)
+    }
+
+    const nodeTypeContract = await this.$contracts.nodeTypeByName(nodeType)
+
+    const node: any = await nodeTypeContract.getNodeFromTokenId(tokenId)
+    const pendingRewards = await nodeTypeContract.calculateUserRewardsBatch(node.owner, [tokenId]) as [[BigNumber], [BigNumber]]
+
+    const nft: NFT = {
+      owner: node.owner,
+      nodeType,
+      tokenId,
+      creationTime: new Date(node.creationTime.toNumber() * 1000),
+      lastClaimTime: new Date(node.lastClaimTime.toNumber() * 1000),
+      obtainingTime: new Date(node.obtainingTime.toNumber() * 1000),
+      isBoostedAirDropRate: node.isBoostedAirDropRate.toNumber() / 100,
+      isBoostedNft: node.isBoostedNft,
+      isBoostedToken: node.isBoostedToken,
+      feature: node.feature,
+      userPendingRewards: pendingRewards[0][0],
+      userPendingFees: pendingRewards[1][0]
+    }
+
+    commit('setByTokenId', { tokenId, nft })
   }
 }

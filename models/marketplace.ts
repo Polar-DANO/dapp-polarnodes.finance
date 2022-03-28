@@ -5,28 +5,30 @@ export enum NFTType {
   LuckyBox = 'luckybox',
 }
 
-export interface Offer {
-  id: number;
+export interface NFT {
+  nftType: NFTType
+  tokenId: BigNumber;
   owner: string;
-  nftType: NFTType
-  tokenId: BigNumber
-  price: BigNumber
-  creationTime: Date
 }
 
-// TODO : move to models
-export interface Auction {
-  id: number
-  owner: string
-  nftType: NFTType
-  tokenId: BigNumber
-  currentPrice: BigNumber
-  end: Date
-  creationTime: Date
-}
-
-// TODO : move to models
 export enum ItemType {
   Offer = 'offer',
   Auction = 'auction'
 }
+
+export interface Offer {
+  type: ItemType.Offer
+  nft: NFT;
+  creationTime: Date
+  price: BigNumber
+}
+
+export interface Auction {
+  type: ItemType.Auction;
+  nft: NFT;
+  creationTime: Date
+  currentPrice: BigNumber
+  end: Date
+}
+
+export type Item = Offer | Auction;

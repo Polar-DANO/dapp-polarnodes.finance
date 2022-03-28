@@ -281,7 +281,7 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
       allowance: await this.$store.dispatch('polar/loadAllowance'),
       nodes: await (async () => {
         await this.$store.dispatch('nodes/loadNodeTypes')
-        await this.$store.dispatch('nft/loadNFTs')
+        await this.$store.dispatch('nft/loadMyNFTs')
       })()
     }
   }
@@ -365,7 +365,7 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   }
 
   get nfts () {
-    return this.$store.getters['nft/byNodeType'].flatMap(({ nodeType, nfts }: { nodeType: string, nfts: NFT[] }) => {
+    return this.$store.getters['nft/myNFTsByNodeType'].flatMap(({ nodeType, nfts }: { nodeType: string, nfts: NFT[] }) => {
       if (nfts.length === 0) {
         return []
       }

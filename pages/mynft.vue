@@ -48,7 +48,7 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
   }
 
   get nfts () {
-    return this.$store.getters['nft/byCreationDateDesc'] ?? []
+    return this.$store.getters['nft/myNFTsByCreationDateDesc'] ?? []
   }
 
   get luckyBoxes () {
@@ -63,7 +63,7 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
         polarBalance: await this.$store.dispatch('polar/loadBalance'),
         myNFTs: await (async () => {
           await this.$store.dispatch('nodes/loadNodeTypes')
-          await this.$store.dispatch('nft/loadNFTs')
+          await this.$store.dispatch('nft/loadMyNFTs')
         })()
       }
     }

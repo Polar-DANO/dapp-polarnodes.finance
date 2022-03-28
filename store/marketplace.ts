@@ -1,9 +1,7 @@
 import { ActionTree, MutationTree, GetterTree } from 'vuex'
 import * as ethers from 'ethers'
 import { ContractsPlugin } from '~/plugins/ethers'
-import { NFTType, Offer, Auction, ItemType } from '~/models/marketplace'
-
-// TODO : move to models
+import { NFTType, Offer, Auction, ItemType, Item } from '~/models/marketplace'
 
 function getSupportedNfts (addresses: ContractsPlugin['$addresses']): Record<NFTType, string> {
   return {
@@ -21,26 +19,17 @@ export const state = () => ({
 export type State = ReturnType<typeof state>;
 
 export const getters: GetterTree<State, {}> = {
-  items: state => [
-    ...(state.offers ?? []).map((offer) => {
-      return {
-        type: ItemType.Offer,
-        item: offer
-      }
-    }),
-    ...(state.auctions ?? []).map((auction) => {
-      return {
-        type: ItemType.Auction,
-        item: auction
-      }
-    })
+  items: (state): Item[] => [
+    ...(state.offers ?? []),
+    ...(state.auctions ?? [])
   ].sort((a, b) =>
-    a.item.creationTime.getTime() - b.item.creationTime.getTime() || a.item.id - b.item.id
+    a.creationTime.getTime() - b.creationTime.getTime()
   ),
 
-  isApprovedForNFTType: state => (nftType: NFTType) => {
-    return state.isApprovedForNFTType[nftType] ?? false
-  }
+  isApprovedForNFTType: state =>
+    (nftType: NFTType): boolean => {
+      return state.isApprovedForNFTType[nftType] ?? false
+    }
 }
 
 export const mutations: MutationTree<State> = {
@@ -73,17 +62,20 @@ export const actions: ActionTree<State, {}> = {
         if (!this.$contracts) {
           throw new Error('Contracts not loaded')
         }
+
         const offerSize = await this.$contracts.marketplace.getOfferOfSize(nftAddress)
         const offers: any[] = await this.$contracts.marketplace.getOfferOfBetweenIndexes(nftAddress, 0, offerSize)
 
-        return offers.map((offer, id): Offer => {
+        return offers.map((offer): Offer => {
           return {
-            id,
-            owner: offer.owner,
-            nftType: nftType as NFTType,
-            tokenId: offer.tokenId,
-            price: offer.price,
-            creationTime: new Date(offer.creationTime.toNumber() * 1000)
+            type: ItemType.Offer,
+            nft: {
+              owner: offer.owner,
+              tokenId: offer.tokenId,
+              nftType: nftType as NFTType
+            },
+            creationTime: new Date(offer.creationTime.toNumber() * 1000),
+            price: offer.price
           }
         })
       })
@@ -103,15 +95,17 @@ export const actions: ActionTree<State, {}> = {
         const auctionSize = await this.$contracts.marketplace.getAuctionOfSize(nftAddress)
         const auctions: any[] = await this.$contracts.marketplace.getAuctionOfBetweenIndexes(nftAddress, 0, auctionSize)
 
-        return auctions.map((auction, id): Auction => {
+        return auctions.map((auction): Auction => {
           return {
-            id,
-            owner: auction.owner,
-            nftType: nftType as NFTType,
-            tokenId: auction.tokenId,
+            type: ItemType.Auction,
+            nft: {
+              owner: auction.owner,
+              tokenId: auction.tokenId,
+              nftType: nftType as NFTType
+            },
+            creationTime: new Date(auction.creationTime.toNumber() * 1000),
             currentPrice: auction.currentPrice,
-            end: new Date(auction.end.toNumber() * 1000),
-            creationTime: new Date(auction.creationTime.toNumber() * 1000)
+            end: new Date(auction.end.toNumber() * 1000)
           }
         })
       })

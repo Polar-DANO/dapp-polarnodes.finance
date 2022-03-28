@@ -142,7 +142,7 @@ export default class LuckyboxList extends WalletReactiveFetch implements IReacti
         this.$store.dispatch('marketplace/loadApproveForNftType', NFTType.LuckyBox)
       ])
 
-      if (!this.luckyBox) {
+      if (!this.luckyBox || this.luckyBox.owner !== this.$store.getters['wallet/isConnected']) {
         this.$router.push('/mynft')
       }
     }

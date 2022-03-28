@@ -15,7 +15,7 @@
     <ItemDetailsModal
       v-if="isModalOpen"
       :data-detail="selectedItem"
-      @close="isModalOpen = false"
+      @close="() => selectedItem = null"
     />
   </div>
 </template>
@@ -25,7 +25,7 @@ import { Component } from 'nuxt-property-decorator'
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 
 @Component
-export default class Mazrket extends WalletReactiveFetch implements IReactiveFetch {
+export default class Market extends WalletReactiveFetch implements IReactiveFetch {
   private selectedItem = null
 
   get isModalOpen () {

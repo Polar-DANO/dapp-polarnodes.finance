@@ -5,7 +5,8 @@ import { LuckyBox } from '~/models/LuckyBox'
 
 export const state = () => ({
   luckyBoxTypes: null as (LuckyBoxType[] | null),
-  myLuckyBoxes: null as (LuckyBox[] | null)
+  myLuckyBoxes: null as (LuckyBox[] | null),
+  byTokenIds: {} as { [tokenId: string]: LuckyBox | null } // null means the tokenId doesn't exist
 })
 
 export type State = ReturnType<typeof state>;
@@ -13,7 +14,7 @@ export type State = ReturnType<typeof state>;
 export const getters: GetterTree<State, {}> = {
   typeByName: state => (name: string) => state.luckyBoxTypes?.find(type => type.name === name) ?? null,
   typeById: state => (id: number) => state.luckyBoxTypes?.[id] ?? null,
-  byTokenId: state => (tokenId: BigNumber) => state.myLuckyBoxes?.find(luckyBox => luckyBox.tokenId.eq(tokenId)) ?? null
+  byTokenId: state => (tokenId: BigNumber) => state.byTokenIds[tokenId.toString()] ?? null
 }
 
 export const mutations: MutationTree<State> = {
@@ -26,6 +27,20 @@ export const mutations: MutationTree<State> = {
       const cmp = b.tokenId.sub(a.tokenId)
       return cmp.gt(0) ? 1 : cmp.lt(0) ? -1 : 0
     })
+
+    myLuckyBoxes.forEach((luckyBox) => {
+      state.byTokenIds = {
+        ...state.byTokenIds,
+        [luckyBox.tokenId.toString()]: (luckyBox.type === '') ? null : luckyBox
+      }
+    })
+  },
+
+  setLuckyBox (state, luckyBox: LuckyBox) {
+    state.byTokenIds = {
+      ...state.byTokenIds,
+      [luckyBox.tokenId.toString()]: (luckyBox.type === '') ? null : luckyBox
+    }
   }
 }
 
@@ -90,13 +105,14 @@ export const actions: ActionTree<State, {}> = {
     }
 
     const luckyBoxesTokens: BigNumber[] = await this.$contracts.luckyBoxes.tokensOfOwner(userAddress)
-    const luckyBoxes = await Promise.all(luckyBoxesTokens.map(async (tokenId) => {
+    const luckyBoxes = await Promise.all(luckyBoxesTokens.map(async (tokenId): Promise<LuckyBox> => {
       if (!this.$contracts) {
         throw new Error('Contracts not loaded')
       }
 
       return {
         tokenId,
+        owner: userAddress,
         type: await this.$contracts.luckyBoxes.tokenIdsToType(tokenId)
       }
     }))
@@ -120,6 +136,18 @@ export const actions: ActionTree<State, {}> = {
 
     await tx.wait()
     dispatch('loadMyLuckyBoxes')
-    dispatch('nft/loadNFTs', null, { root: true })
+    dispatch('nft/loadMyNFTs', null, { root: true })
+  },
+
+  async loadByTokenId ({ commit }, tokenId: BigNumber) {
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
+    commit('setLuckyBox', {
+      tokenId,
+      owner: await this.$contracts.luckyBoxes.ownerOf(tokenId),
+      type: await this.$contracts.luckyBoxes.tokenIdsToType(tokenId)
+    })
   }
 }
