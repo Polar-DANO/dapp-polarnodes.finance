@@ -77,6 +77,15 @@
               />
               Create this Mountain NFT by ‘Leveling Up’ Existing NFTs
             </div>
+            <div v-if="canOfferToUser" class="mt-1 d-flex align-center node-card__details__options">
+              <VCheckbox
+                v-model="isOtherUser"
+                hide-details
+                class="mr-1"
+                color="#00c6ed"
+              />
+              Offer this Mountain NFT to a friend
+            </div>
           </div>
         </VCol>
         <VCol cols="12" md="6" class="mt-8">
@@ -114,6 +123,14 @@
                 </VCol>
               </VRow>
 
+              <VRow v-if="isOtherUser && canOfferToUser">
+                <VTextField
+                  v-model="otherUser"
+                  dark
+                  label="Your Friend's Address"
+                />
+              </VRow>
+
               <div class="mt-6 mb-1 d-flex justify-center items-center">
                 <VBtn small rounded color="#00c6ed" dark @click="onRemove">
                   -
@@ -145,7 +162,7 @@
               class="node-card__outlined node-card__button pa-2"
               dark
               text
-              :disabled="quantity < 1"
+              :disabled="!canCreate"
               :loading="isBtnLoading"
               @click="onCreate"
             >
@@ -253,6 +270,8 @@ import { Token } from '~/hardhat/scripts/address'
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 import { NFT } from '~/models/nft'
 
+const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/
+
 const CreateMode = {
   FROM_TOKENS: 'FROM_TOKENS',
   FROM_NFT: 'FROM_NFT',
@@ -263,6 +282,9 @@ const CreateMode = {
   watch: {
     selectedToken: {
       handler: 'reactiveFetch'
+    },
+    createMode: {
+      handler: 'onCreateModeChange'
     }
   }
 })
@@ -273,6 +295,18 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   public selectedToken = Token
   public selectedNfts: NFT[] = []
   public isBtnLoading = false
+  private isOtherUser = false
+  private otherUser = ''
+
+  onCreateModeChange (createMode: keyof typeof CreateMode) {
+    if (createMode !== CreateMode.FROM_TOKENS) {
+      this.isOtherUser = false
+    }
+  }
+
+  get canOfferToUser () {
+    return this.createMode === CreateMode.FROM_TOKENS
+  }
 
   get availableTokens () {
     return this.$store.state.tokens.tokens
@@ -396,6 +430,10 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
     this.quantity++
   }
 
+  get canCreate () {
+    return this.quantity >= 1 && (this.isOtherUser ? ADDRESS_REGEX.test(this.otherUser) : true)
+  }
+
   get isApprove () {
     return !this.$store.getters['tokens/hasEnoughSwapperAllowance'](this.selectedToken, this.totalCost)
   }
@@ -417,7 +455,8 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
         await this.$store.dispatch('nodes/createNodesFromToken', {
           nodeTypeName: this.nodeNftName,
           count: this.quantity,
-          token: this.selectedToken
+          token: this.selectedToken,
+          user: this.isOtherUser ? this.otherUser : this.walletAddress
         })
 
         this.$router.push('/mynft')

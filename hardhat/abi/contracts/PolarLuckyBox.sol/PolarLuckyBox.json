@@ -111,54 +111,6 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "priceTokens",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "probability",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "string[]",
-        "name": "nodeType",
-        "type": "string[]"
-      },
-      {
-        "internalType": "string[]",
-        "name": "feature",
-        "type": "string[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "remaining",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "maxBox",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "maxUser",
-        "type": "uint256"
-      }
-    ],
-    "name": "addPolarLuckyBox",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "to",
         "type": "address"
@@ -271,35 +223,6 @@
         "type": "address"
       }
     ],
-    "name": "createLuckyBoxesWithNodes",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "count",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
     "name": "createLuckyBoxesWithTokens",
     "outputs": [
       {
@@ -354,6 +277,25 @@
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAttribute",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -438,6 +380,11 @@
             "internalType": "uint256",
             "name": "maxUser",
             "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "attribute",
+            "type": "string"
           }
         ],
         "internalType": "struct PolarLuckyBox.Box[]",
@@ -509,6 +456,11 @@
             "internalType": "uint256",
             "name": "maxUser",
             "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "attribute",
+            "type": "string"
           }
         ],
         "internalType": "struct PolarLuckyBox.Box",
@@ -639,19 +591,6 @@
         "internalType": "string",
         "name": "",
         "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "openCreateLuckyBoxesWithNodes",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -838,24 +777,11 @@
     "inputs": [
       {
         "internalType": "bool",
-        "name": "_new",
+        "name": "_openCreateLuckyBoxesWithTokens",
         "type": "bool"
       }
     ],
-    "name": "setOpenCreateLuckyBoxesWithNodes",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bool",
-        "name": "_new",
-        "type": "bool"
-      }
-    ],
-    "name": "setOpenCreateLuckyBoxesWithTokens",
+    "name": "setOpenCreate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1134,6 +1060,11 @@
         "internalType": "uint256",
         "name": "maxUser",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "attribute",
+        "type": "string"
       }
     ],
     "name": "updatePolarLuckyBox",

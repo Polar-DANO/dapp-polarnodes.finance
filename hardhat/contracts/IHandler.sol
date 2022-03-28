@@ -4,4 +4,5 @@ pragma solidity ^0.8.0;
 
 interface IHandler {
 	function transferFrom(address from, address to, uint tokenId) external;
+	function getAttribute(uint tokenId) external view returns(string memory);
 }

@@ -3,10 +3,9 @@ const { ethers } = require('hardhat')
 const address = require('./address')
 const params = require('./params')
 const { getWallets } = require('./utils/getWallets')
+const { getContracts } = require('./utils/getContracts')
 
 async function caller () {
-  await require('./00_earlySetUp')()
-  const deploy = require('./00_deploy')
   const [
     handler,
     nt,
@@ -14,15 +13,13 @@ async function caller () {
     polarLuckyBox,
     swapper,
     polar,
+    router,
     dai,
+    wavax,
+    old,
+    factory,
     marketPlace
-  ] = await deploy()
-
-  const setUp = require('./01_setUp')
-  await setUp(handler, nt, polarNode, polarLuckyBox, swapper, marketPlace)
-
-  const openAll = require('./02_openAll')
-  await openAll(handler, nt, polarNode, polarLuckyBox, swapper, marketPlace)
+  ] = await getContracts()
 
   await main(handler, nt, polarNode, polarLuckyBox, swapper, marketPlace)
 }
@@ -87,7 +84,6 @@ async function main (handler, nt, polarNode, polarLuckyBox, swapper, marketPlace
     console.log('\t\t' + name + '.isOwner(' + params.AddOwner + ') =', res)
   }
 
-  // add market place owners
   console.log('\tPolarMarketPlace Owners')
   estimatedGas = await marketPlace.connect(owner).estimateGas.addOwner(...params.AddOwner)
   res = await marketPlace.connect(owner).addOwner(...params.AddOwner,

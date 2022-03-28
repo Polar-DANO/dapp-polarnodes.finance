@@ -501,6 +501,25 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAttribute",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "iStart",
         "type": "uint256"
       },
@@ -1345,25 +1364,22 @@
   {
     "inputs": [
       {
-        "internalType": "bool",
-        "name": "_new",
-        "type": "bool"
-      }
-    ],
-    "name": "setCanBeBoostedNftLevelUp",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+        "internalType": "uint256",
+        "name": "_price",
+        "type": "uint256"
+      },
       {
-        "internalType": "bool",
-        "name": "_new",
-        "type": "bool"
+        "internalType": "uint256",
+        "name": "_claimTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_rewardAmount",
+        "type": "uint256"
       }
     ],
-    "name": "setCanBeBoostedNftLucky",
+    "name": "setBasics",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1372,37 +1388,31 @@
     "inputs": [
       {
         "internalType": "bool",
-        "name": "_new",
+        "name": "_canBeBoostedNftToken",
         "type": "bool"
-      }
-    ],
-    "name": "setCanBeBoostedNftMigration",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "bool",
-        "name": "_new",
+        "name": "_canBeBoostedNftLevelUp",
         "type": "bool"
-      }
-    ],
-    "name": "setCanBeBoostedNftPending",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "bool",
-        "name": "_new",
+        "name": "_canBeBoostedNftPending",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "_canBeBoostedNftLucky",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "_canBeBoostedNftMigration",
         "type": "bool"
       }
     ],
-    "name": "setCanBeBoostedNftToken",
+    "name": "setCanBeBoosted",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1411,63 +1421,16 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_new",
+        "name": "_claimTimeReference",
         "type": "uint256"
-      }
-    ],
-    "name": "setClaimTaxRoi",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "uint256",
-        "name": "_new",
+        "name": "_claimTimeRate",
         "type": "uint256"
       }
     ],
-    "name": "setClaimTime",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_new",
-        "type": "uint256"
-      }
-    ],
-    "name": "setClaimTimeRate",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_new",
-        "type": "uint256"
-      }
-    ],
-    "name": "setClaimTimeReference",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_new",
-        "type": "uint256"
-      }
-    ],
-    "name": "setGlobalTax",
+    "name": "setClaimTimeBoost",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1488,38 +1451,32 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_new",
-        "type": "uint256"
-      }
-    ],
-    "name": "setIsBoostedNftProbability",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_new",
-        "type": "uint256"
-      }
-    ],
-    "name": "setIsBoostedNftRate",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+        "internalType": "bool",
+        "name": "_isBoostedTokenToken",
+        "type": "bool"
+      },
       {
         "internalType": "bool",
-        "name": "_new",
+        "name": "_isBoostedTokenLevelUp",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isBoostedTokenPending",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isBoostedTokenLucky",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isBoostedTokenMigration",
         "type": "bool"
       }
     ],
-    "name": "setIsBoostedTokenLevelUp",
+    "name": "setIsBoosted",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1527,38 +1484,17 @@
   {
     "inputs": [
       {
-        "internalType": "bool",
-        "name": "_new",
-        "type": "bool"
-      }
-    ],
-    "name": "setIsBoostedTokenLucky",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+        "internalType": "uint256",
+        "name": "_isBoostedNftRate",
+        "type": "uint256"
+      },
       {
-        "internalType": "bool",
-        "name": "_new",
-        "type": "bool"
+        "internalType": "uint256",
+        "name": "_isBoostedNftProbability",
+        "type": "uint256"
       }
     ],
-    "name": "setIsBoostedTokenMigration",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bool",
-        "name": "_new",
-        "type": "bool"
-      }
-    ],
-    "name": "setIsBoostedTokenPending",
+    "name": "setIsBoostedNft",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1571,20 +1507,7 @@
         "type": "uint256"
       }
     ],
-    "name": "setIsBoostedTokenRate",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bool",
-        "name": "_new",
-        "type": "bool"
-      }
-    ],
-    "name": "setIsBoostedTokenToken",
+    "name": "setIsBoostedToken",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1593,11 +1516,16 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_new",
+        "name": "_maxUser",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxCount",
         "type": "uint256"
       }
     ],
-    "name": "setMaxCount",
+    "name": "setMax",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1606,11 +1534,16 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_new",
+        "name": "_maxCreationPendingUser",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxCreationPendingTotal",
         "type": "uint256"
       }
     ],
-    "name": "setMaxCreationPendingTotal",
+    "name": "setMaxCreationPending",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1619,11 +1552,16 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_new",
+        "name": "_maxLevelUpUser",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxLevelUpTotal",
         "type": "uint256"
       }
     ],
-    "name": "setMaxCreationPendingUser",
+    "name": "setMaxLevelUp",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1632,11 +1570,16 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_new",
+        "name": "_maxMultiObtaining",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxMultiClaim",
         "type": "uint256"
       }
     ],
-    "name": "setMaxLevelUpTotal",
+    "name": "setMaxMulti",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1645,11 +1588,16 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_new",
+        "name": "_noClaimRewardAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_noClaimTimeReference",
         "type": "uint256"
       }
     ],
-    "name": "setMaxLevelUpUser",
+    "name": "setNoClaimBoost",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1658,85 +1606,12 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_new",
+        "name": "_obtainingTimeReference",
         "type": "uint256"
-      }
-    ],
-    "name": "setMaxMultiClaim",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "uint256",
-        "name": "_new",
-        "type": "uint256"
-      }
-    ],
-    "name": "setMaxMultiObtaining",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_new",
-        "type": "uint256"
-      }
-    ],
-    "name": "setMaxUser",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_new",
-        "type": "uint256"
-      }
-    ],
-    "name": "setNoClaimRewardAmount",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_new",
-        "type": "uint256"
-      }
-    ],
-    "name": "setNoClaimTimeReference",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_new",
-        "type": "uint256"
-      }
-    ],
-    "name": "setObtainingTimeRate",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_new",
+        "name": "_obtainingTimeRate",
         "type": "uint256"
       }
     ],
@@ -1762,63 +1637,31 @@
     "inputs": [
       {
         "internalType": "bool",
-        "name": "_new",
+        "name": "_openCreateNodesWithTokens",
         "type": "bool"
-      }
-    ],
-    "name": "setOpenCreateNodesLevelUp",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "bool",
-        "name": "_new",
+        "name": "_openCreateNodesLevelUp",
         "type": "bool"
-      }
-    ],
-    "name": "setOpenCreateNodesMigration",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "bool",
-        "name": "_new",
+        "name": "_openCreateNodesWithPending",
         "type": "bool"
-      }
-    ],
-    "name": "setOpenCreateNodesWithLuckyBoxes",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "bool",
-        "name": "_new",
+        "name": "_openCreateNodesWithLuckyBoxes",
         "type": "bool"
-      }
-    ],
-    "name": "setOpenCreateNodesWithPending",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "bool",
-        "name": "_new",
+        "name": "_openCreateNodesMigration",
         "type": "bool"
       }
     ],
-    "name": "setOpenCreateNodesWithTokens",
+    "name": "setOpenCreate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1827,24 +1670,16 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_new",
+        "name": "_claimTaxRoi",
         "type": "uint256"
-      }
-    ],
-    "name": "setPrice",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "uint256",
-        "name": "_new",
+        "name": "_globalTax",
         "type": "uint256"
       }
     ],
-    "name": "setRewardAmount",
+    "name": "setTax",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1855,68 +1690,29 @@
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_isBoostedAirDropRate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isBoostedNft",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isBoostedToken",
+        "type": "bool"
       },
       {
         "internalType": "string",
-        "name": "_new",
+        "name": "_feature",
         "type": "string"
       }
     ],
-    "name": "setTokenIdFeature",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_rate",
-        "type": "uint256"
-      }
-    ],
-    "name": "setTokenIdIsBoostedAirDropRate",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "_new",
-        "type": "bool"
-      }
-    ],
-    "name": "setTokenIdIsBoostedNft",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "_new",
-        "type": "bool"
-      }
-    ],
-    "name": "setTokenIdIsBoostedToken",
+    "name": "setTokenIdSpecs",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

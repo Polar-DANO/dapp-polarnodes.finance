@@ -82,13 +82,26 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 
 	bool public openOffer;
 	bool public openAuction;
+	mapping(address => bool) public onlyAttribute;
 
 	mapping(address => bool) public isBlacklistedNft;
 
-	constructor(address _polar, address _swapper, uint _fee) {
+	uint public auctionBeforeRef;
+	uint public auctionBeforeAdd;
+
+	constructor(
+		address _polar, 
+		address _swapper, 
+		uint _fee,
+		uint _auctionBeforeRef,
+		uint _auctionBeforeAdd
+	) 
+	{
 		polar = _polar;
 		swapper = _swapper;
 		fee = _fee;
+		auctionBeforeRef = _auctionBeforeRef;
+		auctionBeforeAdd = _auctionBeforeAdd;
 	}
 
 	function setMinPrices(
@@ -104,6 +117,7 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 		require(_names.length == _auctionPrices.length, "PolarMarketPlace: Length mismatch");
 			
 		IPolarNft(_nft).tokenIdsToType(0); // pseudo check polar standard
+		//IPolarNft(_nft).getAttribute(0); // zero nft
 
 		mapNftPricesAdd(_nft);
 		for (uint i = 0; i < _names.length; i++) {
@@ -135,6 +149,12 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 			require(mapPrices.inserted[name], "PolarMarketPlace: Contact core team");
 			require(mapPrices.values[name].offerPrice <= _price, 
 					"PolarMarketPlace: Price lower than min price");
+
+			if (onlyAttribute[_nft]) {
+				string memory attribute = IPolarNft(_nft).getAttribute(_tokenId);
+				require(bytes(attribute).length > 0, 
+						"PolarMarketPlace: Only special Nft");
+			}
 		}
 
 		IERC721(_nft).transferFrom(msg.sender, address(this), _tokenId);
@@ -201,6 +221,12 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 			require(mapPrices.inserted[name], "PolarMarketPlace: Contact core team");
 			require(mapPrices.values[name].auctionPrice <= _currentPrice, 
 					"PolarMarketPlace: Price lower than min price");
+			
+			if (onlyAttribute[_nft]) {
+				string memory attribute = IPolarNft(_nft).getAttribute(_tokenId);
+				require(bytes(attribute).length > 0, 
+						"PolarMarketPlace: Only special Nft");
+			}
 		}
 		
 		IERC721(_nft).transferFrom(msg.sender, address(this), _tokenId);
@@ -231,12 +257,16 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 			IERC20(polar).transfer(auction.nextOwner, auction.currentPrice);
 		IERC20(polar).transferFrom(msg.sender, address(this), _currentPrice);
 
+		uint endTime = auction.end;
+		if (block.timestamp + auctionBeforeRef > auction.end)
+			endTime = block.timestamp + auctionBeforeAdd;
+
 		mapAuctionSet(nft.values[_nft].mapAuction, _tokenId, Auction({
 			owner: auction.owner,
 			tokenId: auction.tokenId,
 			currentPrice: _currentPrice,
 			nextOwner: msg.sender,
-			end: auction.end,
+			end: endTime,
 			creationTime: auction.creationTime
 		}));
 	}
@@ -307,6 +337,21 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 	
 	function setOpenAuction(bool _new) external onlyOwners {
 		openAuction = _new;
+	}
+	
+	function setOnlyAttribute(address _addr, bool _new) external onlyOwners {
+		onlyAttribute[_addr] = _new;
+	}
+	
+	function setAuctionBefore(
+		uint _auctionBeforeRef,
+		uint _auctionBeforeAdd
+	) 
+		external 
+		onlyOwners 
+	{
+		auctionBeforeRef = _auctionBeforeRef;
+		auctionBeforeAdd = _auctionBeforeAdd;
 	}
 
 	//external view
@@ -482,7 +527,6 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 			prices[i - iStart] = mapPrices.values[mapPrices.keys[i]];
 		return prices;
 	}
-	// private
 
 	// maps
 	function mapOfferSet(

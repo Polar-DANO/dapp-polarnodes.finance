@@ -4,6 +4,7 @@ const address = require('./address')
 const params = require('./params')
 const { getWallets } = require('./utils/getWallets')
 const { getContracts } = require('./utils/getContracts')
+const earlySetUp = require('./00_earlySetUp')
 
 async function replaceInFile (searchPattern, newLine, filePath) {
   return new Promise((resolve, error) => {
@@ -136,7 +137,8 @@ async function main () {
 
   const MarketPlace = await ethers.getContractFactory('PolarMarketPlace')
   const marketPlace = await MarketPlace.connect(owner).deploy(
-    polar.address, swapper.address, 1000
+    polar.address, swapper.address, params.MarketPlace.fee,
+    params.MarketPlace.auctionBeforeRef, params.MarketPlace.auctionBeforeAdd
   )
   str = 'const MarketPlace = "' + marketPlace.address + '";'
   console.log('\t' + str)

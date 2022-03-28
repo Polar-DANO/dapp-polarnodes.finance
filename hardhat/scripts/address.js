@@ -57,6 +57,5 @@ module.exports = {
   Pair,
   Dai,
   Factory,
-  Metamask,
-  Owner
+  Metamask
 }

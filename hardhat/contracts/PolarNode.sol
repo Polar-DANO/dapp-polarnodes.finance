@@ -142,6 +142,11 @@ contract PolarNode is ERC721, ERC721Enumerable, Owners {
 			no[i - iStart] = nodeOwners[i];
 		return no;
 	}
+
+	function getAttribute(uint tokenId) external view returns(string memory) {
+		return IHandler(handler).getAttribute(tokenId);
+	}
+
 	// public
 
 	// internal

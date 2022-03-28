@@ -11,6 +11,11 @@ import "./Owners.sol";
 import "hardhat/console.sol";
 
 contract Handler is Owners {
+	event NewNode(
+		address indexed owner,
+		string indexed name,
+		uint count
+	);
 
 	struct NodeType {
 		string[] keys; // nodeTypeName to address
@@ -65,18 +70,21 @@ contract Handler is Owners {
 	
 	function createNodesWithTokens(
 		address tokenIn,
+		address user,
 		string memory name,
 		uint count,
 		string memory sponso
 	) 
 		external 
 	{
-		uint[] memory tokenIds = _setUpNodes(name, msg.sender, count);
+		uint[] memory tokenIds = _setUpNodes(name, user, count);
 
 		uint price = INodeType(mapNt.values[name])
-			.createNodesWithTokens(msg.sender, tokenIds);
+			.createNodesWithTokens(user, tokenIds);
 		
 		swapper.swapCreateNodesWithTokens(tokenIn, msg.sender, price, sponso);
+	
+		emit NewNode(user, name, count);
 	}
 
 	function createNodesLevelUp(
@@ -115,6 +123,8 @@ contract Handler is Owners {
 		}
 
 		require(price == 0, "Handler: Nice try buddy");
+		
+		emit NewNode(msg.sender, nameTo, count);
 	}
 
 	function createNodesWithPending(
@@ -150,6 +160,8 @@ contract Handler is Owners {
 
 		swapper.swapCreateNodesWithPending(
 			tokenOut, msg.sender, rewardsTotal - price, feesTotal);
+		
+		emit NewNode(msg.sender, nameTo, count);
 	}
 
 	function createNodesWithLuckyBoxes(uint[] memory tokenIdsLuckyBoxes) external {
@@ -168,26 +180,33 @@ contract Handler is Owners {
 					tokenIds, 
 					features[i]
 				);
+		
+			emit NewNode(msg.sender, nodeTypes[i], 1);
 		}
 	}
 	
 	function createNodesMigration(
+		address user,
 		string[] memory nameFrom,
 		uint[] memory count
 	) 
 		external 
 	{
+		require(user == msg.sender || isOwner[msg.sender], 
+			"Handler: Sender not authorized");
 		require(nameFrom.length == count.length, "Handler: Length mismatch");
 
 		for (uint i = 0; i < nameFrom.length; i++) {
-			uint[] memory tokenIds = _setUpNodes(nameFrom[i], msg.sender, count[i]);
+			uint[] memory tokenIds = _setUpNodes(nameFrom[i], user, count[i]);
 		
 			INodeType(mapNt.values[nameFrom[i]])
-				.createNodesMigration(msg.sender, tokenIds);
+				.createNodesMigration(user, tokenIds);
+			
+			emit NewNode(user, nameFrom[i], count[i]);
 		}
 	}
 
-	function createNodeAirDrop(
+	function createNodesAirDrop(
 		string memory name,
 		address user,
 		uint isBoostedAirDropRate,
@@ -215,10 +234,13 @@ contract Handler is Owners {
 					feature
 				);
 		}
+
+		emit NewNode(user, name, count);
 	}
 
 	function createLuckyBoxesWithTokens(
 		address tokenIn,
+		address user,
 		string memory name,
 		uint count,
 		string memory sponso
@@ -226,47 +248,11 @@ contract Handler is Owners {
 		external 
 	{
 		uint price = lucky
-			.createLuckyBoxesWithTokens(name, count, msg.sender);
+			.createLuckyBoxesWithTokens(name, count, user);
 		
 		swapper.swapCreateLuckyBoxesWithTokens(tokenIn, msg.sender, price, sponso);
 	}
 
-	function createLuckyBoxesWithNodes(
-		address tokenOut,
-		string[] memory nameFrom,
-		uint[][] memory tokenIdsToBurn,
-		string memory nameTo,
-		uint count
-	)
-		external
-	{
-		require(nameFrom.length == tokenIdsToBurn.length, "Handler: Length mismatch");
-
-		claimRewardsBatch(tokenOut, msg.sender, nameFrom, tokenIdsToBurn);
-
-		uint price = lucky
-			.createLuckyBoxesWithNodes(nameTo, count, msg.sender);
-
-		for (uint i = 0; i < nameFrom.length && price > 0; i++) {
-			require(mapNt.inserted[nameFrom[i]], "Handler: NodeType doesnt exist");
-
-			IPolarNode(nft).burnBatch(msg.sender, tokenIdsToBurn[i]);
-
-			for (uint j = 0; j < tokenIdsToBurn[i].length; j++) {
-				require(mapToken.inserted[tokenIdsToBurn[i][j]], "Handler: TokenId doesnt exist");
-				mapTokenRemove(tokenIdsToBurn[i][j]);
-			}
-			
-			address nt = mapNt.values[nameFrom[i]];
-			
-			uint burnedPrice = INodeType(nt).burnFrom(msg.sender, tokenIdsToBurn[i]);
-
-			price = price > burnedPrice ? price - burnedPrice : 0;
-		}
-
-		require(price == 0, "Handler: Nice try buddy");
-	}
-	
 	function createLuckyBoxesAirDrop(
 		string memory name,
 		address user,
@@ -420,6 +406,11 @@ contract Handler is Owners {
 	function getNodeTypesAddress(string memory key) external view returns(address) {
 		require(mapNt.inserted[key], "NodeType doesnt exist");
 		return mapNt.values[key];
+	}
+
+	function getAttribute(uint tokenId) external view returns(string memory) {
+		return INodeType(mapNt.values[mapToken.values[tokenId]])
+			.getAttribute(tokenId);
 	}
 	
 	function getTokenIdsSize() external view returns(uint) {

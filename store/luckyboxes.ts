@@ -74,7 +74,7 @@ export const actions: ActionTree<State, {}> = {
     commit('setLuckyBoxTypes', luckyBoxesArray)
   },
 
-  async buy ({ dispatch, rootGetters }, { luckyBox, amount, withToken }: { luckyBox: LuckyBoxType, amount: number, withToken: string }) {
+  async buy ({ dispatch, rootGetters }, { luckyBox, amount, withToken, user }: { luckyBox: LuckyBoxType, amount: number, withToken: string, user: string }) {
     const userAddress = rootGetters['wallet/address']
     if (!userAddress) {
       throw new Error('Current user address not found')
@@ -86,6 +86,7 @@ export const actions: ActionTree<State, {}> = {
 
     const tx = await this.$contracts.handler.createLuckyBoxesWithTokens(
       withToken,
+      user,
       luckyBox.name,
       amount,
       '' // sponso

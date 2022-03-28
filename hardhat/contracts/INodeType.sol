@@ -43,6 +43,7 @@ interface INodeType {
 	) external;
 
 	function getTotalNodesNumberOf(address user) external view returns(uint);
+	function getAttribute(uint tokenId) external view returns(string memory);
 
 	function claimRewardsAll(address user) external returns(uint, uint);
 	function claimRewardsBatch(address user, uint[] memory tokenIds) external returns(uint, uint);

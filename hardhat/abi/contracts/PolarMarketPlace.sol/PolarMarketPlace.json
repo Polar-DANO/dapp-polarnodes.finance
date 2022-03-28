@@ -15,6 +15,16 @@
         "internalType": "uint256",
         "name": "_fee",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_auctionBeforeRef",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_auctionBeforeAdd",
+        "type": "uint256"
       }
     ],
     "stateMutability": "nonpayable",
@@ -36,6 +46,32 @@
     "name": "addOwner",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "auctionBeforeAdd",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "auctionBeforeRef",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -536,6 +572,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "onlyAttribute",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "openAuction",
     "outputs": [
@@ -738,6 +793,24 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "_auctionBeforeRef",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_auctionBeforeAdd",
+        "type": "uint256"
+      }
+    ],
+    "name": "setAuctionBefore",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "_new",
         "type": "uint256"
       }
@@ -789,6 +862,24 @@
       }
     ],
     "name": "setMinPrices",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_addr",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "_new",
+        "type": "bool"
+      }
+    ],
+    "name": "setOnlyAttribute",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

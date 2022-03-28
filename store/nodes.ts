@@ -112,12 +112,12 @@ export const actions: ActionTree<State, {}> = {
     commit('setUserRewardsForNodeType', { nodeTypeName, rewards, fees })
   },
 
-  async createNodesFromToken ({ dispatch }, { nodeTypeName, count, token }) {
+  async createNodesFromToken ({ dispatch }, { nodeTypeName, user, count, token }) {
     if (!this.$contracts) {
       throw new Error('Contracts not loaded')
     }
 
-    await this.$contracts.handler.createNodesWithTokens(token, nodeTypeName, count, '')
+    await this.$contracts.handler.createNodesWithTokens(token, user, nodeTypeName, count, '')
     dispatch('nft/loadMyNFTs', null, { root: true })
   },
 

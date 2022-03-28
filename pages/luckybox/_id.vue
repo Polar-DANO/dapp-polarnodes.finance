@@ -11,14 +11,18 @@
         Mountain NFT!
       </div>
       <VRow justify="space-between" class="mt-8">
-        <VCol cols="12" md="6" class="d-flex align-center">
-          <video class="node-video" autoplay loop muted>
+        <VCol cols="12" md="6" class="d-flex align-center flex-col">
+          <video class="inline-block node-video" autoplay loop muted>
             <source
               :src="require('../../assets/PACK/LUCKY_BOX_NEUTRAL_ANIM.mp4')"
               type="video/mp4"
             >
             Your browser does not support the video tag.
           </video>
+          <div class="mt-8 d-flex align-center node-card__details__options">
+            <VCheckbox v-model="isOtherUser" hide-details class="mr-1" color="#00c6ed" />
+            Offer this Lucky Box to a friend
+          </div>
         </VCol>
         <VCol cols="12" md="6">
           <div class="text-center">
@@ -73,6 +77,14 @@
                 </VCol>
               </VRow>
 
+              <VRow v-if="isOtherUser">
+                <VTextField
+                  v-model="otherUser"
+                  dark
+                  label="Your Friend's Address"
+                />
+              </VRow>
+
               <div class="mt-4 d-flex justify-center items-center">
                 <VBtn small rounded color="#00c6ed" dark @click="onRemove">
                   -
@@ -106,7 +118,7 @@
               dark
               text
               :loading="isBtnLoading"
-              :disabled="quantity < 1"
+              :disabled="quantity < 1 && (isOtherUser ? otherUserValid : true)"
               @click="onBuy"
             >
               Buy
@@ -130,6 +142,12 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   private quantity = 1
   private selectedToken = Polar
   private isBtnLoading = false
+  private isOtherUser = false
+  private otherUser = ''
+
+  get otherUserValid () {
+    return /^0x[0-9a-fA-F]{40}$/.test(this.otherUser)
+  }
 
   get payWithTokens () {
     return Object.values(this.$store.state.tokens.tokens).map((token: any) => {
@@ -202,7 +220,8 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
       await this.$store.dispatch('luckyboxes/buy', {
         luckyBox: this.luckyBox,
         amount: this.quantity,
-        withToken: this.selectedToken
+        withToken: this.selectedToken,
+        user: this.isOtherUser ? this.otherUser : this.walletAddress
       })
 
       this.$router.push('/mynft')

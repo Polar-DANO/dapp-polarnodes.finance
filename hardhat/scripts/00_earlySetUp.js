@@ -61,13 +61,6 @@ async function main () {
   res = await polar.connect(owner).approve(router.address, b2, { gasLimit: estimatedGas.toNumber() + 50000 })
   await res.wait()
   console.log('polar.approve(router,1000000)')
-  await Promise.all(
-    payees.map(async (payee) => {
-      const res = await polar.connect(payee).getToken()
-      await res.wait()
-      console.log('polar.getToken() for ' + payee.address)
-    })
-  )
   let date = new Date()
   let deadline = Math.floor(date.getTime() / 1000) + 1000000000
   args = [

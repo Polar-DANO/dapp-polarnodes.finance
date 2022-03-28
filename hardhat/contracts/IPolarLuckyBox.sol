@@ -9,12 +9,6 @@ interface IPolarLuckyBox {
 		address user
 	) external returns(uint);
 	
-	function createLuckyBoxesWithNodes(
-		string memory name,
-		uint count,
-		address user
-	) external returns(uint);
-	
 	function createLuckyBoxesAirDrop(
 		string memory name,
 		uint count,

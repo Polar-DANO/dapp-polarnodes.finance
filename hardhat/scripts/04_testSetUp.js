@@ -5,7 +5,6 @@ const params = require('./params')
 const { getWallets } = require('./utils/getWallets')
 
 async function caller () {
-  await require('./00_earlySetUp')()
   const deploy = require('./00_deploy')
   const [
     handler,

@@ -26,6 +26,7 @@ contract PolarLuckyBox is ERC721, ERC721Enumerable, Owners {
 		uint openBox;
 		uint maxBox;
 		uint maxUser;
+		string attribute;
 	}
 
 	struct Map {
@@ -48,7 +49,6 @@ contract PolarLuckyBox is ERC721, ERC721Enumerable, Owners {
 	mapping (address => bool) public isBlacklisted;
 
 	bool public openCreateLuckyBoxesWithTokens = false;
-	bool public openCreateLuckyBoxesWithNodes = false;
 
 	constructor(
 		string memory uri,
@@ -64,43 +64,6 @@ contract PolarLuckyBox is ERC721, ERC721Enumerable, Owners {
 	}
 
 	// external
-	function addPolarLuckyBox(
-		string memory name,
-		uint priceTokens,
-		uint[] memory probability,
-		string[] memory nodeType,
-		string[] memory feature,
-		uint[] memory remaining,
-		uint maxBox,
-		uint maxUser
-	)
-		external
-		onlyOwners
-	{
-		require(probability.length == nodeType.length, "PolarLuckyBox: Length mismatch");
-		require(nodeType.length == feature.length, "PolarLuckyBox: Length mismatch");
-		require(feature.length == remaining.length, "PolarLuckyBox: Length mismatch");
-		require(feature.length > 1, "PolarLuckyBox: Length must be greater than 1");
-		require(!map.inserted[name], "PolarLuckyBox: Name already exists");
-
-		uint[] memory counter = new uint[](nodeType.length);
-
-		mapSet(name, Box({
-			priceTokens: priceTokens,
-			probability: _updateProbability(probability),
-			nodeType: nodeType,
-			feature: feature,
-			counter: counter,
-			remaining: remaining,
-			createdBox: 0,
-			openBox: 0,
-			maxBox: maxBox,
-			maxUser: maxUser
-		}));
-
-		checkBoxIntegrity(map.values[name]);
-	}
-
 	function updatePolarLuckyBox(
 		string memory name,
 		uint priceTokens,
@@ -109,7 +72,8 @@ contract PolarLuckyBox is ERC721, ERC721Enumerable, Owners {
 		string[] memory feature,
 		uint[] memory remaining,
 		uint maxBox,
-		uint maxUser
+		uint maxUser,
+		string memory attribute
 	)
 		external
 		onlyOwners
@@ -118,16 +82,17 @@ contract PolarLuckyBox is ERC721, ERC721Enumerable, Owners {
 		require(nodeType.length == feature.length, "PolarLuckyBox: Length mismatch");
 		require(feature.length == remaining.length, "PolarLuckyBox: Length mismatch");
 		require(feature.length > 1, "PolarLuckyBox: Length must be greater than 1");
-		require(map.inserted[name], "PolarLuckyBox: Name doesnt exist");
 		
 		uint[] memory counter = new uint[](nodeType.length);
 		Box memory box = map.values[name];
 
-		for (uint i = 0; i < nodeType.length; i++) {
-			for (uint j = 0; j < box.nodeType.length; j++) {
-				if (strcmp(nodeType[i], box.nodeType[j]) && strcmp(feature[i], box.feature[j])) {
-					counter[i] = box.counter[j];
-					break;
+		if (map.inserted[name]) {
+			for (uint i = 0; i < nodeType.length; i++) {
+				for (uint j = 0; j < box.nodeType.length; j++) {
+					if (strcmp(nodeType[i], box.nodeType[j]) && strcmp(feature[i], box.feature[j])) {
+						counter[i] = box.counter[j];
+						break;
+					}
 				}
 			}
 		}
@@ -142,7 +107,8 @@ contract PolarLuckyBox is ERC721, ERC721Enumerable, Owners {
 			createdBox: box.createdBox,
 			openBox: box.openBox,
 			maxBox: maxBox,
-			maxUser: maxUser
+			maxUser: maxUser,
+			attribute: attribute
 		}));
 		
 		checkBoxIntegrity(map.values[name]);
@@ -169,26 +135,6 @@ contract PolarLuckyBox is ERC721, ERC721Enumerable, Owners {
 		return map.values[name].priceTokens * count;
 	}
 	
-	function createLuckyBoxesWithNodes(
-		string memory name,
-		uint count,
-		address user
-	)
-		external
-		onlyHandler
-		returns(uint)
-	{
-		require(openCreateLuckyBoxesWithNodes, "PolarLuckyBox: Not open");
-		mintBoxes(name, user, count);
-
-		Box storage box = map.values[name];
-		require(box.createdBox <= box.maxBox, "PolarLuckyBox: Out of stock");
-		require(boxesUserCount[name][user] <= map.values[name].maxUser, 
-				"PolarLuckyBox: User got too many boxes of this type");
-
-		return map.values[name].priceTokens * count;
-	}
-
 	function createLuckyBoxesAirDrop(
 		string memory name,
 		uint count,
@@ -273,12 +219,13 @@ contract PolarLuckyBox is ERC721, ERC721Enumerable, Owners {
 		isBlacklisted[_new] = _value;
 	}
 
-	function setOpenCreateLuckyBoxesWithTokens(bool _new) external onlyOwners {
-		openCreateLuckyBoxesWithTokens = _new;
-	}
-	
-	function setOpenCreateLuckyBoxesWithNodes(bool _new) external onlyOwners {
-		openCreateLuckyBoxesWithNodes = _new;
+	function setOpenCreate(
+		bool _openCreateLuckyBoxesWithTokens
+	) 
+		external 
+		onlyOwners 
+	{
+		openCreateLuckyBoxesWithTokens = _openCreateLuckyBoxesWithTokens;
 	}
 	
 	function setPolarLuckyBoxPrice(string memory name, uint _new) external onlyOwners {
@@ -353,6 +300,10 @@ contract PolarLuckyBox is ERC721, ERC721Enumerable, Owners {
 	function getMapForKey(string memory key) external view returns(Box memory) {
 		require(map.inserted[key], "PolarLuckyBox: Key doesnt exist");
 		return map.values[key];
+	}
+
+	function getAttribute(uint tokenId) external view returns(string memory) {
+		return map.values[tokenIdsToType[tokenId]].attribute;
 	}
 
 	// public

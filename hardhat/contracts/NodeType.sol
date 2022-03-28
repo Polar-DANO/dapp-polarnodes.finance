@@ -367,180 +367,201 @@ contract NodeType is Owners {
 		require(_new != address(0), "NodeType: Old cannot be address zero");
 		old = _new;
 	}
+	
+	function setBasics(
+		uint _price,
+		uint _claimTime,
+		uint _rewardAmount
+	) 
+		external 
+		onlyOwners 
+	{
+		require(_price > 0, "NodeType: Price cannot be zero");
+		price = _price;
+		require(_claimTime > 0, "NodeType: Claim Time cannot be zero");
+		claimTime = _claimTime;
+		require(_rewardAmount > 0, "NodeType: Reward Amount cannot be zero");
+		rewardAmount = _rewardAmount;
+	}
 
-	function setMaxCount(uint _new) external onlyOwners {
-		maxCount = _new;
-	}
-	
-	function setPrice(uint _new) external onlyOwners {
-		require(_new > 0, "NodeType: Price cannot be zero");
-		price = _new;
+	function setTax(
+		uint _claimTaxRoi,
+		uint _globalTax
+	) 
+		external 
+		onlyOwners 
+	{
+		claimTaxRoi = _claimTaxRoi;
+		globalTax = _globalTax;
 	}
 
-	function setClaimTime(uint _new) external onlyOwners {
-		require(_new > 0, "NodeType: Claim Time cannot be zero");
-		claimTime = _new;
+	function setMax(
+		uint _maxUser,
+		uint _maxCount
+	) 
+		external 
+		onlyOwners 
+	{
+		maxUser = _maxUser;
+		maxCount = _maxCount;
 	}
 	
-	function setRewardAmount(uint _new) external onlyOwners {
-		require(_new > 0, "NodeType: Reward Amount cannot be zero");
-		rewardAmount = _new;
+	function setMaxLevelUp(
+		uint _maxLevelUpUser,
+		uint _maxLevelUpTotal
+	) 
+		external 
+		onlyOwners 
+	{
+		maxLevelUpUser = _maxLevelUpUser;
+		maxLevelUpTotal = _maxLevelUpTotal;
 	}
 	
-	function setClaimTaxRoi(uint _new) external onlyOwners {
-		require(_new < 10000, "NodeType: Claim Tax Roi must be lower than 10000");
-		claimTaxRoi = _new;
+	function setMaxCreationPending(
+		uint _maxCreationPendingUser,
+		uint _maxCreationPendingTotal
+	) 
+		external 
+		onlyOwners 
+	{
+		maxCreationPendingUser = _maxCreationPendingUser;
+		maxCreationPendingTotal = _maxCreationPendingTotal;
 	}
 	
-	function setMaxLevelUpUser(uint _new) external onlyOwners {
-		maxLevelUpUser = _new;
+	function setIsBoostedNft(
+		uint _isBoostedNftRate,
+		uint _isBoostedNftProbability
+	) 
+		external 
+		onlyOwners 
+	{
+		isBoostedNftRate = _isBoostedNftRate;
+		require(_isBoostedNftProbability < 10000, 
+			"NodeType: Is BoostedNft Probability must be lower than 10000");
+		isBoostedNftProbability = _isBoostedNftProbability;
 	}
 	
-	function setMaxLevelUpTotal(uint _new) external onlyOwners {
-		maxLevelUpTotal = _new;
+	function setObtainingTimeReference(
+		uint _obtainingTimeReference,
+		uint _obtainingTimeRate
+	) 
+		external 
+		onlyOwners 
+	{
+		require(_obtainingTimeReference > 0, "NodeType: Obtaining Time Reference cannot be zero");
+		obtainingTimeReference = _obtainingTimeReference;
+		obtainingTimeRate = _obtainingTimeRate;
 	}
 	
-	function setMaxCreationPendingUser(uint _new) external onlyOwners {
-		maxCreationPendingUser = _new;
-	}
-	
-	function setMaxCreationPendingTotal(uint _new) external onlyOwners {
-		maxCreationPendingTotal = _new;
-	}
-	
-	function setMaxUser(uint _new) external onlyOwners {
-		maxUser = _new;
-	}
-	
-	function setIsBoostedNftRate(uint _new) external onlyOwners {
-		isBoostedNftRate = _new;
-	}
-	
-	function setIsBoostedNftProbability(uint _new) external onlyOwners {
-		require(_new < 10000, "NodeType: Is BoostedNft Probability must be lower than 10000");
-		isBoostedNftProbability = _new;
-	}
-	
-	function setObtainingTimeReference(uint _new) external onlyOwners {
-		require(_new > 0, "NodeType: Obtaining Time Reference cannot be zero");
-		obtainingTimeReference = _new;
-	}
-	
-	function setObtainingTimeRate(uint _new) external onlyOwners {
-		obtainingTimeRate = _new;
-	}
-	
-	function setIsBoostedTokenRate(uint _new) external onlyOwners {
+	function setIsBoostedToken(uint _new) external onlyOwners {
 		isBoostedTokenRate = _new;
 	}
 	
-	function setTokenIdIsBoostedAirDropRate(uint tokenId, uint _rate) external onlyOwners {
-		userOf[tokenIdToOwner[tokenId]].values[tokenId].isBoostedAirDropRate = _rate;
+	function setTokenIdSpecs(
+		uint tokenId, 
+		uint _isBoostedAirDropRate,
+		bool _isBoostedNft,
+		bool _isBoostedToken,
+		string memory _feature
+	)
+		external 
+		onlyOwners 
+	{
+		Node storage node = userOf[tokenIdToOwner[tokenId]].values[tokenId];
+
+		node.isBoostedAirDropRate = _isBoostedAirDropRate;
+		node.isBoostedNft = _isBoostedNft;
+		node.isBoostedToken = _isBoostedToken;
+		require(featureToBoostRate[_feature] != 0, "NodeType: Feature doesnt exist");
+		node.feature = _feature;
 	}
 	
-	function setTokenIdIsBoostedNft(uint tokenId, bool _new) external onlyOwners {
-		userOf[tokenIdToOwner[tokenId]].values[tokenId].isBoostedNft = _new;
+	function setNoClaimBoost(
+		uint _noClaimRewardAmount,
+		uint _noClaimTimeReference
+	)
+		external 
+		onlyOwners 
+	{
+		noClaimRewardAmount = _noClaimRewardAmount;
+		require(_noClaimTimeReference > 0, "NodeType: NoClaimTimeReference must be greater than zero");
+		noClaimTimeReference = _noClaimTimeReference;
 	}
 	
-	function setTokenIdIsBoostedToken(uint tokenId, bool _new) external onlyOwners {
-		userOf[tokenIdToOwner[tokenId]].values[tokenId].isBoostedToken = _new;
+	function setClaimTimeBoost(
+		uint _claimTimeReference,
+		uint _claimTimeRate
+	) 
+		external 
+		onlyOwners 
+	{
+		require(_claimTimeReference > 0, "NodeType: Claim Time Reference cannot be zero");
+		claimTimeReference = _claimTimeReference;
+		claimTimeRate = _claimTimeRate;
 	}
 	
-	function setTokenIdFeature(uint tokenId, string memory _new) external onlyOwners {
-		require(featureToBoostRate[_new] != 0, "NodeType: Feature doesnt exist");
-		userOf[tokenIdToOwner[tokenId]].values[tokenId].feature = _new;
+	function setMaxMulti(
+		uint _maxMultiObtaining,
+		uint _maxMultiClaim
+	) 
+		external 
+		onlyOwners 
+	{
+		maxMultiObtaining = _maxMultiObtaining;
+		maxMultiClaim = _maxMultiClaim;
 	}
 	
-	function setNoClaimRewardAmount(uint _new) external onlyOwners {
-		noClaimRewardAmount = _new;
+	function setCanBeBoosted(
+		bool _canBeBoostedNftToken,
+		bool _canBeBoostedNftLevelUp,
+		bool _canBeBoostedNftPending,
+		bool _canBeBoostedNftLucky,
+		bool _canBeBoostedNftMigration
+	) 
+		external 
+		onlyOwners 
+	{
+		canBeBoostedNftToken = _canBeBoostedNftToken;
+		canBeBoostedNftLevelUp = _canBeBoostedNftLevelUp;
+		canBeBoostedNftPending = _canBeBoostedNftPending;
+		canBeBoostedNftLucky = _canBeBoostedNftLucky;
+		canBeBoostedNftMigration = _canBeBoostedNftMigration;
 	}
 	
-	function setNoClaimTimeReference(uint _new) external onlyOwners {
-		require(_new > 0, "NodeType: NoClaimTimeReference must be greater than zero");
-		noClaimTimeReference = _new;
+	function setIsBoosted(
+		bool _isBoostedTokenToken,
+		bool _isBoostedTokenLevelUp,
+		bool _isBoostedTokenPending,
+		bool _isBoostedTokenLucky,
+		bool _isBoostedTokenMigration
+	) 
+		external 
+		onlyOwners 
+	{
+		isBoostedTokenToken = _isBoostedTokenToken;
+		isBoostedTokenLevelUp = _isBoostedTokenLevelUp;
+		isBoostedTokenPending = _isBoostedTokenPending;
+		isBoostedTokenLucky = _isBoostedTokenLucky;
+		isBoostedTokenMigration = _isBoostedTokenMigration;
 	}
 	
-	function setGlobalTax(uint _new) external onlyOwners {
-		globalTax = _new;
-	}
-	
-	function setClaimTimeReference(uint _new) external onlyOwners {
-		require(_new > 0, "NodeType: Claim Time Reference cannot be zero");
-		claimTimeReference = _new;
-	}
-	
-	function setClaimTimeRate(uint _new) external onlyOwners {
-		claimTimeRate = _new;
-	}
-	
-	function setMaxMultiObtaining(uint _new) external onlyOwners {
-		maxMultiObtaining = _new;
-	}
-	
-	function setMaxMultiClaim(uint _new) external onlyOwners {
-		maxMultiClaim = _new;
+	function setOpenCreate(
+		bool _openCreateNodesWithTokens,
+		bool _openCreateNodesLevelUp,
+		bool _openCreateNodesWithPending,
+		bool _openCreateNodesWithLuckyBoxes,
+		bool _openCreateNodesMigration
+	) 
+		external 
+		onlyOwners 
+	{
+		openCreateNodesWithTokens = _openCreateNodesWithTokens;
+		openCreateNodesLevelUp = _openCreateNodesLevelUp;
+		openCreateNodesWithPending = _openCreateNodesWithPending;
+		openCreateNodesWithLuckyBoxes = _openCreateNodesWithLuckyBoxes;
+		openCreateNodesMigration = _openCreateNodesMigration;
 	}
 
-	function setCanBeBoostedNftToken(bool _new) external onlyOwners {
-		canBeBoostedNftToken = _new;
-	}
-	
-	function setCanBeBoostedNftLevelUp(bool _new) external onlyOwners {
-		canBeBoostedNftToken = _new;
-	}
-	
-	function setCanBeBoostedNftPending(bool _new) external onlyOwners {
-		canBeBoostedNftToken = _new;
-	}
-	
-	function setCanBeBoostedNftLucky(bool _new) external onlyOwners {
-		canBeBoostedNftLucky = _new;
-	}
-	
-	function setCanBeBoostedNftMigration(bool _new) external onlyOwners {
-		canBeBoostedNftMigration = _new;
-	}
-	
-	function setIsBoostedTokenToken(bool _new) external onlyOwners {
-		isBoostedTokenToken = _new;
-	}
-	
-	function setIsBoostedTokenLevelUp(bool _new) external onlyOwners {
-		isBoostedTokenLevelUp = _new;
-	}
-	
-	function setIsBoostedTokenPending(bool _new) external onlyOwners {
-		isBoostedTokenPending = _new;
-	}
-	
-	function setIsBoostedTokenLucky(bool _new) external onlyOwners {
-		isBoostedTokenLucky = _new;
-	}
-	
-	function setIsBoostedTokenMigration(bool _new) external onlyOwners {
-		isBoostedTokenMigration = _new;
-	}
-	
-	function setOpenCreateNodesWithTokens(bool _new) external onlyOwners {
-		openCreateNodesWithTokens = _new;
-	}
-
-	function setOpenCreateNodesLevelUp(bool _new) external onlyOwners {
-		openCreateNodesLevelUp = _new;
-	}
-
-	function setOpenCreateNodesWithPending(bool _new) external onlyOwners {
-		openCreateNodesWithPending = _new;
-	}
-
-	function setOpenCreateNodesWithLuckyBoxes(bool _new) external onlyOwners {
-		openCreateNodesWithLuckyBoxes = _new;
-	}
-
-	function setOpenCreateNodesMigration(bool _new) external onlyOwners {
-		openCreateNodesMigration = _new;
-	}
-	
 	// external view
 	function getTotalNodesNumberOf(address user) external view returns(uint) {
 		return userOf[user].keys.length;
@@ -626,6 +647,10 @@ contract NodeType is Owners {
 
 	function getNodeOwnersSize() external view returns(uint) {
 		return nodeOwners.length;
+	}
+
+	function getAttribute(uint tokenId) external view returns(string memory) {
+		return userOf[tokenIdToOwner[tokenId]].values[tokenId].feature;
 	}
 	
 	function getNodeOwnersBetweenIndexes(
@@ -779,7 +804,8 @@ contract NodeType is Owners {
 		if (block.timestamp - node.lastClaimTime > noClaimTimeReference)
 			rewardsTotal += noClaimRewardAmount;
 
-		if (rewardAmount * (block.timestamp - node.creationTime) / claimTime < price)
+		if (rewardAmount * (block.timestamp - node.creationTime) / claimTime < price && 
+				claimTaxRoi > 0)
 			fees += rewardsTotal * claimTaxRoi / 10000;
 		
 		if (globalTax > 0)

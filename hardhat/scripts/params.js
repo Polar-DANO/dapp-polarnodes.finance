@@ -185,7 +185,8 @@ const LuckyBox0 = {
 		10000, 10000, 10000, 10000, 10000
 	],
 	maxBox: 10000,
-	maxUser: 500
+	maxUser: 500,
+	attribute: ""
 }
 const LuckyBox1 = {
 	name: "Lucky Box 2",
@@ -203,7 +204,8 @@ const LuckyBox1 = {
 		10000, 10000, 10000, 10000, 10000
 	],
 	maxBox: 5000,
-	maxUser: 200
+	maxUser: 200,
+	attribute: ""
 }
 const LuckyBox2 = {
 	name: "Lucky Box 3",
@@ -221,7 +223,8 @@ const LuckyBox2 = {
 		10000, 1000, 100
 	],
 	maxBox: 1000,
-	maxUser: 100
+	maxUser: 100,
+	attribute: ""
 }
 const LuckyBox3 = {
 	name: "Lucky Box 4",
@@ -239,7 +242,8 @@ const LuckyBox3 = {
 		10000, 30, 20, 10,
 	],
 	maxBox: 500,
-	maxUser: 10
+	maxUser: 10,
+	attribute: ""
 }
 const NodeType4Feature0 = {
 	name: "Gold",
@@ -281,6 +285,12 @@ const AddOwner = [
 const NodeTypes = [
 	NodeType0, NodeType1, NodeType2, NodeType3, NodeType4
 ]
+
+const MarketPlace = {
+	fee: 1000,
+	auctionBeforeRef: 60,
+	auctionBeforeAdd: 60
+}
 
 const MinPricesNode = {
 	names: [
@@ -333,7 +343,7 @@ module.exports = {
 	LuckyBox0, LuckyBox1, LuckyBox2, LuckyBox3,
 	NodeType4Feature0, NodeType4Feature1, NodeType4Feature2,
 	SwapperPath0, SwapperPath1,
-	AddOwner,
+	AddOwner, MarketPlace,
 	NodeTypes, MinPricesNode, MinPricesLucky
 }
 
