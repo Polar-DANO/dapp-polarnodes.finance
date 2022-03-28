@@ -1,7 +1,7 @@
 import { MutationTree, ActionTree, GetterTree } from 'vuex'
 import { BigNumber } from 'ethers'
-import { LuckyBoxType } from '~/models/LuckyBoxType'
-import { LuckyBox } from '~/models/LuckyBox'
+import { LuckyBoxType } from '~/models/luckybox-type'
+import { LuckyBox } from '~/models/luckybox'
 
 export const state = () => ({
   luckyBoxTypes: null as (LuckyBoxType[] | null),

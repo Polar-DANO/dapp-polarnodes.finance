@@ -110,7 +110,7 @@
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
-import * as LuckyBox from '~/models/LuckyBoxType'
+import * as LuckyBox from '~/models/luckybox-type'
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 
 @Component({})

@@ -23,20 +23,21 @@
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
+import { Item } from '~/models/marketplace'
 
 @Component
 export default class Market extends WalletReactiveFetch implements IReactiveFetch {
-  private selectedItem = null
+  private selectedItem: Item | null = null
 
   get isModalOpen () {
     return this.selectedItem !== null
   }
 
-  get items () {
+  get items () : Item[] {
     return this.$store.getters['marketplace/items']
   }
 
-  private onClick (item) {
+  private onClick (item: Item) {
     this.selectedItem = item
   }
 

@@ -23,6 +23,7 @@
 import { PropType } from 'vue'
 import { Component, Vue } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
+import { NodeNftNames } from '~/models/types'
 
 @Component({
   props: {

@@ -53,18 +53,19 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import { LuckyBox } from '~/models/luckybox'
 
 @Component({
   props: {
-    items: Array
+    items: Array as () => LuckyBox[]
   }
 })
 export default class NodeTable extends Vue {
-  async onReveal (tokenId) {
+  async onReveal (tokenId: LuckyBox['tokenId']) {
     await this.$store.dispatch('luckyboxes/reveal', [tokenId])
   }
 
-  onList (tokenId) {
+  onList (tokenId: LuckyBox['tokenId']) {
     this.$router.push(`/luckybox/list/${tokenId._hex}`)
   }
 }

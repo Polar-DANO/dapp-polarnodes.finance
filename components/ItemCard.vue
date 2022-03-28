@@ -139,7 +139,7 @@ export default class ItemCard extends Vue {
 
     switch (this.nft.nftType) {
       case NFTType.Node:
-        return NODENAME_TO_IMAGE[this.nodeData?.nodeType]
+        return (NODENAME_TO_IMAGE as any)[this.nodeData?.nodeType]
       case NFTType.LuckyBox:
         return LUCKYBOX_IMAGE
     }

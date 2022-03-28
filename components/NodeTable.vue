@@ -100,20 +100,20 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
+import { NFT } from '~/models/nft'
 
 @Component({
   props: {
-    items: Array
+    items: Array as () => NFT[]
   }
 })
 export default class NodeTable extends Vue {
-  private nodeData = []
   private nftSellSectionModal = false
   private nftSellModal = false
-  private selectedNft = null
+  private selectedNft: NFT | null = null
   private isClaimAllBtnLoading = false
 
-  formatDate (date) {
+  formatDate (date: Date) {
     return new Intl.DateTimeFormat().format(date)
   }
 
@@ -122,7 +122,7 @@ export default class NodeTable extends Vue {
     this.nftSellModal = false
   }
 
-  public openSellModal (nft) {
+  public openSellModal (nft: NFT) {
     this.selectedNft = nft
     this.nftSellModal = true
     this.nftSellSectionModal = false
@@ -175,7 +175,7 @@ export default class NodeTable extends Vue {
   //   }
   // }
 
-  public formatEther (bn) {
+  public formatEther (bn: ethers.BigNumber) {
     if (ethers.BigNumber.isBigNumber(bn)) {
       return parseFloat(ethers.utils.formatEther(bn)).toFixed(4)
     }

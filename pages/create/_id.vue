@@ -252,7 +252,7 @@ import { URL_TO_NAME, NODENAME_TO_VIDEO, Url } from '~/models/constants'
 import * as NodeType from '~/models/NodeType'
 import { Token } from '~/hardhat/scripts/address'
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
-import { NFT } from '~/store/nft'
+import { NFT } from '~/models/nft'
 
 const CreateMode = {
   FROM_TOKENS: 'FROM_TOKENS',

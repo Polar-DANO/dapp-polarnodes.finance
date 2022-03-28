@@ -1,21 +1,7 @@
 import { ActionTree, MutationTree, GetterTree } from 'vuex'
 import { BigNumber } from 'ethers'
 import { NodeType } from '~/models/NodeType'
-
-export interface NFT {
-  owner: string;
-  nodeType: string;
-  tokenId: BigNumber;
-  creationTime: Date;
-  lastClaimTime: Date;
-  obtainingTime: Date;
-  isBoostedAirDropRate: number
-  isBoostedNft: boolean;
-  isBoostedToken: boolean;
-  feature: string;
-  userPendingRewards: BigNumber;
-  userPendingFees: BigNumber;
-}
+import { NFT } from '~/models/nft'
 
 export const state = () => ({
   myNfts: {} as Record<string, NFT[]>,

@@ -26,12 +26,10 @@
 </template>
 
 <script lang="ts">
-import { PropType } from 'vue'
 import { Component, Vue } from 'nuxt-property-decorator'
 import * as eth from 'ethers'
 import * as NodeType from '~/models/NodeType'
 import { NAME_TO_URL, NODENAME_TO_IMAGE } from '~/models/constants'
-import { NodeNftNames } from '~/models/types'
 
 const formatEther = eth.utils.formatEther
 
@@ -43,12 +41,12 @@ const formatEther = eth.utils.formatEther
 export default class NodeNft extends Vue {
   public onSelectNode () {
     this.$router.push(
-      `/create/${NAME_TO_URL[this.$props.name]}`
+      `/create/${(NAME_TO_URL as any)[this.$props.name]}`
     )
   }
 
-  get image () {
-    return NODENAME_TO_IMAGE[this.$props.name]
+  get image (): any {
+    return (NODENAME_TO_IMAGE as any)[this.$props.name]
   }
 
   get nodeType () {
