@@ -1,6 +1,6 @@
 import { GetterTree, MutationTree, ActionTree } from 'vuex'
 import { BigNumber } from 'ethers'
-import addresses from '~/hardhat/scripts/address'
+import addresses from '~/config/addresses'
 
 export const state = () => ({
   tokens: {
@@ -20,7 +20,7 @@ export type State = ReturnType<typeof state>;
 
 export const getters: GetterTree<State, {}> = {
   balanceForToken: state => (tokenAddress: string) => {
-    return state.balance[tokenAddress] ?? BigNumber.from(0)
+    return state.balance[tokenAddress] ?? null
   },
   hasEnoughSwapperAllowance: state => (token: string, amount: BigNumber) => state.allowance[token]?.[addresses.Swapper]?.gte(amount) ?? false,
   hasEnoughMarketplaceAllowance: state => (token: string, amount: BigNumber) => state.allowance[token]?.[addresses.MarketPlace]?.gte(amount) ?? false
@@ -52,7 +52,6 @@ export const mutations: MutationTree<State> = {
   ...(process.env.isTestnet)
     ? {
         setGotToken (state, gotToken: boolean) {
-          console.log(gotToken)
           state.gotToken = gotToken
         }
       }

@@ -266,9 +266,9 @@ import { Component } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
 import { URL_TO_NAME, NODENAME_TO_VIDEO, Url } from '~/models/constants'
 import * as NodeType from '~/models/NodeType'
-import { Token } from '~/hardhat/scripts/address'
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 import { NFT } from '~/models/nft'
+import addresses from '~/config/addresses'
 
 const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/
 
@@ -292,7 +292,7 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   public quantity = 1
   public isDetailsOpen = false
   public createMode: keyof typeof CreateMode = CreateMode.FROM_TOKENS
-  public selectedToken = Token
+  public selectedToken: string = addresses.Token
   public selectedNfts: NFT[] = []
   public isBtnLoading = false
   private isOtherUser = false

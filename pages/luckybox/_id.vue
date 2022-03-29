@@ -135,14 +135,14 @@ import { Component } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
 import * as LuckyBox from '~/models/luckybox-type'
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
-import { Token as Polar } from '~/hardhat/scripts/address'
+import addresses from '~/config/addresses'
 
 const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/
 
 @Component({})
 export default class Create extends WalletReactiveFetch implements IReactiveFetch {
   private quantity = 1
-  private selectedToken = Polar
+  private selectedToken = addresses.Token
   private isBtnLoading = false
   private isOtherUser = false
   private otherUser = ''
