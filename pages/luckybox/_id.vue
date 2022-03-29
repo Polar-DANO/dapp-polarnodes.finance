@@ -118,7 +118,7 @@
               dark
               text
               :loading="isBtnLoading"
-              :disabled="quantity < 1 && (isOtherUser ? otherUserValid : true)"
+              :disabled="!canCreate"
               @click="onBuy"
             >
               Buy
@@ -137,6 +137,8 @@ import * as LuckyBox from '~/models/luckybox-type'
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 import { Token as Polar } from '~/hardhat/scripts/address'
 
+const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/
+
 @Component({})
 export default class Create extends WalletReactiveFetch implements IReactiveFetch {
   private quantity = 1
@@ -146,7 +148,11 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   private otherUser = ''
 
   get otherUserValid () {
-    return /^0x[0-9a-fA-F]{40}$/.test(this.otherUser)
+    return ADDRESS_REGEX.test(this.otherUser)
+  }
+
+  get canCreate () {
+    return this.quantity >= 1 && (this.isOtherUser ? ADDRESS_REGEX.test(this.otherUser) : true)
   }
 
   get payWithTokens () {
