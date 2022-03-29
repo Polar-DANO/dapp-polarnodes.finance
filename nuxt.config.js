@@ -3,7 +3,7 @@ import i18n from './config/i18n'
 
 export default {
   env: {
-    chainId: process.env.CHAIN_ID || 41337
+    isTestnet: !!process.env.IS_TESTNET || false
   },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,

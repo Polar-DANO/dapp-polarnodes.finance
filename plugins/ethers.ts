@@ -110,27 +110,41 @@ function checkConnection (makePlugin: (provider: ethers.providers.Web3Provider) 
   }
 }
 
-async function switchNetwork (provider: ethers.providers.Web3Provider, reqChainId: string) {
+async function switchNetwork (provider: ethers.providers.Web3Provider, isTestnet: boolean) {
   const network = await provider.getNetwork()
   const chainId = network.chainId
 
-  if (chainId === parseInt(reqChainId ?? '0xa86a')) {
+  if (chainId === (isTestnet ? 0xA869 : 0xA86A)) {
     return
+  }
+
+  const testnetParams = {
+    chainId: 0xA869,
+    chainName: 'Avalanche Test Network',
+    rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
+    blockExplorerUrls: ['https://testnet.snowtrace.io/'],
+    nativeCurrency: {
+      name: 'AVAX',
+      symbol: 'AVAX',
+      decimals: 18
+    }
+  }
+
+  const mainnetParams = {
+    chainId: '0xa86a',
+    chainName: 'Avalanche Network',
+    rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+    blockExplorerUrls: ['https://snowtrace.io/'],
+    nativeCurrency: {
+      name: 'AVAX',
+      symbol: 'AVAX',
+      decimals: 18
+    }
   }
 
   await (provider.provider as any).request({
     method: 'wallet_addEthereumChain',
-    params: [{
-      chainId: '0xa86a',
-      chainName: 'Avalanche Network',
-      rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
-      blockExplorerUrls: ['https://snowtrace.io/'],
-      nativeCurrency: {
-        name: 'AVAX',
-        symbol: 'AVAX',
-        decimals: 18
-      }
-    }]
+    params: [(isTestnet ? testnetParams : mainnetParams)]
   })
 }
 
@@ -143,7 +157,7 @@ const ethersPlugin: Plugin = ({ store, env }, inject) => {
       return
     }
 
-    await switchNetwork(provider, env.chainId)
+    await switchNetwork(provider, env.isTestnet)
     inject('web3Provider', provider)
     const signer = provider.getSigner()
 

@@ -50,43 +50,59 @@
           </th> -->
           </tr>
         </thead>
-        <tbody class="divide-white/10 divide-y-[1px] px-[16px]" />
-        <tr v-for="nft in items" :key="`${nft.tokenId}-${nft.nodeType}`">
-          <td
-            class="py-[12px] pl-[16px] text-left text-[12px] text-white"
-          >
-            #{{ nft.tokenId }}
-            <!-- {{ item.nodeIndex }} -->
-          </td>
-          <td
-            class="py-[12px] pl-[16px] text-left text-[12px] text-white"
-          >
-            {{ nft.nodeType }}
-          </td>
-          <td
-            class="py-[12px] pl-[16px] text-left text-[12px] text-white"
-          >
-            {{ formatDate(nft.creationTime) }}
-          </td>
-
-          <td class="py-[12px] pl-[16px] text-left text-[12px] text-white">
-            {{ formatDate(nft.lastClaimTime) }}
-          </td>
-          <td class="py-[12px] pl-[16px] text-left text-[12px] text-white">
-            -
-          </td>
-          <td class="flex flex-wrap items-center justify-center py-[12px] pl-[16px] text-[12px] text-white">
-            {{ formatEther(nft.userPendingRewards) || '-' }} $POLAR
-          </td>
-          <td>
-            <button
-              class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px] my-[10px] ml-[16px]"
-              @click="openSellModal(nft)"
+        <tbody class="divide-white/10 divide-y-[1px] px-[16px]">
+          <tr v-if="items.length === 0">
+            <td colspan="42424242">
+              <v-alert
+                v-if="items.length === 0"
+                type="info"
+                class="mt-[30px] mx-4"
+                :value="true"
+                dismissible
+                outlined
+                dark
+              >
+                You don't have any nodes yet.
+              </v-alert>
+            </td>
+          </tr>
+          <tr v-for="nft in items" :key="`${nft.tokenId}-${nft.nodeType}`">
+            <td
+              class="py-[12px] pl-[16px] text-left text-[12px] text-white"
             >
-              <div>Manage</div>
-            </button>
-          </td>
-        </tr>
+              #{{ nft.tokenId }}
+            <!-- {{ item.nodeIndex }} -->
+            </td>
+            <td
+              class="py-[12px] pl-[16px] text-left text-[12px] text-white"
+            >
+              {{ nft.nodeType }}
+            </td>
+            <td
+              class="py-[12px] pl-[16px] text-left text-[12px] text-white"
+            >
+              {{ formatDate(nft.creationTime) }}
+            </td>
+
+            <td class="py-[12px] pl-[16px] text-left text-[12px] text-white">
+              {{ formatDate(nft.lastClaimTime) }}
+            </td>
+            <td class="py-[12px] pl-[16px] text-left text-[12px] text-white">
+              -
+            </td>
+            <td class="flex flex-wrap items-center justify-center py-[12px] pl-[16px] text-[12px] text-white">
+              {{ formatEther(nft.userPendingRewards) || '-' }} $POLAR
+            </td>
+            <td>
+              <button
+                class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px] my-[10px] ml-[16px]"
+                @click="openSellModal(nft)"
+              >
+                <div>Manage</div>
+              </button>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
     <div v-if="nftSellSectionModal">

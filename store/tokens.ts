@@ -8,7 +8,12 @@ export const state = () => ({
     DAI: { address: addresses.Dai, symbol: 'DAI' }
   },
   balance: {} as { [tokenAddress: string]: (BigNumber | null) },
-  allowance: {} as { [tokenAddress: string] : { [address: string]: BigNumber } }
+  allowance: {} as { [tokenAddress: string] : { [address: string]: BigNumber } },
+  ...(process.env.isTestnet)
+    ? {
+        gotToken: false
+      }
+    : {}
 })
 
 export type State = ReturnType<typeof state>;
@@ -42,7 +47,16 @@ export const mutations: MutationTree<State> = {
         [args.address]: args.allowance
       }
     }
-  }
+  },
+
+  ...(process.env.isTestnet)
+    ? {
+        setGotToken (state, gotToken: boolean) {
+          console.log(gotToken)
+          state.gotToken = gotToken
+        }
+      }
+    : {}
 }
 
 export const actions: ActionTree<State, {}> = {
@@ -121,5 +135,35 @@ export const actions: ActionTree<State, {}> = {
     )
     await tx.wait()
     dispatch('loadAllowance')
+  }
+}
+
+if (process.env.isTestnet) {
+  actions.fetchGotToken = async function fetchGotToken ({ commit, rootGetters }) {
+    const userAddress = rootGetters['wallet/address']
+    if (!userAddress) {
+      throw new Error('You must connnect your wallet to the testnet first')
+    }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
+    commit('setGotToken', await this.$contracts.polar.gotToken(userAddress))
+  }
+
+  actions.getPolarToken = async function getPolarToken ({ dispatch, rootGetters }) {
+    const userAddress = rootGetters['wallet/address']
+    if (!userAddress) {
+      throw new Error('You must connnect your wallet to the testnet first')
+    }
+
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+
+    await this.$contracts.polar.getToken()
+    dispatch('fetchGotToken')
+    dispatch('loadBalance', addresses.Token)
   }
 }
