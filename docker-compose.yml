@@ -7,7 +7,7 @@ services:
     restart: always
     ports:
       - "7000:7000"
-    command: "IS_TESTNET=true npm run start "
+    # command: "npm run start"
     networks:
       - nuxt-network
 networks:
