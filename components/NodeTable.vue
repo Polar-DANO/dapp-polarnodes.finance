@@ -58,7 +58,6 @@
                 type="info"
                 class="mt-[30px] mx-4"
                 :value="true"
-                dismissible
                 outlined
                 dark
               >
@@ -66,7 +65,7 @@
               </v-alert>
             </td>
           </tr>
-          <tr v-for="nft in items" :key="`${nft.tokenId}-${nft.nodeType}`">
+          <tr v-for="nft in items" :key="`${nft.tokenId}-${nft.nodeType}`" class="align-middle">
             <td
               class="py-[12px] pl-[16px] text-left text-[12px] text-white"
             >
@@ -93,7 +92,7 @@
             <td class="flex flex-wrap items-center justify-center py-[12px] pl-[16px] text-[12px] text-white">
               {{ formatEther(nft.userPendingRewards) || '-' }} $POLAR
             </td>
-            <td>
+            <td class="pr-4">
               <button
                 class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px] my-[10px] ml-[16px]"
                 @click="openSellModal(nft)"
@@ -120,7 +119,7 @@ import { NFT } from '~/models/nft'
 
 @Component({
   props: {
-    items: Array as () => NFT[]
+    items: Array as () => NFT[] | null
   }
 })
 export default class NodeTable extends Vue {
@@ -152,43 +151,6 @@ export default class NodeTable extends Vue {
       this.isClaimAllBtnLoading = false
     }
   }
-
-  // public onError (err: { message: string } | null): void {
-  //   if (err) {
-  //     const inAppAlert = this.$root.$refs.alert as unknown as Record<
-  //       string,
-  //       Function
-  //     >
-
-  //     if (err.message.includes('User denied transaction signature')) {
-  //       inAppAlert.MustSign()
-  //     } else if (err.message.includes('GET REWARD OF: NO NODE OWNER')) {
-  //       inAppAlert.NoOwner()
-  //     } else if (err.message.includes('MANIA CSHT: Blacklisted address')) {
-  //       inAppAlert.NodesBlacklist()
-  //     } else if (
-  //       err.message.includes('MANIA CSHT:  creation from the zero address')
-  //     ) {
-  //       inAppAlert.MustSign()
-  //     } else if (
-  //       err.message.includes(
-  //         'MANIA CSHT: futur and rewardsPool cannot cashout rewards'
-  //       )
-  //     ) {
-  //       inAppAlert.MustSign()
-  //     } else if (
-  //       err.message.includes(
-  //         "MANIA CSHT: You don't have enough reward to cash out"
-  //       )
-  //     ) {
-  //       inAppAlert.MustSign()
-  //     } else if (err.message.includes('Nothing to claim')) {
-  //       inAppAlert.NoClaim()
-  //     } else {
-  //       inAppAlert.OtherError()
-  //     }
-  //   }
-  // }
 
   public formatEther (bn: ethers.BigNumber) {
     if (ethers.BigNumber.isBigNumber(bn)) {

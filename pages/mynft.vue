@@ -48,7 +48,7 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
   }
 
   get nfts () {
-    return this.$store.getters['nft/myNFTsByCreationDateDesc'] ?? []
+    return this.$store.getters['nft/myNFTsByCreationDateDesc']
   }
 
   get luckyBoxes () {

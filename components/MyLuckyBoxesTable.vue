@@ -32,7 +32,7 @@
           >
             {{ lb.type }}
           </td>
-          <td>
+          <td class="text-right pr-4">
             <button
               class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px] my-[10px] ml-[16px]"
               @click="() => onReveal(lb.tokenId)"
@@ -40,10 +40,11 @@
               <div>Reveal</div>
             </button>
             <button
+              v-if="canSell(lb)"
               class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px] my-[10px] ml-[16px]"
               @click="()=> onList(lb.tokenId)"
             >
-              <div>List on Marketplace</div>
+              <div>List</div>
             </button>
           </td>
         </tr>
@@ -67,6 +68,10 @@ export default class NodeTable extends Vue {
 
   onList (tokenId: LuckyBox['tokenId']) {
     this.$router.push(`/luckybox/list/${tokenId._hex}`)
+  }
+
+  canSell (item: LuckyBox) {
+    return item.attribute !== ''
   }
 }
 </script>

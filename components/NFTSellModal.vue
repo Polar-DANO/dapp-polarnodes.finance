@@ -78,6 +78,7 @@
             </div>
           </div> -->
           <button
+            v-if="canSell"
             class="text-white text-center font-normal text-[14px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px]"
             @click="$emit('sellModal')"
           >
@@ -123,6 +124,10 @@ export default class NFTSellModal extends Vue {
 
   get roi () {
     return NodeType.roi(this.nodeType)
+  }
+
+  get canSell () {
+    return this.$props.nft.attribute !== ''
   }
 
   async onClaim () {
