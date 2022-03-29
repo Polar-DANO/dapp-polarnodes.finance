@@ -516,7 +516,7 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   get totalDailyEarning () {
     if (!this.nodeType) { return 0 }
     const { quantity, dailyEarningPerNode } = this
-    return ethers.utils.formatEther(dailyEarningPerNode?.mul(quantity) ?? 0)
+    return parseFloat(ethers.utils.formatEther(dailyEarningPerNode?.mul(quantity) ?? 0)).toFixed(2)
   }
 
   get roi () {
