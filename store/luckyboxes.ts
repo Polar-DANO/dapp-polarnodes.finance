@@ -67,7 +67,8 @@ export const actions: ActionTree<State, {}> = {
           maxBox: luckyBox.maxBox,
           nodeTypes: luckyBox.nodeType,
           probabilities: luckyBox.probability,
-          remaining: luckyBox.remaining
+          remaining: luckyBox.remaining,
+          features: luckyBox.feature
         }
       })
 
@@ -115,7 +116,8 @@ export const actions: ActionTree<State, {}> = {
       return {
         tokenId,
         owner: userAddress,
-        type: await this.$contracts.luckyBoxes.tokenIdsToType(tokenId)
+        type: await this.$contracts.luckyBoxes.tokenIdsToType(tokenId),
+        attribute: await this.$contracts.luckyBoxes.getAttribute(tokenId)
       }
     }))
 
@@ -149,7 +151,8 @@ export const actions: ActionTree<State, {}> = {
     commit('setLuckyBox', {
       tokenId,
       owner: await this.$contracts.luckyBoxes.ownerOf(tokenId),
-      type: await this.$contracts.luckyBoxes.tokenIdsToType(tokenId)
+      type: await this.$contracts.luckyBoxes.tokenIdsToType(tokenId),
+      attribute: await this.$contracts.luckyBoxes.getAttribute(tokenId)
     })
   }
 }

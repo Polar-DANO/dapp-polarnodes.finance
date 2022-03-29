@@ -2,13 +2,17 @@ import { MutationTree } from 'vuex'
 import { State } from './state'
 import { NFTType, Offer, Auction } from '~/models/marketplace'
 
+function filterEmptyAttributes<T extends { nft: { attribute: string } }> (items: T[]): T[] {
+  return items.filter(item => item.nft.attribute !== '')
+}
+
 const mutations: MutationTree<State> = {
   setOffers (state, offers: Offer[]) {
-    state.offers = offers
+    state.offers = filterEmptyAttributes(offers)
   },
 
   setAuctions (state, auctions: Auction[]) {
-    state.auctions = auctions
+    state.auctions = filterEmptyAttributes(auctions)
   },
 
   setApprovedForNftType (state, { nftType, isApproved }: { nftType: NFTType; isApproved: boolean; }) {

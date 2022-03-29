@@ -9,6 +9,7 @@ export interface NFT {
   nftType: NFTType
   tokenId: BigNumber;
   owner: string;
+  attribute: string;
 }
 
 export enum ItemType {

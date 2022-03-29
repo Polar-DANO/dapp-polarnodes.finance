@@ -27,28 +27,27 @@
         <VCol cols="12" md="6">
           <div class="text-center">
             <div class="node-card__odds">
-              Odds:
+              Biggest nodes in this box:
             </div>
             <div class="node-card__odds__outlined py-4 inline-block mt-2">
               <VRow
-                v-for="chance in chances"
-                :key="chance.key"
+                v-for="(chance, key) in chances"
+                :key="key"
                 justify="center"
                 no-gutters
               >
-                <VCol class="text-right">
-                  {{ chance.key }}:
-                </VCol>
-                <VDivider vertical dark class="mx-4" />
-                <VCol class="text-left">
-                  {{ chance.value }}% Chance
+                <VCol class="text-center font-bold">
+                  {{ chance }}
                 </VCol>
               </VRow>
             </div>
 
+            <div class="node-card__odds mt-4">
+              Pay with:
+            </div>
             <VSelect
               v-model="selectedToken"
-              class="node-card__outlined node-card__select centered-input mt-4"
+              class="node-card__outlined node-card__select centered-input mt-2"
               width="200px"
               placeholder="Buy With"
               dense
@@ -173,11 +172,8 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   }
 
   get chances () {
-    return this.luckyBox
-      ? LuckyBox
-        .computeProbabilities(this.luckyBox)
-        .map(item => ({ key: item.nodeType, value: item.probability }))
-      : []
+    if (!this.luckyBox) { return [] }
+    return LuckyBox.getPossibleTypes(this.luckyBox).slice(-3)
   }
 
   async reactiveFetch () {

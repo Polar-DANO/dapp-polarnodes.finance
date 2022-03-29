@@ -13,4 +13,5 @@ export interface NFT {
   feature: string;
   userPendingRewards: BigNumber;
   userPendingFees: BigNumber;
+  attribute: string;
 }

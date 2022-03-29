@@ -1,4 +1,4 @@
-import { ActionTree } from 'vuex'
+import { ActionTree, Store } from 'vuex'
 import * as ethers from 'ethers'
 import { BigNumber } from 'ethers'
 import { State } from './state'
@@ -10,6 +10,15 @@ function getSupportedNfts (addresses: ContractsPlugin['$addresses']): Record<NFT
     [NFTType.Node]: addresses.PolarNode,
     [NFTType.LuckyBox]: addresses.PolarLuckyBox
   }
+}
+
+async function fetchAttribute<T> (this: Store<T>, nftType: NFTType, tokenId: BigNumber): Promise<string> {
+  const contract = (nftType === NFTType.Node) ? this.$contracts?.polarNodeNft : this.$contracts?.luckyBoxes
+  if (!contract) {
+    return ''
+  }
+
+  return await contract.getAttribute(tokenId)
 }
 
 const actions: ActionTree<State, {}> = {
@@ -25,18 +34,19 @@ const actions: ActionTree<State, {}> = {
         const offerSize = await this.$contracts.marketplace.getOfferOfSize(nftAddress)
         const offers: any[] = await this.$contracts.marketplace.getOfferOfBetweenIndexes(nftAddress, 0, offerSize)
 
-        return offers.map((offer): Offer => {
+        return Promise.all(offers.map(async (offer): Promise<Offer> => {
           return {
             type: ItemType.Offer,
             nft: {
               owner: offer.owner,
               tokenId: offer.tokenId,
-              nftType: nftType as NFTType
+              nftType: nftType as NFTType,
+              attribute: await fetchAttribute.call(this, nftType as NFTType, offer.tokenId)
             },
             creationTime: new Date(offer.creationTime.toNumber() * 1000),
             price: offer.price
           }
-        })
+        }))
       })
     )
 
@@ -54,19 +64,20 @@ const actions: ActionTree<State, {}> = {
         const auctionSize = await this.$contracts.marketplace.getAuctionOfSize(nftAddress)
         const auctions: any[] = await this.$contracts.marketplace.getAuctionOfBetweenIndexes(nftAddress, 0, auctionSize)
 
-        return auctions.map((auction): Auction => {
+        return Promise.all(auctions.map(async (auction): Promise<Auction> => {
           return {
             type: ItemType.Auction,
             nft: {
               owner: auction.owner,
               tokenId: auction.tokenId,
-              nftType: nftType as NFTType
+              nftType: nftType as NFTType,
+              attribute: await fetchAttribute.call(this, nftType as NFTType, auction.tokenId)
             },
             creationTime: new Date(auction.creationTime.toNumber() * 1000),
             currentPrice: auction.currentPrice,
             end: new Date(auction.end.toNumber() * 1000)
           }
-        })
+        }))
       })
     )
 

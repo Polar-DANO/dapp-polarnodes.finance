@@ -119,7 +119,7 @@ async function switchNetwork (provider: ethers.providers.Web3Provider, isTestnet
   }
 
   const testnetParams = {
-    chainId: 0xA869,
+    chainId: '0xA869',
     chainName: 'Avalanche Test Network',
     rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
     blockExplorerUrls: ['https://testnet.snowtrace.io/'],

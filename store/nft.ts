@@ -74,13 +74,16 @@ export const actions: ActionTree<State, {}> = {
 
       const { nfts, pendingRewards } = {
         nfts: await Promise.all(tokenIds.map(async (tokenId) => {
-          const nft = await nodeTypeContract.getNodeFromTokenId(tokenId)
-          return { nft, tokenId }
+          return {
+            nft: await nodeTypeContract.getNodeFromTokenId(tokenId),
+            attribute: await this.$contracts?.polarNodeNft?.getAttribute(tokenId),
+            tokenId
+          }
         })),
         pendingRewards: await nodeTypeContract.calculateUserRewardsBatch(userAddress, tokenIds) as [BigNumber[], BigNumber[]]
       }
 
-      return nfts.map(({ nft, tokenId }, idx): NFT => {
+      return nfts.map(({ nft, attribute, tokenId }, idx): NFT => {
         return {
           owner: nft.owner,
           nodeType: nodeType.name,
@@ -93,7 +96,8 @@ export const actions: ActionTree<State, {}> = {
           isBoostedToken: nft.isBoostedToken,
           feature: nft.feature,
           userPendingRewards: pendingRewards[0][idx],
-          userPendingFees: pendingRewards[1][idx]
+          userPendingFees: pendingRewards[1][idx],
+          attribute
         }
       })
     }))
@@ -186,7 +190,8 @@ export const actions: ActionTree<State, {}> = {
       isBoostedToken: node.isBoostedToken,
       feature: node.feature,
       userPendingRewards: pendingRewards[0][0],
-      userPendingFees: pendingRewards[1][0]
+      userPendingFees: pendingRewards[1][0],
+      attribute: await this.$contracts?.polarNodeNft?.getAttribute(tokenId)
     }
 
     commit('setByTokenId', { tokenId, nft })
