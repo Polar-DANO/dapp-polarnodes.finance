@@ -13,7 +13,7 @@ COPY . /usr/src/dapp.polarnodes/
 RUN npm install @types/mocha
 # build necessary, even if no static files are needed,
 # since it builds the server as well
-RUN npm run build
+RUN sh -c "IS_TESTNET=true npm run build"
 
 # expose 5000 on container
 EXPOSE 7000
