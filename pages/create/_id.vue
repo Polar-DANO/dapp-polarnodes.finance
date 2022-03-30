@@ -202,9 +202,6 @@
               *** WARNING / ATTENTION: ***
             </div>
             <div class="mt-4 text-left node-card__danger-text">
-              Leveling up an NFT will make it lose any existing pending rewards!
-            </div>
-            <div class="mt-4 text-left node-card__danger-text">
               Please count the number of NFTs you want to exchange. If you
               select more than the price of the target NFT, you will lose the
               excess NFTs.
