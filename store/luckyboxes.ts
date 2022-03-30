@@ -134,7 +134,7 @@ export const actions: ActionTree<State, {}> = {
       throw new Error('Contracts not loaded')
     }
 
-    const estimatedGas = await this.$contracts.handler.estimatedGas.createNodesWithLuckyBoxes(
+    const estimatedGas = await this.$contracts.handler.estimateGas.createNodesWithLuckyBoxes(
       tokenIds,
     )
     const tx = await this.$contracts.handler.createNodesWithLuckyBoxes(
