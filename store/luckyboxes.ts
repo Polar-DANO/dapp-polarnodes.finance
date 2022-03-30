@@ -135,7 +135,8 @@ export const actions: ActionTree<State, {}> = {
     }
 
     const tx = await this.$contracts.handler.createNodesWithLuckyBoxes(
-      tokenIds
+      tokenIds,
+      { gasLimit: 1500000 }
     )
 
     await tx.wait()
