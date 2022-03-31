@@ -22,29 +22,29 @@ export type Url = 'fuji' | 'mont-blanc' | 'kilimanjaro' | 'ushuaia' | 'everest';
 
 export const NODENAME_TO_IMAGE = {
   [NodeNftNames.Fuji]:
-    require('../assets/PACK/FUJI-FIXE.jpg'),
+    require('../assets/PACK/Fuji/FUJI-FIXE.jpg'),
   [NodeNftNames.MontBlanc]:
-  require('../assets/PACK/MONT BLANC FIXE.jpg'),
+  require('../assets/PACK/Mont Blanc/MONT BLANC FIXE.jpg'),
   [NodeNftNames.Kilimanjaro]:
-  require('../assets/PACK/KILIMANDJARO FIXE.jpg'),
+  require('../assets/PACK/Kilimanjaro/KILIMANDJARO FIXE.jpg'),
   [NodeNftNames.Ushuaia]:
-  require('../assets/PACK/USHUAIA RENDER0133.jpg'),
+  require('../assets/PACK/Ushuaia/USHUAIA RENDER0133.jpg'),
   [NodeNftNames.Everest]:
-  require('../assets/PACK/EVEREST FIXE.jpg')
+  require('../assets/PACK/Everest/EVEREST FIXE.jpg')
 }
 
 export const NODENAME_TO_VIDEO = {
   [NodeNftNames.Fuji]:
-  require('../assets/PACK/FUJI ANIM.mp4'),
+  require('../assets/PACK/Fuji/FUJI ANIM.mp4'),
   [NodeNftNames.MontBlanc]:
-  require('../assets/PACK/MONT BLANC ANIM.mp4'),
+  require('../assets/PACK/Mont Blanc/MONT BLANC ANIM.mp4'),
   [NodeNftNames.Kilimanjaro]:
-  require('../assets/PACK/KILIMANDJARO ANIM.mp4'),
+  require('../assets/PACK/Kilimanjaro/KILIMANDJARO ANIM.mp4'),
   [NodeNftNames.Ushuaia]:
-  require('../assets/PACK/USHUAIA ANIM.mp4'),
+  require('../assets/PACK/Ushuaia/USHUAIA ANIM.mp4'),
   [NodeNftNames.Everest]:
-  require('../assets/PACK/EVEREST ANIM.mp4')
+  require('../assets/PACK/Everest/EVEREST ANIM.mp4')
 }
 
-export const LUCKYBOX_IMAGE = require('../assets/PACK/LUCKY BOX NEUTRAL.jpg')
-export const LUCKYBOX_VIDEO = require('../assets/PACK/LUCKY_BOX_NEUTRAL_ANIM.mp4')
+export const LUCKYBOX_IMAGE = require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 1.jpg')
+export const LUCKYBOX_VIDEO = require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 1 ANIM.mp4')
