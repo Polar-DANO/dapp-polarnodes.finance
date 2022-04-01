@@ -2,8 +2,12 @@
   <div
     class="node-card flex flex-col mx-auto md:mx-[64px] mt-[30px] md:mt-[100px]"
   >
-    <div class="node-card__header">
-      Buy {{ name }} 📦
+    <div class="node-card__header d-flex">
+      <div>Buy {{ name }} 📦</div>
+      <VSpacer />
+      <VIcon class="ml-auto pointer" color="white" @click="onClose">
+        mdi-close
+      </VIcon>
     </div>
     <div class="mt-8 mb-16 mx-16">
       <div class="node-card__subtitle">
@@ -14,13 +18,20 @@
         <VCol cols="12" md="6" class="d-flex align-center flex-col">
           <video class="inline-block node-video" autoplay loop muted>
             <source
-              :src="require('../../assets/PACK/LUCKY_BOX_NEUTRAL_ANIM.mp4')"
+              :src="
+                require('../../assets/PACK/Lucky Boxes/LUCKY BOX LVL 1 ANIM.mp4')
+              "
               type="video/mp4"
             >
             Your browser does not support the video tag.
           </video>
           <div class="mt-8 d-flex align-center node-card__details__options">
-            <VCheckbox v-model="isOtherUser" hide-details class="mr-1" color="#00c6ed" />
+            <VCheckbox
+              v-model="isOtherUser"
+              hide-details
+              class="mr-1"
+              color="#00c6ed"
+            />
             Offer this Lucky Box to a friend
           </div>
         </VCol>
@@ -133,13 +144,17 @@
 import { Component } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
 import * as LuckyBox from '~/models/luckybox-type'
-import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
+import WalletReactiveFetch, {
+  IReactiveFetch
+} from '~/mixins/wallet-reactive-fetch'
 import addresses from '~/config/addresses'
 
 const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/
 
 @Component({})
-export default class Create extends WalletReactiveFetch implements IReactiveFetch {
+export default class Create
+  extends WalletReactiveFetch
+  implements IReactiveFetch {
   private quantity = 1
   private selectedToken = addresses.Token
   private isBtnLoading = false
@@ -151,7 +166,10 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   }
 
   get canCreate () {
-    return this.quantity >= 1 && (this.isOtherUser ? ADDRESS_REGEX.test(this.otherUser) : true)
+    return (
+      this.quantity >= 1 &&
+      (this.isOtherUser ? ADDRESS_REGEX.test(this.otherUser) : true)
+    )
   }
 
   get payWithTokens () {
@@ -164,7 +182,10 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   }
 
   get isApprove () {
-    return !this.$store.getters['tokens/hasEnoughSwapperAllowance'](this.selectedToken, this.totalCost)
+    return !this.$store.getters['tokens/hasEnoughSwapperAllowance'](
+      this.selectedToken,
+      this.totalCost
+    )
   }
 
   get luckyBox () {
@@ -172,8 +193,14 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   }
 
   get chances () {
-    if (!this.luckyBox) { return [] }
+    if (!this.luckyBox) {
+      return []
+    }
     return LuckyBox.getPossibleTypes(this.luckyBox).slice(-3)
+  }
+
+  onClose () {
+    this.$router.push('/nodes')
   }
 
   async reactiveFetch () {
@@ -210,7 +237,10 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   public async onApprove () {
     try {
       this.isBtnLoading = true
-      await this.$store.dispatch('tokens/requestSwapperAllowance', this.selectedToken)
+      await this.$store.dispatch(
+        'tokens/requestSwapperAllowance',
+        this.selectedToken
+      )
     } finally {
       this.isBtnLoading = false
     }
@@ -233,7 +263,13 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   }
 
   get dataBlocks () {
-    return [{ key: 'Cost:', value: ethers.utils.formatEther(this.totalCost), unit: '$POLAR' }]
+    return [
+      {
+        key: 'Cost:',
+        value: ethers.utils.formatEther(this.totalCost),
+        unit: '$POLAR'
+      }
+    ]
   }
 }
 </script>
