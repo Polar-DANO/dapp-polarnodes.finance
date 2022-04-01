@@ -9,7 +9,7 @@
       <div class="max-w-[420px] max-h-[325px]">
         <video class="node-video" autoplay loop muted>
           <source
-            :src="require('../../../assets/PACK/LUCKY_BOX_NEUTRAL_ANIM.mp4')"
+            :src="require('../../../assets/PACK/Lucky Boxes/LUCKY BOX LVL 1 ANIM.mp4')"
             type="video/mp4"
           >
           Your browser does not support the video tag.
