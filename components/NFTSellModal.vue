@@ -13,9 +13,9 @@
     <div class="bg-[#17171B] rounded-b-[20px] border-solid border-[#00C6ED] border-[2px]">
       <div class="flex flex-col justify-center items-center gap-2 md:gap-[75px] md:flex-row flex-wrap md:mt-[64px] md:mr-[104px] md:ml-[64px] md:mb-[89px] p-[20px] md:p-[0px]">
         <div class="max-w-[420px] max-h-[325px]">
-          <img class="rounded-[15px] w-[420px] h-[325px] object-cover" :src="require('../assets/img/nft/3.jpg')" alt="">
+          <img class="rounded-[15px] w-[420px] h-[325px] object-cover" :src="image" alt="">
         </div>
-        <div class="flex flex-col gap-[12px] md:gap-[10px]">
+        <div class="flex flex-col gap-[12px] md:gap-[15px]">
           <div class="border-solid border-[#00C6ED] border-[2px] rounded-[14px] text-center p-[23px]">
             <span class="text-[white] text-[16px] font-[600]">Earning {{ formatBigNumber(rewardAmount) }} $POLAR per day</span>
           </div>
@@ -31,7 +31,7 @@
               </div>
             </div>
             <button
-              class="text-white text-center font-normal text-[14px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] w-[30%]"
+              class="text-white text-center font-normal text-[14px] border-solid border-[#57A146] border-[2px] bg-gradient-to-l from-[#3ee3232e] to-[#2ae927] hover:bg-[#57A146]  rounded-[14px] w-[30%]"
             >
               <v-btn
                 class="text-[16px] font-[600] py-[8px] text-center"
@@ -79,7 +79,7 @@
           </div> -->
           <button
             v-if="canSell"
-            class="text-white text-center font-normal text-[14px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px]"
+            class="text-white text-center font-normal text-[14px]  bg-gradient-to-l from-[#231717] to-[#d12929] border-solid border-[#f30000] border-[2px] hover:bg-[#f30303] rounded-[14px]"
             @click="$emit('sellModal')"
           >
             <div class="text-[16px] font-[600] py-[8px] text-center">
@@ -97,7 +97,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
 import * as NodeType from '~/models/NodeType'
 import { NFT } from '~/models/nft'
-
+import { NODENAME_TO_IMAGE } from '~/models/constants'
 @Component({
   props: {
     nft: Object as () => NFT
@@ -109,7 +109,11 @@ export default class NFTSellModal extends Vue {
   get nodeType () {
     return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType)
   }
-
+  
+  get image (): any {
+    return (NODENAME_TO_IMAGE as any)[this.$props.nft.nodeType]
+  }
+  
   get rewardAmount () {
     return NodeType.dailyRewardPerNode(this.nodeType)
   }

@@ -13,7 +13,7 @@
     <div class="bg-[#17171B] rounded-b-[20px] border-solid border-[#00C6ED] border-[2px]">
       <div class="flex flex-col justify-center items-center md:gap-[107px] md:flex-row flex-wrap md:mt-[64px] md:mr-[104px] md:ml-[64px] md:mb-[89px] p-[20px] md:p-[0px]">
         <div class="max-w-[420px] max-h-[325px]">
-          <img class="rounded-[15px] w-[420px] h-[325px] object-cover" :src="require('../assets/img/nft/3.jpg')" alt="">
+          <img class="rounded-[15px] w-[420px] h-[325px] object-cover" :src="image" alt="">
         </div>
         <div class="flex flex-col gap-[20px] md:gap-[48px] w-[70%] md:w-[0]">
           <div class="flex flex-initial flex-col gap-[15px]">
@@ -85,6 +85,7 @@ import { Component } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 import { NFTType } from '~/models/marketplace'
+import { NODENAME_TO_IMAGE } from '~/models/constants'
 
 @Component({
   props: {
@@ -109,6 +110,9 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
     return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType)
   }
 
+  get image (): any {
+    return (NODENAME_TO_IMAGE as any)[this.$props.nft.nodeType]
+  }
   setDefaultPrices () {
     if (!this.$props.nft) { return }
     if (!this.nodeType) { return }
