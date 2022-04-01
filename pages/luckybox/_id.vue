@@ -200,7 +200,7 @@ export default class Create
   }
 
   onClose () {
-    this.$router.push('/nodes')
+    this.$router.push('/nodes#lucky-box')
   }
 
   async reactiveFetch () {
