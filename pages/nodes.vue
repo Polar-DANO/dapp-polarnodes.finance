@@ -30,7 +30,7 @@
     >
       <NodeNftLoading v-for="index of 5" :key="`loading-node-${index}`" />
     </div>
-    <span class="mt-[64px] text-[24px] text-white">Node Lucky Boxes 📦️</span>
+    <span ref="lucky-box" class="mt-[64px] text-[24px] text-white">Node Lucky Boxes 📦️</span>
     <div
       class="md:flex flex-wrap gap-2 md:gap-[24px] my-[32px]"
       style="color: white"
@@ -52,6 +52,16 @@ import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fe
 
 @Component
 export default class Nodes extends WalletReactiveFetch implements IReactiveFetch {
+  mounted () {
+    if (window.location.hash && window.location.hash === '#lucky-box') {
+      const el = this.$refs['lucky-box']
+
+      if (el) {
+        (el as any).scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+  }
+
   get nodeStation () {
     return [
       {
