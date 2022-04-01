@@ -2,8 +2,12 @@
   <div
     class="node-card flex flex-col mx-auto md:mx-[64px] mt-[30px] md:mt-[100px]"
   >
-    <div class="node-card__header">
-      Create {{ nodeNftName }} Mountain 🗻️
+    <div class="node-card__header d-flex">
+      <div>Create {{ nodeNftName }} Mountain 🗻️</div>
+      <VSpacer />
+      <VIcon class="ml-auto pointer" color="white" @click="onClose">
+        mdi-close
+      </VIcon>
     </div>
     <div class="mt-8 mb-16 mx-16">
       <div class="node-card__subtitle">
@@ -65,7 +69,12 @@
               </div>
             </div>
             <div class="mt-8 d-flex align-center node-card__details__options">
-              <VCheckbox v-model="isPendingRewardsSelected" hide-details class="mr-1" color="#00c6ed" />
+              <VCheckbox
+                v-model="isPendingRewardsSelected"
+                hide-details
+                class="mr-1"
+                color="#00c6ed"
+              />
               Create this Mountain NFT with Pending Rewards
             </div>
             <div class="mt-1 d-flex align-center node-card__details__options">
@@ -77,7 +86,10 @@
               />
               Create this Mountain NFT by ‘Leveling Up’ Existing NFTs
             </div>
-            <div v-if="canOfferToUser" class="mt-1 d-flex align-center node-card__details__options">
+            <div
+              v-if="canOfferToUser"
+              class="mt-1 d-flex align-center node-card__details__options"
+            >
               <VCheckbox
                 v-model="isOtherUser"
                 hide-details
@@ -263,7 +275,9 @@ import { Component } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
 import { URL_TO_NAME, NODENAME_TO_VIDEO, Url } from '~/models/constants'
 import * as NodeType from '~/models/NodeType'
-import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
+import WalletReactiveFetch, {
+  IReactiveFetch
+} from '~/mixins/wallet-reactive-fetch'
 import { NFT } from '~/models/nft'
 import addresses from '~/config/addresses'
 
@@ -285,7 +299,9 @@ const CreateMode = {
     }
   }
 })
-export default class Create extends WalletReactiveFetch implements IReactiveFetch {
+export default class Create
+  extends WalletReactiveFetch
+  implements IReactiveFetch {
   public quantity = 1
   public isDetailsOpen = false
   public createMode: keyof typeof CreateMode = CreateMode.FROM_TOKENS
@@ -294,6 +310,10 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   public isBtnLoading = false
   private isOtherUser = false
   private otherUser = ''
+
+  onClose () {
+    this.$router.push('/nodes')
+  }
 
   onCreateModeChange (createMode: keyof typeof CreateMode) {
     if (createMode !== CreateMode.FROM_TOKENS) {
@@ -316,9 +336,14 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   }
 
   async reactiveFetch () {
-    if (!this.isWalletConnected) { return }
+    if (!this.isWalletConnected) {
+      return
+    }
     await {
-      allowance: await this.$store.dispatch('tokens/loadAllowance', this.selectedToken),
+      allowance: await this.$store.dispatch(
+        'tokens/loadAllowance',
+        this.selectedToken
+      ),
       nodes: await (async () => {
         await this.$store.dispatch('nodes/loadNodeTypes')
         await this.$store.dispatch('nft/loadMyNFTs')
@@ -408,13 +433,21 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   }
 
   get nfts () {
-    return this.$store.getters['nft/myNFTsByNodeType'].flatMap(({ nodeType, nfts }: { nodeType: string, nfts: NFT[] }) => {
-      if (nfts.length === 0) {
-        return []
-      }
+    return this.$store.getters['nft/myNFTsByNodeType'].flatMap(
+      ({ nodeType, nfts }: { nodeType: string; nfts: NFT[] }) => {
+        if (nfts.length === 0) {
+          return []
+        }
 
-      return [{ header: nodeType }, ...nfts.map(nft => ({ text: `${nodeType} #${nft.tokenId}`, value: { ...nft, nodeType } }))]
-    })
+        return [
+          { header: nodeType },
+          ...nfts.map(nft => ({
+            text: `${nodeType} #${nft.tokenId}`,
+            value: { ...nft, nodeType }
+          }))
+        ]
+      }
+    )
   }
 
   public onRemove () {
@@ -428,17 +461,26 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
   }
 
   get canCreate () {
-    return this.quantity >= 1 && (this.isOtherUser ? ADDRESS_REGEX.test(this.otherUser) : true)
+    return (
+      this.quantity >= 1 &&
+      (this.isOtherUser ? ADDRESS_REGEX.test(this.otherUser) : true)
+    )
   }
 
   get isApprove () {
-    return !this.$store.getters['tokens/hasEnoughSwapperAllowance'](this.selectedToken, this.totalCost)
+    return !this.$store.getters['tokens/hasEnoughSwapperAllowance'](
+      this.selectedToken,
+      this.totalCost
+    )
   }
 
   public async onApprove () {
     try {
       this.isBtnLoading = true
-      await this.$store.dispatch('tokens/requestSwapperAllowance', this.selectedToken)
+      await this.$store.dispatch(
+        'tokens/requestSwapperAllowance',
+        this.selectedToken
+      )
     } finally {
       this.isBtnLoading = false
     }
@@ -491,33 +533,53 @@ export default class Create extends WalletReactiveFetch implements IReactiveFetc
 
   get dataBlocks () {
     const { totalCost, roi, tax } = this
-    if (!this.nodeType) { return [] }
+    if (!this.nodeType) {
+      return []
+    }
     return [
-      { key: 'Cost:', value: ethers.utils.formatEther(totalCost), unit: '$POLAR' },
+      {
+        key: 'Cost:',
+        value: ethers.utils.formatEther(totalCost),
+        unit: '$POLAR'
+      },
       { key: 'ROI / day:', value: roi.toFixed(2), unit: '%' },
       { key: 'Claim Tax:', value: tax, unit: '%' }
     ]
   }
 
   get detailsBlocks () {
-    if (!this.nodeType) { return [] }
+    if (!this.nodeType) {
+      return []
+    }
     return [
-      { key: 'Max Slots:', value: `${this.totalCreatedNodes} / ${this.maxSlots}` },
+      {
+        key: 'Max Slots:',
+        value: `${this.totalCreatedNodes} / ${this.maxSlots}`
+      },
       { key: 'Max Level Up User:', value: this.maxLevelUpUser },
       { key: 'Max Level Up Global:', value: this.maxLevelUpGlobal },
       { key: 'Max Creation Pending User:', value: this.maxCreationPendingUser },
-      { key: 'Max Creation Pending Global:', value: this.maxCreationPendingGlobal }
+      {
+        key: 'Max Creation Pending Global:',
+        value: this.maxCreationPendingGlobal
+      }
     ]
   }
 
   get totalDailyEarning () {
-    if (!this.nodeType) { return 0 }
+    if (!this.nodeType) {
+      return 0
+    }
     const { quantity, dailyEarningPerNode } = this
-    return parseFloat(ethers.utils.formatEther(dailyEarningPerNode?.mul(quantity) ?? 0)).toFixed(2)
+    return parseFloat(
+      ethers.utils.formatEther(dailyEarningPerNode?.mul(quantity) ?? 0)
+    ).toFixed(2)
   }
 
   get roi () {
-    if (!this.nodeType) { return 0 }
+    if (!this.nodeType) {
+      return 0
+    }
     return NodeType.roi(this.nodeType)
   }
 }
