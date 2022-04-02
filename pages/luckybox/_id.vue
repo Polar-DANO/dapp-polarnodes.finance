@@ -57,23 +57,21 @@
                 no-gutters
               >
                 <VCol class="text-center font-bold">
-                  {{ chance.name }} : {{ chance.probability }}%
+                  {{ chance.name }}
                 </VCol>
               </VRow>
             </div>
 
             <div class="node-card__odds mt-2">
-              Find also in box:
+              Minimum node type guaranteed:
             </div>
             <div class="node-card__odds__outlined py-4 inline-block mt-2">
               <VRow
-                v-for="(chance, key) in restOdds"
-                :key="key"
                 justify="center"
                 no-gutters
               >
                 <VCol class="text-center font-bold">
-                  {{ chance.name }}
+                  {{ mostCommonType.name }} : {{ mostCommonType.probability }}%
                 </VCol>
               </VRow>
             </div>
@@ -243,8 +241,8 @@ export default class Create
     return this.chances.slice(-3)
   }
 
-  get restOdds () {
-    return this.chances.slice(0, 3)
+  get mostCommonType () {
+    return this.chances[0]
   }
 
   onClose () {
