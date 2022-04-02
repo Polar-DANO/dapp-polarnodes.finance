@@ -20,7 +20,7 @@
       <div class="flex flex-wrap md:gap-[64px] mx-[20px] md:mx-[64px] items-center">
         <div class="flex-1 flex-col gap-[16px]">
           <video
-            class="flex rounded-[15px] max-h-[300px] object-cover"
+            class="flex rounded-[15px] h-[300px] object-cover"
             width="100%"
             height="100%"
             autoplay
