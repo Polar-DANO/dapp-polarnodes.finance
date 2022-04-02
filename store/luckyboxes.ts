@@ -2,7 +2,6 @@ import { MutationTree, ActionTree, GetterTree } from 'vuex'
 import { BigNumber } from 'ethers'
 import { LuckyBoxType } from '~/models/luckybox-type'
 import { LuckyBox } from '~/models/luckybox'
-
 export const state = () => ({
   luckyBoxTypes: null as (LuckyBoxType[] | null),
   myLuckyBoxes: null as (LuckyBox[] | null),
@@ -56,20 +55,19 @@ export const actions: ActionTree<State, {}> = {
       names: (await this.$contracts.luckyBoxes.getMapKeysBetweenIndexes(0, luckyBoxesSize)) as string[],
       luckyBoxes: (await this.$contracts.luckyBoxes.getMapBetweenIndexes(0, luckyBoxesSize)) as any[]
     }
-
     const luckyBoxesArray =
-      results.luckyBoxes.map((luckyBox, id): LuckyBoxType => {
-        return {
-          id,
-          name: results.names[id],
-          price: luckyBox.priceTokens,
-          maxUser: luckyBox.maxUser,
-          maxBox: luckyBox.maxBox,
-          nodeTypes: luckyBox.nodeType,
-          probabilities: luckyBox.probability,
-          remaining: luckyBox.remaining,
-          features: luckyBox.feature
-        }
+      results.luckyBoxes.filter((box, id) => parseInt(box.maxUser._hex) > 0).map((luckyBox, id): LuckyBoxType => {
+          return {
+            id,
+            name: results.names[id],
+            price: luckyBox.priceTokens,
+            maxUser: luckyBox.maxUser,
+            maxBox: luckyBox.maxBox,
+            nodeTypes: luckyBox.nodeType,
+            probabilities: luckyBox.probability,
+            remaining: luckyBox.remaining,
+            features: luckyBox.feature
+          }
       })
 
     commit('setLuckyBoxTypes', luckyBoxesArray)
@@ -146,6 +144,10 @@ export const actions: ActionTree<State, {}> = {
     dispatch('loadMyLuckyBoxes')
     dispatch('nft/loadMyNFTs', null, { root: true })
   },
+
+  // async allReveal({ dispatch, rootGetters }) {
+  //   console.log(this.state.luckyboxes.myLuckyBoxes)
+  // },
 
   async loadByTokenId ({ commit }, tokenId: BigNumber) {
     if (!this.$contracts) {

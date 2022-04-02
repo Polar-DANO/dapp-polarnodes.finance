@@ -4,7 +4,17 @@
       <div class="flex justify-between bg-[#00C6ED]  rounded-t-lg p-[16px] min-w-[420px]">
         <div class="text-white text-[16px]">
           My Lucky Boxes
-        </div>
+        </div>        
+        <v-btn
+          class="tex text-white font-normal text-[16px] border-solid border-[white] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px]"
+          dark
+          text
+          :loading="isClaimAllBtnLoading"
+          :disabled="isClaimAllBtnLoading"
+          @click="onAllReveal"
+        >
+          Reveal All Boxes
+        </v-btn>
       </div>
       <table
         class="mx-auto w-[100%] min-w-[420px] rounded-b-lg bg-[#17171B]"
@@ -64,6 +74,13 @@ import { LuckyBox } from '~/models/luckybox'
 export default class NodeTable extends Vue {
   async onReveal (tokenId: LuckyBox['tokenId']) {
     await this.$store.dispatch('luckyboxes/reveal', [tokenId])
+  }
+
+  async onAllReveal() {
+    let tokenIds:any = [];
+    console.log(this.$props.items,"itmes");
+    this.$props.items.map((item:LuckyBox,id:any) => tokenIds.push(item.tokenId));
+    await this.$store.dispatch('luckyboxes/reveal', tokenIds)
   }
 
   onList (tokenId: LuckyBox['tokenId']) {
