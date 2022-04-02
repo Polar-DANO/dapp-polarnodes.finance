@@ -113,10 +113,6 @@ export default class NFTSellModal extends Vue {
     return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType)
   }
 
-  get image (): any {
-    return (NODENAME_TO_IMAGE as any)[this.$props.nft.nodeType]
-  }
-
   get rewardAmount () {
     return NodeType.dailyRewardPerNode(this.nodeType)
   }
@@ -138,7 +134,7 @@ export default class NFTSellModal extends Vue {
   }
 
   get video () {
-    return NODENAME_TO_VIDEO[this.nodeType.name]
+    return (NODENAME_TO_VIDEO as any)[this.nodeType.name]
   }
 
   async onClaim () {
