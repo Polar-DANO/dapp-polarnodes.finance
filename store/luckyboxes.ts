@@ -73,7 +73,7 @@ export const actions: ActionTree<State, {}> = {
     commit('setLuckyBoxTypes', luckyBoxesArray)
   },
 
-  async buy ({ dispatch, rootGetters }, { luckyBox, amount, withToken, user }: { luckyBox: LuckyBoxType, amount: number, withToken: string, user: string }) {
+  async buy ({ dispatch, rootGetters }, { luckyBox, amount, withToken, user, sponso }: { luckyBox: LuckyBoxType, amount: number, withToken: string, user: string, sponso: string | null }) {
     const userAddress = rootGetters['wallet/address']
     if (!userAddress) {
       throw new Error('Current user address not found')
@@ -88,7 +88,7 @@ export const actions: ActionTree<State, {}> = {
       user,
       luckyBox.name,
       amount,
-      '' // sponso
+      sponso ?? ''
     )
 
     await tx.wait()
@@ -133,7 +133,7 @@ export const actions: ActionTree<State, {}> = {
     }
 
     const estimatedGas = await this.$contracts.handler.estimateGas.createNodesWithLuckyBoxes(
-      tokenIds,
+      tokenIds
     )
     const tx = await this.$contracts.handler.createNodesWithLuckyBoxes(
       tokenIds,
