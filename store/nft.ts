@@ -11,10 +11,12 @@ export const state = () => ({
 export type State = ReturnType<typeof state>
 
 export const getters: GetterTree<State, {}> = {
-  myNFTsByNodeType: (state, getters, rootState, rootGetters) => rootGetters['nodes/nodeTypesNames'].map((name: string) => ({
-    nodeType: name,
-    nfts: state.myNfts[name]
-  })),
+  myNFTsByNodeType: (state, getters, rootState, rootGetters) =>
+    rootGetters['nodes/nodeTypesNames']
+      ?.map((name: string) => ({
+        nodeType: name,
+        nfts: state.myNfts[name]
+      })),
   myNFTsByCreationDateDesc: state =>
     Object
       .entries(state.myNfts)

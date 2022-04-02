@@ -34,6 +34,15 @@
             />
             Offer this Lucky Box to a friend
           </div>
+          <div class="mt-1 d-flex align-center node-card__details__options">
+            <VCheckbox
+              v-model="isCreatorCode"
+              hide-details
+              class="mr-1"
+              color="#00c6ed"
+            />
+            Use Creator code
+          </div>
         </VCol>
         <VCol cols="12" md="6">
           <div class="text-center">
@@ -95,6 +104,14 @@
                 />
               </VRow>
 
+              <VRow v-if="isCreatorCode">
+                <VTextField
+                  v-model="creatorCode"
+                  dark
+                  label="Creator code"
+                />
+              </VRow>
+
               <div class="mt-4 d-flex justify-center items-center">
                 <VBtn small rounded color="#00c6ed" dark @click="onRemove">
                   -
@@ -151,7 +168,11 @@ import addresses from '~/config/addresses'
 
 const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/
 
-@Component({})
+@Component({
+  watch: {
+    selectedToken: { handler: 'onSelectedTokenChange' }
+  }
+})
 export default class Create
   extends WalletReactiveFetch
   implements IReactiveFetch {
@@ -160,6 +181,8 @@ export default class Create
   private isBtnLoading = false
   private isOtherUser = false
   private otherUser = ''
+  private isCreatorCode = false
+  private creatorCode: string | null = null
 
   get otherUserValid () {
     return ADDRESS_REGEX.test(this.otherUser)
@@ -205,11 +228,25 @@ export default class Create
 
   async reactiveFetch () {
     if (this.isWalletConnected) {
-      await this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
+      await Promise.all([
+        this.$store.dispatch(
+          'tokens/loadAllowance',
+          this.selectedToken
+        ),
+        this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
+      ])
+
       if (!this.luckyBox) {
         this.$router.push('/nodes')
       }
     }
+  }
+
+  async onSelectedTokenChange () {
+    await this.$store.dispatch(
+      'tokens/loadAllowance',
+      this.selectedToken
+    )
   }
 
   get name () {
@@ -253,7 +290,8 @@ export default class Create
         luckyBox: this.luckyBox,
         amount: this.quantity,
         withToken: this.selectedToken,
-        user: this.isOtherUser ? this.otherUser : this.walletAddress
+        user: this.isOtherUser ? this.otherUser : this.walletAddress,
+        sponso: this.isCreatorCode ? this.creatorCode : null
       })
 
       this.$router.push('/mynft')

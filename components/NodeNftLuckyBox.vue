@@ -8,7 +8,7 @@
     <img
       src="../assets/PACK/Lucky Boxes/LUCKY BOX LVL 1.jpg"
       class="node-image"
-    />
+    >
 
     <div class="divider" />
 
@@ -20,25 +20,25 @@
 </template>
 
 <script lang="ts">
-import { PropType } from "vue";
-import { Component, Vue } from "nuxt-property-decorator";
-import * as ethers from "ethers";
-import { NodeNftNames } from "~/models/types";
+import { PropType } from 'vue'
+import { Component, Vue } from 'nuxt-property-decorator'
+import * as ethers from 'ethers'
+import { NodeNftNames } from '~/models/types'
 
 @Component({
   props: {
     index: { type: Number },
     name: { type: String as PropType<NodeNftNames> },
-    cost: { type: ethers.BigNumber },
-  },
+    cost: { type: ethers.BigNumber }
+  }
 })
 export default class NodeNft extends Vue {
-  public onSelectNode() {
-    this.$router.push(`/luckybox/${this.$props.index}`);
+  public onSelectNode () {
+    this.$router.push(`/luckybox/${this.$props.index}`)
   }
 
-  get price() {
-    return this.$props.cost ? ethers.utils.formatEther(this.$props.cost) : null;
+  get price () {
+    return this.$props.cost ? ethers.utils.formatEther(this.$props.cost) : null
   }
 }
 </script>

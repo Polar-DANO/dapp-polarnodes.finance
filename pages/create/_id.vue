@@ -98,6 +98,18 @@
               />
               Offer this Mountain NFT to a friend
             </div>
+            <div
+              v-if="canUseCreatorCode"
+              class="mt-1 d-flex align-center node-card__details__options"
+            >
+              <VCheckbox
+                v-model="isCreatorCode"
+                hide-details
+                class="mr-1"
+                color="#00c6ed"
+              />
+              Use Creator code
+            </div>
           </div>
         </VCol>
         <VCol cols="12" md="6" class="mt-8">
@@ -140,6 +152,14 @@
                   v-model="otherUser"
                   dark
                   label="Your Friend's Address"
+                />
+              </VRow>
+
+              <VRow v-if="isCreatorCode && canUseCreatorCode">
+                <VTextField
+                  v-model="creatorCode"
+                  dark
+                  label="Creator code"
                 />
               </VRow>
 
@@ -309,7 +329,9 @@ export default class Create
   public selectedNfts: NFT[] = []
   public isBtnLoading = false
   private isOtherUser = false
+  private isCreatorCode = false
   private otherUser = ''
+  private creatorCode = ''
 
   onClose () {
     this.$router.push('/nodes')
@@ -318,10 +340,15 @@ export default class Create
   onCreateModeChange (createMode: keyof typeof CreateMode) {
     if (createMode !== CreateMode.FROM_TOKENS) {
       this.isOtherUser = false
+      this.isCreatorCode = false
     }
   }
 
   get canOfferToUser () {
+    return this.createMode === CreateMode.FROM_TOKENS
+  }
+
+  get canUseCreatorCode () {
     return this.createMode === CreateMode.FROM_TOKENS
   }
 
@@ -433,9 +460,9 @@ export default class Create
   }
 
   get nfts () {
-    return this.$store.getters['nft/myNFTsByNodeType'].flatMap(
+    return this.$store.getters['nft/myNFTsByNodeType']?.flatMap(
       ({ nodeType, nfts }: { nodeType: string; nfts: NFT[] }) => {
-        if (nfts.length === 0) {
+        if (!nfts?.length) {
           return []
         }
 
@@ -495,7 +522,8 @@ export default class Create
           nodeTypeName: this.nodeNftName,
           count: this.quantity,
           token: this.selectedToken,
-          user: this.isOtherUser ? this.otherUser : this.walletAddress
+          user: this.isOtherUser ? this.otherUser : this.walletAddress,
+          sponso: this.isCreatorCode ? this.creatorCode : null
         })
 
         this.$router.push('/mynft')
