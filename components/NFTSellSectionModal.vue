@@ -113,10 +113,6 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
     return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType)
   }
 
-  get image (): any {
-    return (NODENAME_TO_IMAGE as any)[this.$props.nft.nodeType]
-  }
-
   setDefaultPrices () {
     if (!this.$props.nft) { return }
     if (!this.nodeType) { return }
@@ -189,7 +185,7 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
   }
 
   get video () {
-    return NODENAME_TO_VIDEO[this.nodeType.name]
+    return (NODENAME_TO_VIDEO as any)[this.nodeType.name]
   }
 }
 </script>
