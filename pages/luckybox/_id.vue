@@ -51,13 +51,29 @@
             </div>
             <div class="node-card__odds__outlined py-4 inline-block mt-2">
               <VRow
-                v-for="(chance, key) in chances"
+                v-for="(chance, key) in topOdds"
                 :key="key"
                 justify="center"
                 no-gutters
               >
                 <VCol class="text-center font-bold">
-                  {{ chance }}
+                  {{ chance.name }} : {{ chance.probability }}%
+                </VCol>
+              </VRow>
+            </div>
+
+            <div class="node-card__odds mt-2">
+              Find also in box:
+            </div>
+            <div class="node-card__odds__outlined py-4 inline-block mt-2">
+              <VRow
+                v-for="(chance, key) in restOdds"
+                :key="key"
+                justify="center"
+                no-gutters
+              >
+                <VCol class="text-center font-bold">
+                  {{ chance.name }}
                 </VCol>
               </VRow>
             </div>
@@ -219,7 +235,16 @@ export default class Create
     if (!this.luckyBox) {
       return []
     }
-    return LuckyBox.getPossibleTypes(this.luckyBox).slice(-3)
+
+    return LuckyBox.getPossibleTypes(this.luckyBox)
+  }
+
+  get topOdds () {
+    return this.chances.slice(-3)
+  }
+
+  get restOdds () {
+    return this.chances.slice(0, 3)
   }
 
   onClose () {
