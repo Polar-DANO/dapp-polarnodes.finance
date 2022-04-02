@@ -129,7 +129,7 @@ export default class NodeTable extends Vue {
   private isClaimAllBtnLoading = false
 
   formatDate (date: Date) {
-    return new Intl.DateTimeFormat().format(date)
+    return new Intl.DateTimeFormat('default', { dateStyle: 'medium' }).format(date)
   }
 
   private clickedSellSectionModal () {
