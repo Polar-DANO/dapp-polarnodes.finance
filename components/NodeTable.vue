@@ -70,7 +70,6 @@
               class="py-[12px] pl-[16px] text-left text-[12px] text-white"
             >
               #{{ nft.tokenId }}
-            <!-- {{ item.nodeIndex }} -->
             </td>
             <td
               class="py-[12px] pl-[16px] text-left text-[12px] text-white"
