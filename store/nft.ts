@@ -72,20 +72,24 @@ export const actions: ActionTree<State, {}> = {
       const nodeTypeContract = await this.$contracts.nodeTypeByName(nodeTypeName)
 
       const totalCount = await nodeTypeContract.getTotalNodesNumberOf(userAddress)
-      const tokenIds: BigNumber[] = await nodeTypeContract.getTokenIdsOfBetweenIndexes(userAddress, 0, totalCount)
+      const { tokenIds, timeRoi } = {
+        tokenIds: await nodeTypeContract.getTokenIdsOfBetweenIndexes(userAddress, 0, totalCount) as BigNumber[],
+        timeRoi: await nodeTypeContract.getTimeRoiOfBetweenIndexes(userAddress, 0, totalCount) as BigNumber[]
+      }
 
       const { nfts, pendingRewards } = {
-        nfts: await Promise.all(tokenIds.map(async (tokenId) => {
+        nfts: await Promise.all(tokenIds.map(async (tokenId, idx) => {
           return {
             nft: await nodeTypeContract.getNodeFromTokenId(tokenId),
             attribute: await this.$contracts?.polarNodeNft?.getAttribute(tokenId),
+            timeRoi: timeRoi[idx],
             tokenId
           }
         })),
         pendingRewards: await nodeTypeContract.calculateUserRewardsBatch(userAddress, tokenIds) as [BigNumber[], BigNumber[]]
       }
 
-      return nfts.map(({ nft, attribute, tokenId }, idx): NFT => {
+      return nfts.map(({ nft, attribute, tokenId, timeRoi }, idx): NFT => {
         return {
           owner: nft.owner,
           nodeType: nodeType.name,
@@ -99,7 +103,8 @@ export const actions: ActionTree<State, {}> = {
           feature: nft.feature,
           userPendingRewards: pendingRewards[0][idx],
           userPendingFees: pendingRewards[1][idx],
-          attribute
+          attribute,
+          timeRoi: new Date(timeRoi.toNumber() * 1000)
         }
       })
     }))
@@ -109,7 +114,7 @@ export const actions: ActionTree<State, {}> = {
         return [
           nodeTypeNames[idx],
           nfts
-        ]
+        ] as const
       })
       .filter(([, nfts]) => nfts !== null)
 
@@ -142,7 +147,7 @@ export const actions: ActionTree<State, {}> = {
     )
 
     await tx.wait()
-    dispatch('loadMyNFTs')
+    Object.values(groupped).forEach(tokenId => dispatch('loadByTokenId', tokenId))
   },
 
   async claimAll ({ dispatch, rootGetters }) {

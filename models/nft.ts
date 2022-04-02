@@ -14,4 +14,5 @@ export interface NFT {
   userPendingRewards: BigNumber;
   userPendingFees: BigNumber;
   attribute: string;
+  timeRoi?: Date;
 }
