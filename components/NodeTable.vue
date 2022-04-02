@@ -34,7 +34,7 @@
               <span class="text-[#00c6ed]">Last Claim Date</span>
             </th>
             <th class="w-[15%] pt-[12px] pl-[16px] text-left text-[12px]">
-              <span class="text-[#00c6ed]">Claimed Rewards</span>
+              <span class="text-[#00c6ed]">ROI Date</span>
             </th>
             <th class="w-[20%] pt-[12px] pl-[16px] text-left text-[12px]">
               <span class="text-[#00c6ed]">Pending Rewards</span>
@@ -87,7 +87,7 @@
               {{ formatDate(nft.lastClaimTime) }}
             </td>
             <td class="py-[12px] pl-[16px] text-left text-[12px] text-white">
-              -
+              {{ formatDate(nft.timeRoi) }}
             </td>
             <td class="flex flex-wrap items-center justify-center py-[12px] pl-[16px] text-[12px] text-white">
               {{ formatEther(nft.userPendingRewards) || '-' }} $POLAR
