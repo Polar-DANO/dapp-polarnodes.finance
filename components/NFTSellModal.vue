@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col justify-center fixed bg-[#000000da] top-0 right-0 bottom-0 left-0 md:ml-[244px] md:pt-[190px] md:pb-[90px] md:px-[100px]">
     <div class="bg-[#00C6ED] text-[white] rounded-t-[20px] text-[18px] md:text-[24px] p-[16px]">
-      Sell {{ nft.nodeType }} #{{ nft.tokenId }} NFT 🗻️
+      Sell {{ nft.nodeType }} {{ nft.attribute }} #{{ nft.tokenId }} NFT 🗻️
       <div class="cursor-pointer inline absolute right-0 md:px-[100px]">
         <v-btn class="mr-[20px]" icon @click="$emit('closeSellModal')">
           <v-icon class="text-white">
@@ -12,8 +12,11 @@
     </div>
     <div class="bg-[#17171B] rounded-b-[20px] border-solid border-[#00C6ED] border-[2px]">
       <div class="flex flex-col justify-center items-center gap-2 md:gap-[75px] md:flex-row flex-wrap md:mt-[64px] md:mr-[104px] md:ml-[64px] md:mb-[89px] p-[20px] md:p-[0px]">
-        <div class="max-w-[420px] max-h-[325px]">
-          <img class="rounded-[15px] w-[420px] h-[325px] object-cover" :src="image" alt="">
+        <div class="flex max-w-[420px] max-h-[325px]">
+          <video class="node-video" autoplay loop muted>
+            <source :src="video" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
         </div>
         <div class="flex flex-col gap-[12px] md:gap-[15px]">
           <div class="border-solid border-[#00C6ED] border-[2px] rounded-[14px] text-center p-[23px]">
@@ -97,7 +100,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
 import * as NodeType from '~/models/NodeType'
 import { NFT } from '~/models/nft'
-import { NODENAME_TO_IMAGE } from '~/models/constants'
+import { NODENAME_TO_VIDEO } from '~/models/constants'
 @Component({
   props: {
     nft: Object as () => NFT
@@ -109,11 +112,11 @@ export default class NFTSellModal extends Vue {
   get nodeType () {
     return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType)
   }
-  
+
   get image (): any {
     return (NODENAME_TO_IMAGE as any)[this.$props.nft.nodeType]
   }
-  
+
   get rewardAmount () {
     return NodeType.dailyRewardPerNode(this.nodeType)
   }
@@ -132,6 +135,10 @@ export default class NFTSellModal extends Vue {
 
   get canSell () {
     return this.$props.nft.attribute !== ''
+  }
+
+  get video () {
+    return NODENAME_TO_VIDEO[this.nodeType.name]
   }
 
   async onClaim () {
