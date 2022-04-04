@@ -133,7 +133,7 @@ export const actions: ActionTree<State, {}> = {
       BigNumber.from('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
     )
     await tx.wait()
-    dispatch('loadAllowance')
+    dispatch('loadAllowance', token)
   }
 }
 
