@@ -100,6 +100,11 @@
                   </div>
                 </div>
               </div>
+
+              <div style="color: white">
+                Auction End: {{ item.end.toDateString() }}
+              </div>
+
               <div v-if="!isOwner" class="flex flex-initial text-center items-center">
                 <div
                   class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]"
