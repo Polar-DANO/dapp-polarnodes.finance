@@ -71,6 +71,7 @@
                   prepend-icon="mdi-calendar"
                   v-bind="attrs"
                   @blur="date = parseDate(dateFormatted)"
+                  @click:clear="date = null"
                   v-on="on"
                 />
               </template>
