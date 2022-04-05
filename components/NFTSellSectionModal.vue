@@ -65,6 +65,7 @@
                 <v-text-field
                   v-model="dateFormatted"
                   dark
+                  clearable
                   label="Auction end date"
                   persistent-hint
                   prepend-icon="mdi-calendar"
@@ -140,7 +141,7 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
   public date = null
   public datepickerMenu = false
 
-  get dateFormatted () {
+  get dateFormatted (): string | null {
     const { date, formatDate } = this
 
     if (!date) {
@@ -149,7 +150,7 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
     return formatDate(date)
   }
 
-  get isoToday () {
+  get isoToday (): string {
     return new Date().toISOString()
   }
 
@@ -157,14 +158,14 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
     return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType)
   }
 
-  formatDate (date) {
+  formatDate (date: string | null): string | null {
     if (!date) { return null }
 
     const [year, month, day] = date.split('-')
     return `${month}/${day}/${year}`
   }
 
-  parseDate (date) {
+  parseDate (date: string | null): string | null {
     if (!date) { return null }
 
     const [month, day, year] = date.split('/')
@@ -228,15 +229,13 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
           price: this.fixedPrice
         })
       } else {
-        const end = this.date
-          ? ~~(new Date(this.date).getTime() / 1000)
-          : ~~(new Date().getTime() / 1000) + 604800 // now + 1 week
-
         await this.$store.dispatch('marketplace/sellAuction', {
           nftType: NFTType.Node,
           tokenId: this.nft.tokenId,
           price: this.minimumBid,
-          end
+          end: this.date
+            ? ~~(new Date(this.date).getTime() / 1000)
+            : ~~(new Date().getTime() / 1000) + 604800 // now + 1 week
         })
       }
 

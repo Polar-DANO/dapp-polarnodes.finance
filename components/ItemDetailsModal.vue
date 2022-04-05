@@ -85,6 +85,10 @@
           </div>
           <div v-if="isAuction" class="flex flex-initial flex-col gap-[8px] md:gap-[14px]">
             <div class="flex flex-col gap-[4px] md:gap-[8px]">
+              <div class="white--text text-right mr-2">
+                Auction End: {{ item.end.toDateString() }}
+              </div>
+
               <div class="flex flex-initial text-center items-center">
                 <div
                   class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]"
@@ -100,11 +104,6 @@
                   </div>
                 </div>
               </div>
-
-              <div style="color: white">
-                Auction End: {{ item.end.toDateString() }}
-              </div>
-
               <div v-if="!isOwner" class="flex flex-initial text-center items-center">
                 <div
                   class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]"
