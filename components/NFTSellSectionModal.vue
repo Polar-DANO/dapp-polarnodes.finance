@@ -51,6 +51,36 @@
               hide-details
               @change="changeSellMode($event, 'auction')"
             />
+            <v-menu
+              v-if="isAuction"
+              v-model="datepickerMenu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              max-width="290px"
+              min-width="auto"
+              dark
+            >
+              <template #activator="{ on, attrs }">
+                <v-text-field
+                  v-model="dateFormatted"
+                  dark
+                  clearable
+                  label="Auction end date"
+                  persistent-hint
+                  prepend-icon="mdi-calendar"
+                  v-bind="attrs"
+                  @blur="date = parseDate(dateFormatted)"
+                  v-on="on"
+                />
+              </template>
+              <v-date-picker
+                v-model="date"
+                no-title
+                :min="isoToday"
+                @input="datepickerMenu = false"
+              />
+            </v-menu>
             <div class="flex flex-initial items-center text-center">
               <div class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] text-[center] w-[50%] py-[8px] font-[600]">
                 Minimum Bid:
@@ -108,9 +138,38 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
   private minimumBid = 100
   private fixedPrice = 100
   private isBtnLoading = false
+  public date = null
+  public datepickerMenu = false
+
+  get dateFormatted (): string | null {
+    const { date, formatDate } = this
+
+    if (!date) {
+      return null
+    }
+    return formatDate(date)
+  }
+
+  get isoToday (): string {
+    return new Date().toISOString()
+  }
 
   get nodeType () {
     return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType)
+  }
+
+  formatDate (date: string | null): string | null {
+    if (!date) { return null }
+
+    const [year, month, day] = date.split('-')
+    return `${month}/${day}/${year}`
+  }
+
+  parseDate (date: string | null): string | null {
+    if (!date) { return null }
+
+    const [month, day, year] = date.split('/')
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
   }
 
   setDefaultPrices () {
@@ -173,8 +232,10 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
         await this.$store.dispatch('marketplace/sellAuction', {
           nftType: NFTType.Node,
           tokenId: this.nft.tokenId,
-          price: this.fixedPrice,
-          end: ~~(new Date().getTime() / 1000) + 604800 // now + 1 week
+          price: this.minimumBid,
+          end: this.date
+            ? ~~(new Date(this.date).getTime() / 1000)
+            : ~~(new Date().getTime() / 1000) + 604800 // now + 1 week
         })
       }
 
