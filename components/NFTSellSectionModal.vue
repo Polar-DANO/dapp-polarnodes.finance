@@ -139,7 +139,7 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
   private minimumBid = 100
   private fixedPrice = 100
   private isBtnLoading = false
-  public date = null
+  public date = ""
   public datepickerMenu = false
 
   get dateFormatted (): string | null {
@@ -234,7 +234,7 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
           nftType: NFTType.Node,
           tokenId: this.nft.tokenId,
           price: this.minimumBid,
-          end: this.date
+          end: this.date != ""
             ? ~~(new Date(this.date).getTime() / 1000)
             : ~~(new Date().getTime() / 1000) + 604800 // now + 1 week
         })
