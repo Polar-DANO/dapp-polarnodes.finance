@@ -73,13 +73,13 @@ export default class Nodes extends WalletReactiveFetch implements IReactiveFetch
       {
         icon: require('../assets/img/nodesIcon/mynodes_icon.svg'),
         title: 'My Nodes',
-        price: this.$store.getters['nodes/myTotalCreated'],
+        price: this.isWalletConnected ? this.$store.getters['nodes/myTotalCreated'] : null,
         percentage: null
       },
       {
         icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
         title: 'My $POLAR Balance',
-        price: this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address),
+        price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address) : null,
         percentage: null
       }
     ]
@@ -94,13 +94,16 @@ export default class Nodes extends WalletReactiveFetch implements IReactiveFetch
   }
 
   async reactiveFetch () {
-    if (this.isWalletConnected) {
-      return await Promise.all([
-        this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),
+    await Promise.all([
         this.$store.dispatch('nodes/loadNodeTypes'),
-        this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
+        this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
+        ...(
+        (this.isWalletConnected)
+          ? [
+              this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),
+            ]
+          : [])
       ])
-    }
   }
 }
 </script>

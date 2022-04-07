@@ -104,9 +104,9 @@ function setupListeners (w3p: ethers.providers.Web3Provider, store: Store<any>) 
   eth.on('disconnect', () => store.dispatch('wallet/logout'))
 }
 
-function checkConnection (makePlugin: (provider: ethers.providers.Web3Provider) => Promise<void>) {
-  if (window.ethereum) {
-    makePlugin(new ethers.providers.Web3Provider(window.ethereum))
+function checkConnection (makePlugin: (provider: ethers.providers.Web3Provider, isSigned : boolean) => Promise<void>) {
+  if (window.ethereum) {    
+    makePlugin(new ethers.providers.Web3Provider(window.ethereum,"any"), false)
   }
 }
 
@@ -149,18 +149,20 @@ async function switchNetwork (provider: ethers.providers.Web3Provider, isTestnet
 }
 
 const ethersPlugin: Plugin = ({ store, env }, inject) => {
-  const makePlugin = async (provider: ethers.providers.Web3Provider | null) => {
+  const makePlugin = async (provider: ethers.providers.Web3Provider | null, isSigned : boolean | false) => {
     if (!provider) {
       inject('web3Provider', null)
       inject('contracts', null)
       inject('logout', null)
       return
     }
+    
+    inject('web3Provider', provider) 
 
-    await switchNetwork(provider, env.isTestnet)
-    inject('web3Provider', provider)
-    const signer = provider.getSigner()
-
+    const mainnetProvider = new ethers.providers.JsonRpcProvider('https://api.avax.network/ext/bc/C/rpc');
+    const testnetProvider = new ethers.providers.JsonRpcProvider('https://api.avax-test.network/ext/bc/C/rpc');    
+  
+    const signer = isSigned ? provider.getSigner() : env.isTestnet ? testnetProvider : mainnetProvider;
     const nameContractsMap: Record<string, ethers.Contract> = {}
 
     const contracts: ContractsPlugin['$contracts'] = {
@@ -184,28 +186,31 @@ const ethersPlugin: Plugin = ({ store, env }, inject) => {
       erc20 (address: string) {
         return new ethers.Contract(address, ERC_20_ABI, signer)
       }
-    }
+    }    
+    
+    inject('contracts', contracts) 
 
+    await switchNetwork(provider, env.isTestnet)
     setupListeners(provider, store)
+    
     const { address, network } = {
-      address: await signer.getAddress(),
+      address: await provider.getSigner().getAddress(),
       network: await provider.getNetwork()
     }
 
     store.commit('wallet/setAddress', address)
-    store.commit('wallet/setChainId', network.chainId)
+    store.commit('wallet/setChainId', network.chainId)    
 
     inject('logout', () => {
       store.commit('wallet/logout')
-      makePlugin(null)
+      makePlugin(null,false)
     })
-
-    inject('contracts', contracts)
+       
   }
 
   const register = {
-    metamask: async () => await makePlugin(await registerMetamask()),
-    walletConnect: async () => await makePlugin(await registerWalletConnect())
+    metamask: async () => await makePlugin(await registerMetamask(), true),
+    walletConnect: async () => await makePlugin(await registerWalletConnect(), true)
   }
 
   inject('register', register)

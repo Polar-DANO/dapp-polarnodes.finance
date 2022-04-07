@@ -51,23 +51,25 @@ interface CreateNodesWithPendingArgs {
 }
 
 export const actions: ActionTree<State, {}> = {
-  async loadNodeTypes ({ commit, dispatch, rootGetters }) {
+  async loadNodeTypes ({ commit, dispatch, rootGetters }) {    
+
     if (!this.$contracts) {
       throw new Error('Contracts not loaded')
     }
-
-    const nodeSize = (await this.$contracts.handler.getNodeTypesSize()).toNumber()
+    
+    const nodeSize = (await this.$contracts.handler.getNodeTypesSize()).toNumber()    
+    
     const nodeTypesNames: string[] = await this.$contracts.handler.getNodeTypesBetweenIndexes(0, nodeSize)
-
+    
     const nodeTypes = await Promise.all(
       nodeTypesNames.map(async (name, index): Promise<NodeType.NodeType> => {
+        
         if (!this.$contracts) {
           throw new Error('Contracts not loaded')
-        }
-
-        const nodeTypeContract = await this.$contracts.nodeTypeByName(name)
-        const userAddress = rootGetters['wallet/address']
-
+        }        
+        const nodeTypeContract = await this.$contracts.nodeTypeByName(name)        
+        
+        const userAddress = rootGetters['wallet/address']           
         return {
           index,
           name,
@@ -87,7 +89,7 @@ export const actions: ActionTree<State, {}> = {
       })
     )
 
-    commit('setNodeTypes', nodeTypes)
+    commit('setNodeTypes', nodeTypes)    
     nodeTypes.forEach(node => dispatch('loadUserRewardsByNodeType', node.name))
   },
   async loadNodeTypeByName ({ dispatch }, _name) {
@@ -97,6 +99,7 @@ export const actions: ActionTree<State, {}> = {
     const userAddress = rootGetters['wallet/address']
     if (!userAddress) {
       commit('setUserRewardsForNodeType', { nodeTypeName, rewards: null, fees: null })
+      return
     }
 
     if (!this.$contracts) {

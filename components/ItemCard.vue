@@ -141,10 +141,10 @@ export default class ItemCard
   }
 
   async reactiveFetch () {
-    if (!this.isWalletConnected) {
+    /*if (!this.isWalletConnected) {
       this.loading = true
       return
-    }
+    }*/
 
     const nftType = this.nft.nftType
 

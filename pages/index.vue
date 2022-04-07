@@ -68,25 +68,25 @@ export default class IndexVue extends WalletReactiveFetch implements IReactiveFe
       {
         icon: require('../assets/img/dashboardIcon/mynode_icon.svg'),
         title: 'My Nodes',
-        price: this.$store.getters['nodes/myTotalCreated'],
+        price: this.isWalletConnected ? this.$store.getters['nodes/myTotalCreated'] : null,
         percentage: null
       },
       {
         icon: require('../assets/img/dashboardIcon/polarbalance_icon.svg'),
         title: 'My $POLAR Balance',
-        price: this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address),
+        price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address) : null,
         percentage: null
       },
       {
         icon: require('../assets/img/dashboardIcon/dailyrewards_icon.svg'),
         title: 'Daily Rewards',
-        price: this.$store.getters['nodes/totalDailyRewards'],
+        price: this.isWalletConnected ? this.$store.getters['nodes/totalDailyRewards'] : null,
         percentage: null
       },
       {
         icon: require('../assets/img/dashboardIcon/pendingrewards_icon.svg'),
         title: 'Pending Rewards',
-        price: this.$store.getters['nodes/totalPendingRewards'],
+        price: this.isWalletConnected ? this.$store.getters['nodes/totalPendingRewards'] : null,
         percentage: null
       }
     ]
@@ -95,11 +95,11 @@ export default class IndexVue extends WalletReactiveFetch implements IReactiveFe
   async reactiveFetch () {
     await Promise.all([
       this.$store.dispatch('coingecko/loadCoinData'),
+      this.$store.dispatch('nodes/loadNodeTypes'),
       ...(
         (this.isWalletConnected)
           ? [
-              this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),
-              this.$store.dispatch('nodes/loadNodeTypes')
+              this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),              
             ]
           : [])
     ])
