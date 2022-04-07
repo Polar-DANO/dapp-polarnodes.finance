@@ -53,15 +53,18 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
     this.selectedItem = item
   }
 
-  async reactiveFetch () {
-    if (this.isWalletConnected) {
+  async reactiveFetch () {    
       await Promise.all([
-        this.$store.dispatch('tokens/loadAllowance', this.$store.state.tokens.tokens.POLAR.address),
         this.$store.dispatch('marketplace/load'),
         this.$store.dispatch('nodes/loadNodeTypes'),
-        this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
+        this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
+        ...(
+        (this.isWalletConnected)
+          ? [
+              this.$store.dispatch('tokens/loadAllowance', this.$store.state.tokens.tokens.POLAR.address),
+            ]
+          : [])
       ])
-    }
   }
 }
 </script>
