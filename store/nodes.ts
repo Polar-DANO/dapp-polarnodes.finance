@@ -138,7 +138,6 @@ export const actions: ActionTree<State, {}> = {
         throw new Error('Contracts not loaded')
       }    
       const nodeCount = await this.$contracts.old.getNodeTypeOwnerNumber(nodeType,userAddress);
-      console.log(nodeCount,"66666666666")
       commit('setOldNodeNumber', {nodeType : nodeType, oldNodeCount : nodeCount})
     })
   },
