@@ -3,12 +3,17 @@ import * as ethers from 'ethers'
 import * as NodeType from '~/models/NodeType'
 
 export const state = () => ({
-  nodeTypes: null as (NodeType.NodeType[] | null)
+  nodeTypes: null as (NodeType.NodeType[] | null),
+  oldNodeCounter: {} as { [nodeType: string]: (number | null) },
+  //oldNodeCounter: 0 as (number | null)
 })
 
 export type State = ReturnType<typeof state>
 
 export const getters: GetterTree<State, {}> = {
+  oldNodeCount: state => (nodeType: string) => {
+    return state.oldNodeCounter[nodeType] ?? null
+  },
   totalCreated: state => state.nodeTypes?.reduce((total, nodeType) => total + nodeType.totalCreatedNodes, 0) ?? null,
   myTotalCreated: state => state.nodeTypes?.reduce((total, nodeType) => total + (nodeType?.userCount ?? 0), 0) ?? null,
   nodeTypesNames: state => state.nodeTypes?.map(node => node.name),
@@ -28,7 +33,12 @@ export const getters: GetterTree<State, {}> = {
 export const mutations: MutationTree<State> = {
   setNodeTypes (state, nodeTypes: NodeType.NodeType[]) {
     state.nodeTypes = nodeTypes
+  },  
+
+  setOldNodeNumber(state, {nodeType, oldNodeCount}: {nodeType : string, oldNodeCount : number}) {
+    state.oldNodeCounter[nodeType] = oldNodeCount
   },
+
   setUserRewardsForNodeType (state, { nodeTypeName, rewards, fees }) {
     state.nodeTypes = state.nodeTypes?.map((node) => {
       if (node.name === nodeTypeName) {
@@ -115,11 +125,36 @@ export const actions: ActionTree<State, {}> = {
     commit('setUserRewardsForNodeType', { nodeTypeName, rewards, fees })
   },
 
-  async createNodesFromToken ({ dispatch }, { nodeTypeName, user, count, token, sponso }) {
+  async loadOldNodeCount ({commit, rootGetters}, nodeType: string){
     if (!this.$contracts) {
       throw new Error('Contracts not loaded')
     }
 
+    const userAddress = rootGetters['wallet/address']
+
+    const nodeList = ["Fuji","Mont Blanc","Kilimanjaro","Ushuaia","Everest"]
+    nodeList.map(async(nodeType : string) => {
+      if (!this.$contracts) {
+        throw new Error('Contracts not loaded')
+      }    
+      const nodeCount = await this.$contracts.old.getNodeTypeOwnerNumber(nodeType,userAddress);
+      console.log(nodeCount,"66666666666")
+      commit('setOldNodeNumber', {nodeType : nodeType, oldNodeCount : nodeCount})
+    })
+  },
+
+  async onMigration ({dispatch,rootGetters}, {nodeType,nodeCounter}) {
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
+    const userAddress = rootGetters['wallet/address']
+    await this.$contracts.handler.createNodesMigration(userAddress,[nodeType],[nodeCounter]);
+    dispatch('nodes/loadOldNodeCount');
+  },
+  async createNodesFromToken ({ dispatch }, { nodeTypeName, user, count, token, sponso }) {
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded')
+    }
     await this.$contracts.handler.createNodesWithTokens(token, user, nodeTypeName, count, sponso ?? '')
     dispatch('nft/loadMyNFTs', null, { root: true })
   },
@@ -178,7 +213,6 @@ export const actions: ActionTree<State, {}> = {
       nodeTypeTo,
       count
     )
-
     dispatch('nft/loadMyNFTs', null, { root: true })
   }
 }

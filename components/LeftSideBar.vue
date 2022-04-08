@@ -17,7 +17,6 @@
             v-for="(item, i) in core"
             :key="i"
             :to="item.to"
-
           >
             <img class="mx-[23.5px]" :src="item.url" alt="">
             <v-list-item-content>
@@ -105,4 +104,4 @@ export default class LeftSideBar extends Vue {
         this.drawer = !this.drawer;
     }
 }
-</script>
+  </script>

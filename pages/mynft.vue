@@ -12,6 +12,9 @@
       />
     </div>
     <div class="md:mt-[40px]">
+      <MigrationTable />
+    </div>
+    <div class="md:mt-[40px]">
       <MyLuckyBoxesTable v-if="luckyBoxes.length > 0" :items="luckyBoxes" />
       <NodeTable :items="nfts" />
     </div>
@@ -57,7 +60,8 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
 
   async reactiveFetch () {
     if (this.isWalletConnected) {
-      await {
+      await this.$store.dispatch('nodes/loadOldNodeCount')
+      await {        
         lbTypes: await this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
         myLbs: await this.$store.dispatch('luckyboxes/loadMyLuckyBoxes'),
         polarBalance: await this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),
