@@ -16,9 +16,10 @@ import { abi as POLAR_MARKETPLACE_ABI } from '~/hardhat/artifacts/contracts/Pola
 import { abi as POLAR_NODE_ABI } from '~/hardhat/artifacts/contracts/PolarNode.sol/PolarNode.json'
 import { abi as ERC_721_ABI } from '~/hardhat/artifacts/@openzeppelin/contracts/token/ERC721/ERC721.sol/ERC721.json'
 import { abi as ERC_20_ABI } from '~/hardhat/artifacts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json'
-
+import {abi as OLD_ABI} from '~/hardhat/artifacts/contracts/Old.sol/Old.json'
 export interface ContractsPlugin {
   $contracts?: {
+    old: ethers.Contract;
     handler: ethers.Contract;
     polar: ethers.Contract;
     swapper: ethers.Contract;
@@ -166,6 +167,7 @@ const ethersPlugin: Plugin = ({ store, env }, inject) => {
     const nameContractsMap: Record<string, ethers.Contract> = {}
 
     const contracts: ContractsPlugin['$contracts'] = {
+      old: new ethers.Contract(addresses.Old, OLD_ABI, signer),
       handler: new ethers.Contract(addresses.Handler, HANDLER_ABI, signer),
       polar: new ethers.Contract(addresses.Token, POLAR_ABI, signer),
       swapper: new ethers.Contract(addresses.Swapper, SWAPPER_ABI, signer),
