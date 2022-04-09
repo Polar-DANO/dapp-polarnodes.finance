@@ -68,6 +68,7 @@ const actions: ActionTree<State, {}> = {
           return {
             type: ItemType.Auction,
             nft: {
+              nextOwner: auction.nextOwner,
               owner: auction.owner,
               tokenId: auction.tokenId,
               nftType: nftType as NFTType,
@@ -87,7 +88,7 @@ const actions: ActionTree<State, {}> = {
   async load ({ dispatch }) {
     await Promise.all([
       dispatch('loadOffers'),
-      dispatch('loadAuctions')
+      dispatch('loadAuctions'),
     ]);
   },
 

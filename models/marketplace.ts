@@ -9,6 +9,7 @@ export interface NFT {
   nftType: NFTType
   tokenId: BigNumber;
   owner: string;
+  nextOwner?: string;
   attribute: string;
 }
 
