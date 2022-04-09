@@ -74,7 +74,7 @@
             <td
               class="py-[12px] pl-[16px] text-left text-[12px] text-white"
             >
-              {{ nft.nodeType }}
+              {{ nft.nodeType }} {{ nft.attribute }}
             </td>
             <td
               class="py-[12px] pl-[16px] text-left text-[12px] text-white"
