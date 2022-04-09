@@ -204,7 +204,7 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
   async reactiveFetch () {
     if (this.isWalletConnected) {
       await Promise.all([
-        this.$store.dispatch('marketplace/loadApproveForNftType', NFTType.Node)
+        this.$store.dispatch('marketplace/loadApproveForNftType', NFTType.Node),
       ]);
     }
   }

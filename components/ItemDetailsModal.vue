@@ -366,7 +366,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
     if (this.isWalletConnected) {
       await Promise.all([
         this.$store.dispatch('marketplace/loadApproveForNftType', this.nft.nftType),
-        this.$store.dispatch('tokens/loadAllowance', this.$store.state.tokens.tokens.POLAR.address)
+        this.$store.dispatch('tokens/loadAllowance', this.$store.state.tokens.tokens.POLAR.address),
       ]);
     }
   }

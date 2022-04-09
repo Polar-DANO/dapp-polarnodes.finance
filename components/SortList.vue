@@ -75,7 +75,7 @@ export default class SortList extends Vue {
       { header: 'Luckyboxes' },
       ...luckyBoxes,
       { header: 'Nodes' },
-      ...nodeTypes
+      ...nodeTypes,
     ];
   }
 
@@ -85,7 +85,7 @@ export default class SortList extends Vue {
       { text: 'My NFTs', value: ViewType.MyNFTs },
       { text: '- to + Value', value: ViewType.AscValue },
       { text: '+ to - Value', value: ViewType.DescValue },
-      { text: 'Expiring soon', value: ViewType.ExpiringSoon }
+      { text: 'Expiring soon', value: ViewType.ExpiringSoon },
     ];
   }
 }

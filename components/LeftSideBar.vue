@@ -90,14 +90,14 @@ export default class LeftSideBar extends Vue {
       url: require('../assets/img/mynft.svg'),
       title: 'My NFTs',
       to: '/mynft',
-    }
+    },
   ];
 
   created () {
     this.$root.$refs.draw = this;
   }
 
-  private Draw (): Promise<void> {
+  private Draw () {
     this.drawer = !this.drawer;
   }
 }
