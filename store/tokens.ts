@@ -5,7 +5,13 @@ import addresses from '~/config/addresses'
 export const state = () => ({
   tokens: {
     POLAR: { address: addresses.Token, symbol: '$POLAR' },
-    DAI: { address: addresses.Dai, symbol: 'DAI' }
+    DAI: { address: addresses.Dai, symbol: 'DAI' },
+    Thor: { address: addresses.Thor, symbol: 'Thor' },
+    Vpnd: { address: addresses.Vpnd, symbol: 'Vpnd' },
+    Fire: { address: addresses.Fire, symbol: 'Fire' },
+    Mead: { address: addresses.Mead, symbol: 'Mead' },
+    Pxt2: { address: addresses.Pxt2, symbol: 'Pxt2' },
+    Time: { address: addresses.Time, symbol: 'Time' }
   },
   balance: {} as { [tokenAddress: string]: (BigNumber | null) },
   allowance: {} as { [tokenAddress: string] : { [address: string]: BigNumber } },
