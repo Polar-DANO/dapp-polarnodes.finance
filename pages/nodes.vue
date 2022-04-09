@@ -95,15 +95,15 @@ export default class Nodes extends WalletReactiveFetch implements IReactiveFetch
 
   async reactiveFetch () {
     await Promise.all([
-        this.$store.dispatch('nodes/loadNodeTypes'),
-        this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
-        ...(
+      this.$store.dispatch('nodes/loadNodeTypes'),
+      this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
+      ...(
         (this.isWalletConnected)
           ? [
-              this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),
+              this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address)
             ]
           : [])
-      ])
+    ])
   }
 }
 </script>
