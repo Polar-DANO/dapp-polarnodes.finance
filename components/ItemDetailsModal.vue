@@ -146,6 +146,7 @@
           <v-btn
             v-else-if="isOwner"
             class="node-card__outlined pa-2 mt-4"
+            :disabled="isRecoverButtonDisabled"
             dark
             text
             :loading="isBtnLoading"
@@ -171,189 +172,193 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import * as ethers from 'ethers'
-import axios from 'axios'
-import { NFTType, ItemType } from '~/models/marketplace'
-import * as NodeType from '~/models/NodeType'
-import WalletReactiveFetch from '~/mixins/wallet-reactive-fetch'
+import { Component } from 'nuxt-property-decorator';
+import * as ethers from 'ethers';
+import axios from 'axios';
+import { NFTType, ItemType } from '~/models/marketplace';
+import * as NodeType from '~/models/NodeType';
+import WalletReactiveFetch from '~/mixins/wallet-reactive-fetch';
 
 @Component({
   props: {
-    item: Object
+    item: Object,
   },
   watch: {
     price: {
-      handler: 'setDefaultPrice'
-    }
+      handler: 'setDefaultPrice',
+    },
   },
-  transition: 'scale-transition'
+  transition: 'scale-transition',
 })
 export default class ItemDetailModal extends WalletReactiveFetch {
-  private cardData = []
-  private sellGroup: any = [false, false]
-  private bid = 100
-  private isBtnLoading = false
-  public video: string | null = null
-  public title: string | null = null
+  private cardData = [];
+  private sellGroup: any = [false, false];
+  private bid = 100;
+  private isBtnLoading = false;
+  public video: string | null = null;
+  public title: string | null = null;
 
   async mounted () {
-    const { tokenId: bigNumTokenId, nft } = this
-    const tokenId = parseInt(bigNumTokenId)
-    const type = nft.nftType === NFTType.LuckyBox ? 'luckybox' : 'node'
+    const { tokenId: bigNumTokenId, nft } = this;
+    const tokenId = parseInt(bigNumTokenId);
+    const type = nft.nftType === NFTType.LuckyBox ? 'luckybox' : 'node';
 
     try {
-      const { data } = await axios.get(`https://api.polar.financial/${type}/${tokenId}`)
+      const { data } = await axios.get(`https://api.polar.financial/${type}/${tokenId}`);
 
-      this.video = data.animation_url
-      this.title = data.name
+      this.video = data.animation_url;
+      this.title = data.name;
     } catch (_err) {}
   }
 
   get bidBigNumber () {
-    return ethers.utils.parseEther(this.bid + '')
+    return ethers.utils.parseEther(this.bid + '');
   }
 
   get isValidBidPrice () {
-    return this.isAuction && this.bidBigNumber.gt(this.price)
+    return this.isAuction && this.bidBigNumber.gt(this.price);
   }
 
   get nft () {
-    return this.$props.item.nft
+    return this.$props.item.nft;
   }
 
   get tokenId () {
-    return this.nft.tokenId
+    return this.nft.tokenId;
   }
 
   get isAuction () {
-    return this.$props.item.type === ItemType.Auction
+    return this.$props.item.type === ItemType.Auction;
   }
 
   get isOffer () {
-    return this.$props.item.type === ItemType.Offer
+    return this.$props.item.type === ItemType.Offer;
   }
 
   get endDate () {
-    return this.isOffer ? this.$props.item.endDate : null
+    return this.isOffer ? this.$props.item.endDate : null;
   }
 
   get nodeData () {
-    if (this.nft.nftType !== NFTType.Node) { return null }
-    return this.$store.getters['nft/byTokenId'](this.tokenId)
+    if (this.nft.nftType !== NFTType.Node) { return null; }
+    return this.$store.getters['nft/byTokenId'](this.tokenId);
   }
 
   get luckyBoxData () {
-    if (this.nft.nftType !== NFTType.LuckyBox) { return null }
-    return this.$store.getters['luckyboxes/byTokenId'](this.tokenId)
+    if (this.nft.nftType !== NFTType.LuckyBox) { return null; }
+    return this.$store.getters['luckyboxes/byTokenId'](this.tokenId);
   }
 
   get price () {
     if (this.isOffer) {
-      return this.$props.item.price
+      return this.$props.item.price;
     } else {
-      return this.$props.item.currentPrice
+      return this.$props.item.currentPrice;
     }
   }
 
   get nodeType () {
-    if (!this.nodeData) { return null }
-    return this.$store.getters['nodes/nodeTypeByName'](this.nodeData.nodeType)
+    if (!this.nodeData) { return null; }
+    return this.$store.getters['nodes/nodeTypeByName'](this.nodeData.nodeType);
   }
 
   get roi () {
-    if (!this.nodeType) { return null }
-    return NodeType.roi(this.nodeType).toFixed(2)
+    if (!this.nodeType) { return null; }
+    return NodeType.roi(this.nodeType).toFixed(2);
   }
 
   get claimTax () {
-    if (!this.nodeType) { return null }
-    return this.nodeType.claimTax
+    if (!this.nodeType) { return null; }
+    return this.nodeType.claimTax;
   }
 
   get isOwner () {
-    return this.$store.getters['wallet/address'] === this.nft.owner
+    return this.$store.getters['wallet/address'] === this.nft.owner;
+  }
+
+  get isRecoverButtonDisabled () {
+    return true;
   }
 
   setDefaultPrice () {
     if (this.isAuction) {
-      this.bid = parseFloat(ethers.utils.formatEther(this.price))
+      this.bid = parseFloat(ethers.utils.formatEther(this.price));
     }
   }
 
   formatEther (bn: ethers.BigNumber) {
-    return parseFloat(ethers.utils.formatEther(bn)).toFixed(2)
+    return parseFloat(ethers.utils.formatEther(bn)).toFixed(2);
   }
 
   async onBidAuction () {
     try {
-      this.isBtnLoading = true
+      this.isBtnLoading = true;
       await this.$store.dispatch('marketplace/bidAuction', {
         nftType: this.nft.nftType,
         tokenId: this.tokenId,
-        bid: this.bidBigNumber
-      })
+        bid: this.bidBigNumber,
+      });
 
-      this.$emit('close')
+      this.$emit('close');
     } finally {
-      this.isBtnLoading = false
+      this.isBtnLoading = false;
     }
   }
 
   async onBuyNow () {
     try {
-      this.isBtnLoading = true
+      this.isBtnLoading = true;
       await this.$store.dispatch('marketplace/buyNow', {
         nftType: this.nft.nftType,
-        tokenId: this.tokenId
-      })
+        tokenId: this.tokenId,
+      });
 
-      this.$router.push('/mynft')
+      this.$router.push('/mynft');
     } finally {
-      this.isBtnLoading = false
+      this.isBtnLoading = false;
     }
   }
 
   async onRecover () {
     try {
-      this.isBtnLoading = true
+      this.isBtnLoading = true;
       await this.$store.dispatch('marketplace/recover', {
         nft: this.nft,
-        type: this.$props.item.type
-      })
+        type: this.$props.item.type,
+      });
 
-      this.$router.push('/mynft')
+      this.$router.push('/mynft');
     } finally {
-      this.isBtnLoading = false
+      this.isBtnLoading = false;
     }
   }
 
   get isApprove () {
-    return this.isMarketplaceApproved && this.isPolarApproved
+    return this.isMarketplaceApproved && this.isPolarApproved;
   }
 
   get isMarketplaceApproved () {
-    return this.$store.getters['marketplace/isApprovedForNFTType'](this.nft.nftType)
+    return this.$store.getters['marketplace/isApprovedForNFTType'](this.nft.nftType);
   }
 
   get isPolarApproved () {
-    return this.$store.getters['tokens/hasEnoughMarketplaceAllowance'](this.$store.state.tokens.tokens.POLAR.address, this.price)
+    return this.$store.getters['tokens/hasEnoughMarketplaceAllowance'](this.$store.state.tokens.tokens.POLAR.address, this.price);
   }
 
   async onApprove () {
-    if (this.isApprove) { return }
+    if (this.isApprove) { return; }
 
     try {
-      this.isBtnLoading = true
+      this.isBtnLoading = true;
       if (!this.isMarketplaceApproved) {
-        await this.$store.dispatch('marketplace/approveForNftType', this.nft.nftType)
+        await this.$store.dispatch('marketplace/approveForNftType', this.nft.nftType);
       }
 
       if (!this.isPolarApproved) {
-        await this.$store.dispatch('tokens/requestMarketplaceAllowance', this.$store.state.tokens.tokens.POLAR.address)
+        await this.$store.dispatch('tokens/requestMarketplaceAllowance', this.$store.state.tokens.tokens.POLAR.address);
       }
     } finally {
-      this.isBtnLoading = false
+      this.isBtnLoading = false;
     }
   }
 
@@ -362,12 +367,12 @@ export default class ItemDetailModal extends WalletReactiveFetch {
       await Promise.all([
         this.$store.dispatch('marketplace/loadApproveForNftType', this.nft.nftType),
         this.$store.dispatch('tokens/loadAllowance', this.$store.state.tokens.tokens.POLAR.address)
-      ])
+      ]);
     }
   }
 
   created () {
-    this.setDefaultPrice()
+    this.setDefaultPrice();
   }
 }
 </script>

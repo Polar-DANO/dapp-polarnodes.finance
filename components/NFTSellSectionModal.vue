@@ -129,126 +129,126 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import axios from 'axios'
-import * as ethers from 'ethers'
-import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
-import { NFTType } from '~/models/marketplace'
+import { Component } from 'nuxt-property-decorator';
+import axios from 'axios';
+import * as ethers from 'ethers';
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
+import { NFTType } from '~/models/marketplace';
 
 @Component({
   props: {
-    nft: Object
-  }
+    nft: Object,
+  },
 })
 export default class NFTSellSectionModal extends WalletReactiveFetch implements IReactiveFetch {
-  public minimumBid: number | null = null
-  public fixedPrice: number | null = null
-  public video: string | null = null
-  public selectedSellMode: 'fixed' | 'auction' | null = null
-  public isBtnLoading = false
-  public date: string | null = null
-  public datepickerMenu = false
+  public minimumBid: number | null = null;
+  public fixedPrice: number | null = null;
+  public video: string | null = null;
+  public selectedSellMode: 'fixed' | 'auction' | null = null;
+  public isBtnLoading = false;
+  public date: string | null = null;
+  public datepickerMenu = false;
 
   async mounted () {
-    const { $props: { nft } } = this
-    const tokenId = parseInt(nft.tokenId)
+    const { $props: { nft } } = this;
+    const tokenId = parseInt(nft.tokenId);
 
-    const { data } = await axios.get(`https://api.polar.financial/node/${tokenId}`)
+    const { data } = await axios.get(`https://api.polar.financial/node/${tokenId}`);
 
-    const weiFixedPrice = data.attributes.find((att: Record<string, string>) => att.trait_type === 'Min Offer Price')
-    const weiAuctionPrice = data.attributes.find((att: Record<string, string>) => att.trait_type === 'Min Auction Price')
+    const weiFixedPrice = data.attributes.find((att: Record<string, string>) => att.trait_type === 'Min Offer Price');
+    const weiAuctionPrice = data.attributes.find((att: Record<string, string>) => att.trait_type === 'Min Auction Price');
 
-    this.video = data.animation_url
+    this.video = data.animation_url;
 
     if (weiFixedPrice) {
-      const minFixedPrice = ethers.utils.formatEther(weiFixedPrice.value)
-      this.fixedPrice = parseInt(minFixedPrice)
+      const minFixedPrice = ethers.utils.formatEther(weiFixedPrice.value);
+      this.fixedPrice = parseInt(minFixedPrice);
     }
     if (weiAuctionPrice) {
-      const minAuctionPrice = ethers.utils.formatEther(weiAuctionPrice.value)
-      this.minimumBid = parseInt(minAuctionPrice)
+      const minAuctionPrice = ethers.utils.formatEther(weiAuctionPrice.value);
+      this.minimumBid = parseInt(minAuctionPrice);
     }
   }
 
   get dateFormatted (): string | null {
-    const { date, formatDate } = this
+    const { date, formatDate } = this;
 
     if (!date) {
-      return null
+      return null;
     }
-    return formatDate(date)
+    return formatDate(date);
   }
 
   get isoToday (): string {
-    return new Date().toISOString()
+    return new Date().toISOString();
   }
 
   get nodeType () {
-    return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType)
+    return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType);
   }
 
   formatDate (date: string | null): string | null {
-    if (!date) { return null }
+    if (!date) { return null; }
 
-    const [year, month, day] = date.split('-')
-    return `${month}/${day}/${year}`
+    const [year, month, day] = date.split('-');
+    return `${month}/${day}/${year}`;
   }
 
   parseDate (date: string | null): string | null {
-    if (!date) { return null }
+    if (!date) { return null; }
 
-    const [month, day, year] = date.split('/')
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+    const [month, day, year] = date.split('/');
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
   }
 
   async reactiveFetch () {
     if (this.isWalletConnected) {
       await Promise.all([
         this.$store.dispatch('marketplace/loadApproveForNftType', NFTType.Node)
-      ])
+      ]);
     }
   }
 
   get isApprove () {
-    if (!this?.nft?.nodeType) { return false }
-    return !this.$store.getters['marketplace/isApprovedForNFTType'](NFTType.Node)
+    if (!this?.nft?.nodeType) { return false; }
+    return !this.$store.getters['marketplace/isApprovedForNFTType'](NFTType.Node);
   }
 
   get isFixedPrice () {
-    return this.selectedSellMode === 'fixed'
+    return this.selectedSellMode === 'fixed';
   }
 
   get isAuction () {
-    return this.selectedSellMode === 'auction'
+    return this.selectedSellMode === 'auction';
   }
 
   changeSellMode (event: any, mode: 'fixed' | 'auction') {
-    this.selectedSellMode = event ? mode : null
+    this.selectedSellMode = event ? mode : null;
   }
 
   async onApprove () {
     try {
-      this.isBtnLoading = true
-      await this.$store.dispatch('marketplace/approveForNftType', NFTType.Node)
+      this.isBtnLoading = true;
+      await this.$store.dispatch('marketplace/approveForNftType', NFTType.Node);
     } finally {
-      this.isBtnLoading = false
+      this.isBtnLoading = false;
     }
   }
 
   async onList () {
     if (!this.selectedSellMode) {
-      return
+      return;
     }
 
     try {
-      this.isBtnLoading = true
+      this.isBtnLoading = true;
 
       if (this.selectedSellMode === 'fixed') {
         await this.$store.dispatch('marketplace/sellOffer', {
           nftType: NFTType.Node,
           tokenId: this.nft.tokenId,
-          price: this.fixedPrice
-        })
+          price: this.fixedPrice,
+        });
       } else {
         await this.$store.dispatch('marketplace/sellAuction', {
           nftType: NFTType.Node,
@@ -256,13 +256,13 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
           price: this.minimumBid,
           end: this.date
             ? ~~(new Date(this.date).getTime() / 1000)
-            : ~~(new Date().getTime() / 1000) + 604800 // now + 1 week
-        })
+            : ~~(new Date().getTime() / 1000) + 604800, // now + 1 week
+        });
       }
 
-      this.$router.push('/market')
+      this.$router.push('/market');
     } finally {
-      this.isBtnLoading = false
+      this.isBtnLoading = false;
     }
   }
 }

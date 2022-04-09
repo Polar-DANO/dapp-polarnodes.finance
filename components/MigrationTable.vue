@@ -7,17 +7,17 @@
         </div>
       </div>
       <div class="mx-auto w-[100%] min-w-[420px] p-[20px] rounded-b-lg bg-[#17171B]">
-        <div class="flex align-baseline"> 
+        <div class="flex align-baseline">
           <span class="text-[16px] text-[#00C6ED] mr-[16px] mt-[1px]">Type:</span>
           <div class="w-[70%]">
             <v-select
-                :items="nodeList"
-                item-value="nodeList"
-                placeholder="Select NodeType"
-                @change="changeNodeType"
-                dense
-                class="w-[80%] focus:border-none focus:outline-none "
-                ></v-select>
+              :items="nodeList"
+              item-value="nodeList"
+              placeholder="Select NodeType"
+              dense
+              class="w-[80%] focus:border-none focus:outline-none "
+              @change="changeNodeType"
+            ></v-select>
           </div>
         </div>
         <div class="flex text-center  w-[50%]">
@@ -26,7 +26,7 @@
           </div>
           <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[30%]">
             <div class="p-[10px] md:py-[8px]">
-              <span class="text-[white] text-[14px] font-[500]">{{ oldNodeCounter}}</span>
+              <span class="text-[white] text-[14px] font-[500]">{{ oldNodeCounter }}</span>
             </div>
           </div>
         </div>
@@ -51,25 +51,22 @@
   </div>
 </template>
 <script lang="ts">
-import { mapGetters } from "vuex"
-import { Component, Vue } from 'nuxt-property-decorator'
-import { NodeNftNames } from '~/models/types'
+import { Component, Vue } from 'nuxt-property-decorator';
 
 @Component
 export default class MigrationTable extends Vue {
-  private nodeList = ["Fuji","Mont Blanc","Kilimanjaro","Ushuaia","Everest"];
+  private nodeList = ['Fuji', 'Mont Blanc', 'Kilimanjaro', 'Ushuaia', 'Everest'];
   private oldNodeCounter = 0;
   private migrationCounter = 0;
-  private selectedNodeType : string = "";
+  private selectedNodeType : string = '';
 
   changeNodeType (nodeType : string) {
     this.selectedNodeType = nodeType;
-    this.oldNodeCounter = this.$store.getters['nodes/oldNodeCount'](nodeType);    
+    this.oldNodeCounter = this.$store.getters['nodes/oldNodeCount'](nodeType);
   }
 
-  async onMigrate() {
-    console.log(this.migrationCounter,"migrationCounter")
-    await this.$store.dispatch('nodes/onMigration', {nodeType:this.selectedNodeType, nodeCounter:this.migrationCounter});
+  async onMigrate () {
+    await this.$store.dispatch('nodes/onMigration', { nodeType: this.selectedNodeType, nodeCounter: this.migrationCounter });
   }
 }
 </script>

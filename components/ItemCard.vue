@@ -68,45 +68,45 @@
   </div>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import * as ethers from 'ethers'
-import axios from 'axios'
-import { NFTType, ItemType } from '~/models/marketplace'
+import { Component } from 'nuxt-property-decorator';
+import * as ethers from 'ethers';
+import axios from 'axios';
+import { NFTType, ItemType } from '~/models/marketplace';
 import WalletReactiveFetch, {
   IReactiveFetch
-} from '~/mixins/wallet-reactive-fetch'
+} from '~/mixins/wallet-reactive-fetch';
 
 @Component({
   props: {
-    item: Object
-  }
+    item: Object,
+  },
 })
 export default class ItemCard
   extends WalletReactiveFetch
   implements IReactiveFetch {
-  private loading = true
-  public image: string | null = null
-  public title: string | null = null
+  private loading = true;
+  public image: string | null = null;
+  public title: string | null = null;
 
   async mounted () {
-    const { tokenId: bigNumTokenId, nft } = this
-    const tokenId = parseInt(bigNumTokenId)
-    const type = nft.nftType === NFTType.LuckyBox ? 'luckybox' : 'node'
+    const { tokenId: bigNumTokenId, nft } = this;
+    const tokenId = parseInt(bigNumTokenId);
+    const type = nft.nftType === NFTType.LuckyBox ? 'luckybox' : 'node';
 
     try {
-      const { data } = await axios.get(`https://api.polar.financial/${type}/${tokenId}`)
+      const { data } = await axios.get(`https://api.polar.financial/${type}/${tokenId}`);
 
-      this.image = data.image
-      this.title = data.name
+      this.image = data.image;
+      this.title = data.name;
     } catch (_err) {}
   }
 
   get isAuction () {
-    return this.$props.item.type === ItemType.Auction
+    return this.$props.item.type === ItemType.Auction;
   }
 
   get isOffer () {
-    return this.$props.item.type === ItemType.Offer
+    return this.$props.item.type === ItemType.Offer;
   }
 
   get displayPrice () {
@@ -114,34 +114,34 @@ export default class ItemCard
       ? this.$props.item.currentPrice
       : this.isOffer
         ? this.$props.item.price
-        : null
+        : null;
 
     if (!price) {
-      return null
+      return null;
     }
-    return parseFloat(ethers.utils.formatEther(price)).toFixed(2)
+    return parseFloat(ethers.utils.formatEther(price)).toFixed(2);
   }
 
   get nft () {
-    return this.$props.item.nft
+    return this.$props.item.nft;
   }
 
   get tokenId () {
-    return this.nft.tokenId
+    return this.nft.tokenId;
   }
 
   get nodeData () {
     if (this.nft.nftType !== NFTType.Node) {
-      return null
+      return null;
     }
-    return this.$store.getters['nft/byTokenId'](this.tokenId)
+    return this.$store.getters['nft/byTokenId'](this.tokenId);
   }
 
   get luckyBoxData () {
     if (this.nft.nftType !== NFTType.LuckyBox) {
-      return null
+      return null;
     }
-    return this.$store.getters['luckyboxes/byTokenId'](this.tokenId)
+    return this.$store.getters['luckyboxes/byTokenId'](this.tokenId);
   }
 
   async reactiveFetch () {
@@ -150,20 +150,20 @@ export default class ItemCard
       return
     } */
 
-    const nftType = this.nft.nftType
+    const nftType = this.nft.nftType;
 
     switch (nftType) {
       case NFTType.Node:
-        await this.$store.dispatch('nft/loadByTokenId', this.tokenId)
-        break
+        await this.$store.dispatch('nft/loadByTokenId', this.tokenId);
+        break;
       case NFTType.LuckyBox:
-        await this.$store.dispatch('luckyboxes/loadByTokenId', this.tokenId)
-        break
+        await this.$store.dispatch('luckyboxes/loadByTokenId', this.tokenId);
+        break;
       default:
-        throw new Error(`Unsupported NFT Type ${nftType}`)
+        throw new Error(`Unsupported NFT Type ${nftType}`);
     }
 
-    this.loading = false
+    this.loading = false;
   }
 }
 </script>

@@ -103,68 +103,68 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import * as ethers from 'ethers'
-import axios from 'axios'
-import * as NodeType from '~/models/NodeType'
-import { NFT } from '~/models/nft'
+import { Component, Vue } from 'nuxt-property-decorator';
+import * as ethers from 'ethers';
+import axios from 'axios';
+import * as NodeType from '~/models/NodeType';
+import { NFT } from '~/models/nft';
 
 @Component({
   props: {
-    nft: Object as () => NFT
-  }
+    nft: Object as () => NFT,
+  },
 })
 export default class NFTSellModal extends Vue {
-  public isClaimBtnLoading = false
-  public video = null
+  public isClaimBtnLoading = false;
+  public video = null;
 
   async mounted () {
-    const { $props: { nft } } = this
-    const tokenId = parseInt(nft.tokenId)
+    const { $props: { nft } } = this;
+    const tokenId = parseInt(nft.tokenId);
 
-    const { data } = await axios.get(`https://api.polar.financial/node/${tokenId}`)
-    this.video = data.animation_url
+    const { data } = await axios.get(`https://api.polar.financial/node/${tokenId}`);
+    this.video = data.animation_url;
   }
 
   get nodeType () {
-    return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType)
+    return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType);
   }
 
   get rewardAmount () {
-    return NodeType.dailyRewardPerNode(this.nodeType)
+    return NodeType.dailyRewardPerNode(this.nodeType);
   }
 
   get pendingRewards () {
-    return this.$props.nft?.userPendingRewards ?? ethers.BigNumber.from(0)
+    return this.$props.nft?.userPendingRewards ?? ethers.BigNumber.from(0);
   }
 
   get claimTax () {
-    return this.nodeType.claimTax
+    return this.nodeType.claimTax;
   }
 
   get roi () {
-    return NodeType.roi(this.nodeType)
+    return NodeType.roi(this.nodeType);
   }
 
   get canSell () {
-    return this.$props.nft.attribute !== ''
+    return this.$props.nft.attribute !== '';
   }
 
   async onClaim () {
     try {
-      this.isClaimBtnLoading = true
-      await this.$store.dispatch('nft/claimRewards', [this.$props.nft])
+      this.isClaimBtnLoading = true;
+      await this.$store.dispatch('nft/claimRewards', [this.$props.nft]);
     } finally {
-      this.isClaimBtnLoading = false
+      this.isClaimBtnLoading = false;
     }
   }
 
   formatBigNumber (bn: unknown, decimals = 2) {
     if (ethers.BigNumber.isBigNumber(bn)) {
-      return parseFloat(ethers.utils.formatEther(bn)).toFixed(decimals)
+      return parseFloat(ethers.utils.formatEther(bn)).toFixed(decimals);
     }
 
-    return bn
+    return bn;
   }
 }
 </script>

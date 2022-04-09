@@ -20,30 +20,30 @@
 </template>
 
 <script lang="ts">
-import { PropType } from 'vue'
-import { Component, Vue } from 'nuxt-property-decorator'
-import * as ethers from 'ethers'
-import { NodeNftNames } from '~/models/types'
-import { LUCKYBOX_INDEX_TO_IMAGE } from '~/models/constants'
+import { PropType } from 'vue';
+import { Component, Vue } from 'nuxt-property-decorator';
+import * as ethers from 'ethers';
+import { NodeNftNames } from '~/models/types';
+import { LUCKYBOX_INDEX_TO_IMAGE } from '~/models/constants';
 
 @Component({
   props: {
     index: { type: Number },
     name: { type: String as PropType<NodeNftNames> },
-    cost: { type: ethers.BigNumber }
-  }
+    cost: { type: ethers.BigNumber },
+  },
 })
 export default class NodeNft extends Vue {
   public onSelectNode () {
-    this.$router.push(`/luckybox/${this.$props.index}`)
+    this.$router.push(`/luckybox/${this.$props.index}`);
   }
 
   get image (): any {
-    return (LUCKYBOX_INDEX_TO_IMAGE as any)[this.$props.index]
+    return (LUCKYBOX_INDEX_TO_IMAGE as any)[this.$props.index];
   }
 
   get price () {
-    return this.$props.cost ? ethers.utils.formatEther(this.$props.cost) : null
+    return this.$props.cost ? ethers.utils.formatEther(this.$props.cost) : null;
   }
 }
 </script>

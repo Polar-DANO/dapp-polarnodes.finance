@@ -4,6 +4,7 @@
     "vue/html-self-closing": "off",
     "no-unused-vars": "off",
     "semi": [2, "always"],
+    "@typescript-eslint/semi": [2, "always"],
     "comma-dangle": "off",
     "@typescript-eslint/comma-dangle": [
       "error",
