@@ -13,10 +13,17 @@
     <div class="bg-[#17171B] rounded-b-[20px] border-solid border-[#00C6ED] border-[2px]">
       <div class="flex flex-col justify-center items-center gap-2 md:gap-[75px] md:flex-row flex-wrap md:mt-[64px] md:mr-[104px] md:ml-[64px] md:mb-[89px] p-[20px] md:p-[0px]">
         <div class="flex max-w-[420px] max-h-[325px]">
-          <video class="node-video" autoplay loop muted>
+          <video v-if="video" class="node-video" autoplay loop muted>
             <source :src="video" type="video/mp4">
             Your browser does not support the video tag.
           </video>
+          <v-skeleton-loader
+            v-else
+            dark
+            type="image, image"
+            min-width="100%"
+            max-height="325px"
+          />
         </div>
         <div class="flex flex-col gap-[12px] md:gap-[15px]">
           <div class="border-solid border-[#00C6ED] border-[2px] rounded-[14px] text-center p-[23px]">
@@ -96,62 +103,68 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import * as ethers from 'ethers'
-import * as NodeType from '~/models/NodeType'
-import { NFT } from '~/models/nft'
-import { NODENAME_TO_VIDEO } from '~/models/constants'
+import { Component, Vue } from 'nuxt-property-decorator';
+import * as ethers from 'ethers';
+import axios from 'axios';
+import * as NodeType from '~/models/NodeType';
+import { NFT } from '~/models/nft';
+
 @Component({
   props: {
-    nft: Object as () => NFT
-  }
+    nft: Object as () => NFT,
+  },
 })
 export default class NFTSellModal extends Vue {
-  isClaimBtnLoading = false
+  public isClaimBtnLoading = false;
+  public video = null;
+
+  async mounted () {
+    const { $props: { nft } } = this;
+    const tokenId = parseInt(nft.tokenId);
+
+    const { data } = await axios.get(`https://api.polar.financial/node/${tokenId}`);
+    this.video = data.animation_url;
+  }
 
   get nodeType () {
-    return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType)
+    return this.$store.getters['nodes/nodeTypeByName'](this.$props.nft.nodeType);
   }
 
   get rewardAmount () {
-    return NodeType.dailyRewardPerNode(this.nodeType)
+    return NodeType.dailyRewardPerNode(this.nodeType);
   }
 
   get pendingRewards () {
-    return this.$props.nft?.userPendingRewards ?? ethers.BigNumber.from(0)
+    return this.$props.nft?.userPendingRewards ?? ethers.BigNumber.from(0);
   }
 
   get claimTax () {
-    return this.nodeType.claimTax
+    return this.nodeType.claimTax;
   }
 
   get roi () {
-    return NodeType.roi(this.nodeType)
+    return NodeType.roi(this.nodeType);
   }
 
   get canSell () {
-    return this.$props.nft.attribute !== ''
-  }
-
-  get video () {
-    return (NODENAME_TO_VIDEO as any)[this.nodeType.name]
+    return this.$props.nft.attribute !== '';
   }
 
   async onClaim () {
     try {
-      this.isClaimBtnLoading = true
-      await this.$store.dispatch('nft/claimRewards', [this.$props.nft])
+      this.isClaimBtnLoading = true;
+      await this.$store.dispatch('nft/claimRewards', [this.$props.nft]);
     } finally {
-      this.isClaimBtnLoading = false
+      this.isClaimBtnLoading = false;
     }
   }
 
   formatBigNumber (bn: unknown, decimals = 2) {
     if (ethers.BigNumber.isBigNumber(bn)) {
-      return parseFloat(ethers.utils.formatEther(bn)).toFixed(decimals)
+      return parseFloat(ethers.utils.formatEther(bn)).toFixed(decimals);
     }
 
-    return bn
+    return bn;
   }
 }
 </script>

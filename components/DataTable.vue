@@ -98,47 +98,47 @@
   </v-card>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import * as eth from 'ethers'
-import { BigNumber } from 'ethers'
+import { Component, Vue } from 'nuxt-property-decorator';
+import * as eth from 'ethers';
+import { BigNumber } from 'ethers';
 
 @Component({
   props: {
     title: {
       type: String,
-      required: true
+      required: true,
     },
     icon: {
       type: String,
-      required: true
+      required: true,
     },
     price: {
-      type: [Number, BigNumber]
+      type: [Number, BigNumber],
     },
     percentage: {
-      type: Number
-    }
-  }
+      type: Number,
+    },
+  },
 })
 export default class DataTable extends Vue {
   get _title () {
-    return this.$props.title
+    return this.$props.title;
   }
 
   get _icon () {
-    return this.$props.icon
+    return this.$props.icon;
   }
 
   get _price () {
     if (BigNumber.isBigNumber(this.$props.price)) {
-      return eth.utils.formatEther(this.$props.price)
+      return eth.utils.formatEther(this.$props.price);
     }
 
-    return this.$props.price
+    return this.$props.price;
   }
 
   get _percentage () {
-    return this.$props.percentage
+    return this.$props.percentage;
   }
 }
 </script>

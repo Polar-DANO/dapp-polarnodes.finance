@@ -37,46 +37,46 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import { NFTType } from '~/models/marketplace'
-import { NFTTypeFilter, ViewType } from '~/store/marketplace/view/state'
+import { Component, Vue } from 'nuxt-property-decorator';
+import { NFTType } from '~/models/marketplace';
+import { NFTTypeFilter, ViewType } from '~/store/marketplace/view/state';
 
 @Component({
   watch: {
     selectedNftTypes: {
-      handler: 'onSelectedNftTypesChange'
-    }
-  }
+      handler: 'onSelectedNftTypesChange',
+    },
+  },
 })
 export default class SortList extends Vue {
-  selectedNftTypes: NFTTypeFilter[] = []
+  selectedNftTypes: NFTTypeFilter[] = [];
 
   get selectedView () {
-    return this.$store.state.marketplace.view.viewType
+    return this.$store.state.marketplace.view.viewType;
   }
 
   set selectedView (viewType) {
-    this.$store.commit('marketplace/view/setView', viewType)
+    this.$store.commit('marketplace/view/setView', viewType);
   }
 
   onSelectedNftTypesChange (filters: NFTTypeFilter[]) {
-    this.$store.commit('marketplace/view/setFilter', filters)
+    this.$store.commit('marketplace/view/setFilter', filters);
   }
 
   get nftTypesSelect () {
     const wrapTextValue = (type: NFTType) =>
       (val: string): { text: string, value: NFTTypeFilter } =>
-        ({ text: val, value: { type, name: val } })
+        ({ text: val, value: { type, name: val } });
 
-    const luckyBoxes = (this.$store.getters['luckyboxes/typesNames'] ?? []).map(wrapTextValue(NFTType.LuckyBox))
-    const nodeTypes = (this.$store.getters['nodes/nodeTypesNames'] ?? []).map(wrapTextValue(NFTType.Node))
+    const luckyBoxes = (this.$store.getters['luckyboxes/typesNames'] ?? []).map(wrapTextValue(NFTType.LuckyBox));
+    const nodeTypes = (this.$store.getters['nodes/nodeTypesNames'] ?? []).map(wrapTextValue(NFTType.Node));
 
     return [
       { header: 'Luckyboxes' },
       ...luckyBoxes,
       { header: 'Nodes' },
-      ...nodeTypes
-    ]
+      ...nodeTypes,
+    ];
   }
 
   get views () {
@@ -85,8 +85,8 @@ export default class SortList extends Vue {
       { text: 'My NFTs', value: ViewType.MyNFTs },
       { text: '- to + Value', value: ViewType.AscValue },
       { text: '+ to - Value', value: ViewType.DescValue },
-      { text: 'Expiring soon', value: ViewType.ExpiringSoon }
-    ]
+      { text: 'Expiring soon', value: ViewType.ExpiringSoon },
+    ];
   }
 }
 </script>

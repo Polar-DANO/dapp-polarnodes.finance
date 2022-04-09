@@ -1,59 +1,59 @@
-import colors from 'vuetify/es5/util/colors'
-import i18n from './config/i18n'
+import colors from 'vuetify/es5/util/colors';
+import i18n from './config/i18n';
 
 export default {
   env: {
-    isTestnet: !!process.env.IS_TESTNET || false
+    isTestnet: !!process.env.IS_TESTNET || false,
   },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
   server: {
     port: 7000, // default: 3000
-    host: '0.0.0.0' // default: localhost
+    host: '0.0.0.0', // default: localhost
   }, // other configs
   generate: {
-    minify: false
+    minify: false,
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - Dapp.polarnodes',
     title: 'Dapp.polarnodes',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'en',
     },
     meta: [{
-      charset: 'utf-8'
+      charset: 'utf-8',
     },
     {
       name: 'viewport',
-      content: 'width=device-width, initial-scale=1'
+      content: 'width=device-width, initial-scale=1',
     },
     {
       hid: 'description',
       name: 'description',
-      content: ''
+      content: '',
     },
     {
       name: 'format-detection',
-      content: 'telephone=no'
-    }
+      content: 'telephone=no',
+    },
     ],
     link: [{
       rel: 'icon',
       type: 'image/png',
-      href: '/favicon.png'
-    }]
+      href: '/favicon.png',
+    }],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '@/assets/css/main.scss',
-    '@/assets/css/global.css'
+    '@/assets/css/global.css',
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    { src: '~/plugins/ethers', mode: 'client' }
+    { src: '~/plugins/ethers', mode: 'client' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -70,14 +70,14 @@ export default {
         defaultLocale: 'en',
         locales: [{
           code: 'en',
-          name: 'English'
+          name: 'English',
         }],
-        vueI18n: i18n
-      }
+        vueI18n: i18n,
+      },
     ],
     '@nuxt/typescript-build',
     '@nuxt/postcss8',
-    '@nuxtjs/device'
+    '@nuxtjs/device',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -96,11 +96,11 @@ export default {
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
-          success: colors.green.accent3
-        }
-      }
+          success: colors.green.accent3,
+        },
+      },
     },
-    treeShake: true
+    treeShake: true,
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
@@ -108,8 +108,8 @@ export default {
     postcss: {
       plugins: {
         tailwindcss: {},
-        autoprefixer: {}
-      }
-    }
-  }
-}
+        autoprefixer: {},
+      },
+    },
+  },
+};

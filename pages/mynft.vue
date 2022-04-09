@@ -22,8 +22,8 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
+import { Component } from 'nuxt-property-decorator';
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
 
 @Component
 export default class Mynft extends WalletReactiveFetch implements IReactiveFetch {
@@ -33,54 +33,54 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
         icon: require('../assets/img/nodesIcon/totalnodes_icon.svg'),
         title: 'Pending Rewards',
         price: this.isWalletConnected ? this.$store.getters['nodes/totalPendingRewards'] : null,
-        percentage: null
+        percentage: null,
       },
       {
         icon: require('../assets/img/nodesIcon/mynodes_icon.svg'),
         title: 'My Nodes',
         price: this.isWalletConnected ? this.$store.getters['nodes/myTotalCreated'] : null,
-        percentage: null
+        percentage: null,
       },
       {
         icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
         title: 'My $POLAR Balance',
-        price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address) :null,
-        percentage: null
-      }
-    ]
+        price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address) : null,
+        percentage: null,
+      },
+    ];
   }
 
   get nfts () {
-    return this.$store.getters['nft/myNFTsByCreationDateDesc']
+    return this.$store.getters['nft/myNFTsByCreationDateDesc'];
   }
 
   get luckyBoxes () {
-    return this.$store.state.luckyboxes.myLuckyBoxes ?? []
+    return this.$store.state.luckyboxes.myLuckyBoxes ?? [];
   }
 
   async reactiveFetch () {
     if (this.isWalletConnected) {
-      await this.$store.dispatch('nodes/loadOldNodeCount')
-      await {        
+      await this.$store.dispatch('nodes/loadOldNodeCount');
+      await {
         lbTypes: await this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
         myLbs: await this.$store.dispatch('luckyboxes/loadMyLuckyBoxes'),
         polarBalance: await this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),
         myNFTs: await (async () => {
-          await this.$store.dispatch('nodes/loadNodeTypes')
-          await this.$store.dispatch('nft/loadMyNFTs')
-        })()
-      }
+          await this.$store.dispatch('nodes/loadNodeTypes');
+          await this.$store.dispatch('nft/loadMyNFTs');
+        })(),
+      };
     }
   }
 
   created () {
     const interval = setInterval(() => {
-      this.$fetch()
-    }, 10000)
+      this.$fetch();
+    }, 10000);
 
     this.$once('hook:beforeDestroy', () => {
-      clearInterval(interval)
-    })
+      clearInterval(interval);
+    });
   }
 }
 </script>

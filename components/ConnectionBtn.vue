@@ -112,66 +112,66 @@
   </v-dialog>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import WalletReactiveFetch from '~/mixins/wallet-reactive-fetch'
+import { Component } from 'nuxt-property-decorator';
+import WalletReactiveFetch from '~/mixins/wallet-reactive-fetch';
 
 @Component
 export default class ConnectionBtn extends WalletReactiveFetch {
-  private isTestnet = false
-  private isBtnLoading = false
+  private isTestnet = false;
+  private isBtnLoading = false;
 
   created () {
-    this.isTestnet = !!process.env.isTestnet
+    this.isTestnet = !!process.env.isTestnet;
   }
 
   get canMintPolar () {
-    return !this.$store.state.tokens.gotToken
+    return !this.$store.state.tokens.gotToken;
   }
 
   get walletAddress () {
-    return this.$store.getters['wallet/address']
+    return this.$store.getters['wallet/address'];
   }
 
   get isLoggedIn () {
-    return this.$store.getters['wallet/hasAddress']
+    return this.$store.getters['wallet/hasAddress'];
   }
 
-  private dialog = false
+  private dialog = false;
 
   logout () {
     if (this.$store.getters['wallet/isConnected']) {
-      this.$store.dispatch('wallet/logout')
+      this.$store.dispatch('wallet/logout');
     }
   }
 
   async requestMetamask () {
     try {
-      await this.$store.dispatch('wallet/requestMetamask')
+      await this.$store.dispatch('wallet/requestMetamask');
     } finally {
-      this.dialog = false
+      this.dialog = false;
     }
   }
 
   async requestWalletConnect () {
     try {
-      await this.$store.dispatch('wallet/requestWalletConnect')
+      await this.$store.dispatch('wallet/requestWalletConnect');
     } finally {
-      this.dialog = false
+      this.dialog = false;
     }
   }
 
   async mintPolar () {
     try {
-      this.isBtnLoading = true
-      await this.$store.dispatch('tokens/getPolarToken')
+      this.isBtnLoading = true;
+      await this.$store.dispatch('tokens/getPolarToken');
     } finally {
-      this.isBtnLoading = false
+      this.isBtnLoading = false;
     }
   }
 
   async reactiveFetch () {
     if (this.isLoggedIn) {
-      await this.$store.dispatch('tokens/fetchGotToken')
+      await this.$store.dispatch('tokens/fetchGotToken');
     }
   }
 }

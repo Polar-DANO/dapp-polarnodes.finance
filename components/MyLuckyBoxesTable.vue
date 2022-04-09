@@ -4,7 +4,7 @@
       <div class="flex justify-between bg-[#00C6ED]  rounded-t-lg p-[16px] min-w-[420px]">
         <div class="text-white text-[16px]">
           My Lucky Boxes
-        </div>        
+        </div>
         <v-btn
           class="tex text-white font-normal text-[16px] border-solid border-[white] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px]"
           dark
@@ -63,32 +63,31 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import { LuckyBox } from '~/models/luckybox'
+import { Component, Vue } from 'nuxt-property-decorator';
+import { LuckyBox } from '~/models/luckybox';
 
 @Component({
   props: {
-    items: Array as () => LuckyBox[]
-  }
+    items: Array as () => LuckyBox[],
+  },
 })
 export default class NodeTable extends Vue {
   async onReveal (tokenId: LuckyBox['tokenId']) {
-    await this.$store.dispatch('luckyboxes/reveal', [tokenId])
+    await this.$store.dispatch('luckyboxes/reveal', [tokenId]);
   }
 
-  async onAllReveal() {
-    let tokenIds:any = [];
-    console.log(this.$props.items,"itmes");
-    this.$props.items.map((item:LuckyBox,id:any) => tokenIds.push(item.tokenId));
-    await this.$store.dispatch('luckyboxes/reveal', tokenIds)
+  async onAllReveal () {
+    const tokenIds:any = [];
+    this.$props.items.map((item: LuckyBox) => tokenIds.push(item.tokenId));
+    await this.$store.dispatch('luckyboxes/reveal', tokenIds);
   }
 
   onList (tokenId: LuckyBox['tokenId']) {
-    this.$router.push(`/luckybox/list/${tokenId._hex}`)
+    this.$router.push(`/luckybox/list/${tokenId._hex}`);
   }
 
   canSell (item: LuckyBox) {
-    return item.attribute !== ''
+    return item.attribute !== '';
   }
 }
 </script>

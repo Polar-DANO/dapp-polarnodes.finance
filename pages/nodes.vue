@@ -47,17 +47,17 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
+import { Component } from 'nuxt-property-decorator';
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
 
 @Component
 export default class Nodes extends WalletReactiveFetch implements IReactiveFetch {
   mounted () {
     if (window.location.hash && window.location.hash === '#lucky-box') {
-      const el = this.$refs['lucky-box']
+      const el = this.$refs['lucky-box'];
 
       if (el) {
-        (el as any).scrollIntoView({ behavior: 'smooth' })
+        (el as any).scrollIntoView({ behavior: 'smooth' });
       }
     }
   }
@@ -68,42 +68,42 @@ export default class Nodes extends WalletReactiveFetch implements IReactiveFetch
         icon: require('../assets/img/nodesIcon/totalnodes_icon.svg'),
         title: 'Total Nodes',
         price: this.$store.getters['nodes/totalCreated'],
-        percentage: null
+        percentage: null,
       },
       {
         icon: require('../assets/img/nodesIcon/mynodes_icon.svg'),
         title: 'My Nodes',
         price: this.isWalletConnected ? this.$store.getters['nodes/myTotalCreated'] : null,
-        percentage: null
+        percentage: null,
       },
       {
         icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
         title: 'My $POLAR Balance',
         price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address) : null,
-        percentage: null
-      }
-    ]
+        percentage: null,
+      },
+    ];
   }
 
   get luckyBoxesList () {
-    return this.$store.state.luckyboxes.luckyBoxTypes ?? []
+    return this.$store.state.luckyboxes.luckyBoxTypes ?? [];
   }
 
   get nodeNames () {
-    return this.$store.getters['nodes/nodeTypesNames']
+    return this.$store.getters['nodes/nodeTypesNames'];
   }
 
   async reactiveFetch () {
     await Promise.all([
-        this.$store.dispatch('nodes/loadNodeTypes'),
-        this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
-        ...(
+      this.$store.dispatch('nodes/loadNodeTypes'),
+      this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
+      ...(
         (this.isWalletConnected)
           ? [
               this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),
             ]
-          : [])
-      ])
+          : []),
+    ]);
   }
 }
 </script>

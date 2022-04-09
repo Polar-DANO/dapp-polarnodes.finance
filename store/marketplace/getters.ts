@@ -1,6 +1,6 @@
-import { GetterTree } from 'vuex'
-import { State } from './state'
-import { NFTType, Item } from '~/models/marketplace'
+import { GetterTree } from 'vuex';
+import { State } from './state';
+import { NFTType, Item } from '~/models/marketplace';
 
 const getters: GetterTree<State, {}> = {
   items: (state): Item[] => [
@@ -10,8 +10,8 @@ const getters: GetterTree<State, {}> = {
   ),
 
   isApprovedForNFTType: state => (nftType: NFTType): boolean => {
-    return state.isApprovedForNFTType[nftType] ?? false
-  }
-}
+    return state.isApprovedForNFTType[nftType] ?? false;
+  },
+};
 
-export default getters
+export default getters;

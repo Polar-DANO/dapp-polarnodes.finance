@@ -26,43 +26,43 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import * as eth from 'ethers'
-import * as NodeType from '~/models/NodeType'
-import { NAME_TO_URL, NODENAME_TO_IMAGE } from '~/models/constants'
+import { Component, Vue } from 'nuxt-property-decorator';
+import * as eth from 'ethers';
+import * as NodeType from '~/models/NodeType';
+import { NAME_TO_URL, NODENAME_TO_IMAGE } from '~/models/constants';
 
-const formatEther = eth.utils.formatEther
+const formatEther = eth.utils.formatEther;
 
 @Component({
   props: {
-    name: { type: String }
-  }
+    name: { type: String },
+  },
 })
 export default class NodeNft extends Vue {
   public onSelectNode () {
     this.$router.push(
       `/create/${(NAME_TO_URL as any)[this.$props.name]}`
-    )
+    );
   }
 
   get image (): any {
-    return (NODENAME_TO_IMAGE as any)[this.$props.name]
+    return (NODENAME_TO_IMAGE as any)[this.$props.name];
   }
 
   get nodeType () {
-    return this.$store.getters['nodes/nodeTypeByName'](this.$props.name)
+    return this.$store.getters['nodes/nodeTypeByName'](this.$props.name);
   }
 
   get dailyEarnings () {
-    return parseFloat(formatEther(NodeType.dailyRewardPerNode(this.nodeType))).toFixed(2)
+    return parseFloat(formatEther(NodeType.dailyRewardPerNode(this.nodeType))).toFixed(2);
   }
 
   get cost () {
-    return formatEther(this.nodeType.cost)
+    return formatEther(this.nodeType.cost);
   }
 
   get claimTax () {
-    return this.nodeType.claimTax
+    return this.nodeType.claimTax;
   }
 }
 </script>

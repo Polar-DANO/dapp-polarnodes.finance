@@ -1,14 +1,15 @@
-import { BigNumber } from 'ethers'
+import { BigNumber } from 'ethers';
 
 export enum NFTType {
   Node = 'node',
-  LuckyBox = 'luckybox',
+  LuckyBox = 'luckybox'
 }
 
 export interface NFT {
   nftType: NFTType
   tokenId: BigNumber;
   owner: string;
+  nextOwner?: string;
   attribute: string;
 }
 

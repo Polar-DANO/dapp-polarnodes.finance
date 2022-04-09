@@ -6,7 +6,7 @@ module.exports = {
   // Notice: It only affects the settings used by Vetur.
   settings: {
     'vetur.useWorkspaceDependencies': true,
-    'vetur.experimental.templateInterpolationService': true
+    'vetur.experimental.templateInterpolationService': true,
   },
   // **optional** default: `[{ root: './' }]`
   // support monorepos
@@ -35,8 +35,8 @@ module.exports = {
       // It is relative to root property.
       // Notice: It won't actually do it. You need to use `require.context` or `Vue.component`
       globalComponents: [
-        './src/components/**/*.vue'
-      ]
-    }
-  ]
-}
+        './src/components/**/*.vue',
+      ],
+    },
+  ],
+};
