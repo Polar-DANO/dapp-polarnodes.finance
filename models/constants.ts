@@ -42,12 +42,10 @@ export const LUCKYBOX_INDEX_TO_IMAGE = [
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 3.jpg'),
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 4.jpg')
 ]
+
 export const LUCKYBOX_INDEX_TO_VIDEO = [
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 1 ANIM.mp4'),
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 2 ANIM.mp4'),
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 3 ANIM.mp4'),
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 4 ANIM.mp4')
 ]
-
-export const LUCKYBOX_IMAGE = require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 1.jpg')
-export const LUCKYBOX_VIDEO = require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 1 ANIM.mp4')
