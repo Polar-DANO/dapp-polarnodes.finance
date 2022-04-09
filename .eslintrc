@@ -3,12 +3,16 @@
   "rules": {
     "vue/html-self-closing": "off",
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": [
+    "semi": [2, "always"],
+    "comma-dangle": "off",
+    "@typescript-eslint/comma-dangle": [
       "error",
       {
-        "varsIgnorePattern": "^_",
-        "argsIgnorePattern": "^_",
-        "caughtErrorsIgnorePattern": "^_"
+        "arrays": "never",
+        "objects": "always-multiline",
+        "imports": "never",
+        "exports": "never",
+        "functions": "never"
       }
     ]
   }

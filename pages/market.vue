@@ -33,38 +33,38 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
-import { Item } from '~/models/marketplace'
+import { Component } from 'nuxt-property-decorator';
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
+import { Item } from '~/models/marketplace';
 
 @Component
 export default class Market extends WalletReactiveFetch implements IReactiveFetch {
-  private selectedItem: Item | null = null
+  private selectedItem: Item | null = null;
 
   get isModalOpen () {
-    return this.selectedItem !== null
+    return this.selectedItem !== null;
   }
 
   get items () : Item[] {
-    return this.$store.getters['marketplace/view/current']
+    return this.$store.getters['marketplace/view/current'];
   }
 
   private onClick (item: Item) {
-    this.selectedItem = item
+    this.selectedItem = item;
   }
 
-  async reactiveFetch () {    
-      await Promise.all([
-        this.$store.dispatch('marketplace/load'),
-        this.$store.dispatch('nodes/loadNodeTypes'),
-        this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
-        ...(
+  async reactiveFetch () {
+    await Promise.all([
+      this.$store.dispatch('marketplace/load'),
+      this.$store.dispatch('nodes/loadNodeTypes'),
+      this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
+      ...(
         (this.isWalletConnected)
           ? [
-              this.$store.dispatch('tokens/loadAllowance', this.$store.state.tokens.tokens.POLAR.address),
+              this.$store.dispatch('tokens/loadAllowance', this.$store.state.tokens.tokens.POLAR.address)
             ]
           : [])
-      ])
+    ]);
   }
 }
 </script>

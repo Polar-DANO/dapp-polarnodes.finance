@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="bg-[#17171B] rounded-b-[20px] border-solid border-[#00C6ED] border-[2px]">
-      <div class="flex flex-col justify-center items-center md:gap-[107px] md:flex-row flex-wrap md:mt-[64px] md:mr-[104px] md:ml-[64px] md:mb-[89px] p-[20px] md:p-[0px]">
+      <div v-if="video && minimumBid && fixedPrice" class="flex flex-col justify-center items-center md:gap-[107px] md:flex-row flex-wrap md:mt-[64px] md:mr-[104px] md:ml-[64px] md:mb-[89px] p-[20px] md:p-[0px]">
         <div class="flex max-w-[420px] max-h-[325px]">
           <video class="node-video" autoplay loop muted>
             <source :src="video" type="video/mp4">
@@ -109,6 +109,20 @@
           </v-btn>
         </div>
       </div>
+      <div v-else style="min-height: 450px" class="d-flex align-stretch justify-center pa-8">
+        <v-skeleton-loader
+          dark
+          type="image, image"
+          width="100%"
+          max-height="400px"
+        />
+        <v-skeleton-loader
+          dark
+          type="article, article, article"
+          width="100%"
+          max-height="400px"
+        />
+      </div>
     </div>
   </div>
   </div>
@@ -116,31 +130,45 @@
 
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
+import axios from 'axios'
 import * as ethers from 'ethers'
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
 import { NFTType } from '~/models/marketplace'
-import { NODENAME_TO_VIDEO } from '~/models/constants'
 
 @Component({
   props: {
     nft: Object
-  },
-  watch: {
-    nft: {
-      handler: 'setDefaultPrices'
-    },
-    nodeType: {
-      handler: 'setDefaultPrices'
-    }
   }
 })
 export default class NFTSellSectionModal extends WalletReactiveFetch implements IReactiveFetch {
-  private selectedSellMode: 'fixed' | 'auction' | null = null
-  private minimumBid = 100
-  private fixedPrice = 100
-  private isBtnLoading = false
-  public date = ""
+  public minimumBid: number | null = null
+  public fixedPrice: number | null = null
+  public video: string | null = null
+  public selectedSellMode: 'fixed' | 'auction' | null = null
+  public isBtnLoading = false
+  public date: string | null = null
   public datepickerMenu = false
+
+  async mounted () {
+    const { $props: { nft } } = this
+    const tokenId = parseInt(nft.tokenId)
+
+    const { data } = await axios.get(`https://api.polar.financial/node/${tokenId}`)
+
+    const weiFixedPrice = data.attributes.find((att: Record<string, string>) => att.trait_type === 'Min Offer Price')
+    const weiAuctionPrice = data.attributes.find((att: Record<string, string>) => att.trait_type === 'Min Auction Price')
+
+    this.video = data.animation_url
+
+    if (weiFixedPrice) {
+      const minFixedPrice = ethers.utils.formatEther(weiFixedPrice.value)
+      this.fixedPrice = parseInt(minFixedPrice)
+    }
+    if (weiAuctionPrice) {
+      const minAuctionPrice = ethers.utils.formatEther(weiAuctionPrice.value)
+      this.minimumBid = parseInt(minAuctionPrice)
+    }
+  }
 
   get dateFormatted (): string | null {
     const { date, formatDate } = this
@@ -171,14 +199,6 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
 
     const [month, day, year] = date.split('/')
     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-  }
-
-  setDefaultPrices () {
-    if (!this.$props.nft) { return }
-    if (!this.nodeType) { return }
-
-    const defaultPrice = parseFloat(ethers.utils.formatEther(this.nodeType.cost))
-    this.minimumBid = this.fixedPrice = defaultPrice
   }
 
   async reactiveFetch () {
@@ -234,7 +254,7 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
           nftType: NFTType.Node,
           tokenId: this.nft.tokenId,
           price: this.minimumBid,
-          end: this.date != ""
+          end: this.date
             ? ~~(new Date(this.date).getTime() / 1000)
             : ~~(new Date().getTime() / 1000) + 604800 // now + 1 week
         })
@@ -244,10 +264,6 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
     } finally {
       this.isBtnLoading = false
     }
-  }
-
-  get video () {
-    return (NODENAME_TO_VIDEO as any)[this.nodeType.name]
   }
 }
 </script>

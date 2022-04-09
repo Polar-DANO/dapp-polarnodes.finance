@@ -8,8 +8,8 @@ module.exports = {
   ],
   theme: {
     extend: {
-    }
+    },
   },
   plugins: [],
-  important: true
-}
+  important: true,
+};

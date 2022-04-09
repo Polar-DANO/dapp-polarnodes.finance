@@ -70,7 +70,7 @@
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
-import { NODENAME_TO_IMAGE, LUCKYBOX_IMAGE } from '~/models/constants'
+import axios from 'axios'
 import { NFTType, ItemType } from '~/models/marketplace'
 import WalletReactiveFetch, {
   IReactiveFetch
@@ -85,6 +85,21 @@ export default class ItemCard
   extends WalletReactiveFetch
   implements IReactiveFetch {
   private loading = true
+  public image: string | null = null
+  public title: string | null = null
+
+  async mounted () {
+    const { tokenId: bigNumTokenId, nft } = this
+    const tokenId = parseInt(bigNumTokenId)
+    const type = nft.nftType === NFTType.LuckyBox ? 'luckybox' : 'node'
+
+    try {
+      const { data } = await axios.get(`https://api.polar.financial/${type}/${tokenId}`)
+
+      this.image = data.image
+      this.title = data.name
+    } catch (_err) {}
+  }
 
   get isAuction () {
     return this.$props.item.type === ItemType.Auction
@@ -129,22 +144,11 @@ export default class ItemCard
     return this.$store.getters['luckyboxes/byTokenId'](this.tokenId)
   }
 
-  get title () {
-    switch (this.nft.nftType) {
-      case NFTType.LuckyBox:
-        return this.luckyBoxData?.type
-      case NFTType.Node:
-        return this.nodeData?.nodeType
-      default:
-        return null
-    }
-  }
-
   async reactiveFetch () {
-    /*if (!this.isWalletConnected) {
+    /* if (!this.isWalletConnected) {
       this.loading = true
       return
-    }*/
+    } */
 
     const nftType = this.nft.nftType
 
@@ -160,21 +164,6 @@ export default class ItemCard
     }
 
     this.loading = false
-  }
-
-  get image () {
-    if (this.loading) {
-      return
-    }
-
-    switch (this.nft.nftType) {
-      case NFTType.Node:
-        return (NODENAME_TO_IMAGE as any)[this.nodeData?.nodeType]
-      case NFTType.LuckyBox:
-        return LUCKYBOX_IMAGE
-    }
-
-    return null
   }
 }
 </script>

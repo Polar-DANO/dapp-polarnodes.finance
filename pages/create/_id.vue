@@ -291,80 +291,80 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import * as ethers from 'ethers'
-import { URL_TO_NAME, NODENAME_TO_VIDEO, Url } from '~/models/constants'
-import * as NodeType from '~/models/NodeType'
+import { Component } from 'nuxt-property-decorator';
+import * as ethers from 'ethers';
+import { URL_TO_NAME, NODENAME_TO_VIDEO, Url } from '~/models/constants';
+import * as NodeType from '~/models/NodeType';
 import WalletReactiveFetch, {
   IReactiveFetch
-} from '~/mixins/wallet-reactive-fetch'
-import { NFT } from '~/models/nft'
-import addresses from '~/config/addresses'
+} from '~/mixins/wallet-reactive-fetch';
+import { NFT } from '~/models/nft';
+import addresses from '~/config/addresses';
 
-const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/
+const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/;
 
 const CreateMode = {
   FROM_TOKENS: 'FROM_TOKENS',
   FROM_NFT: 'FROM_NFT',
-  LEVEL_UP: 'LEVEL_UP'
-} as const
+  LEVEL_UP: 'LEVEL_UP',
+} as const;
 
 @Component({
   watch: {
     selectedToken: {
-      handler: 'reactiveFetch'
+      handler: 'reactiveFetch',
     },
     createMode: {
-      handler: 'onCreateModeChange'
-    }
-  }
+      handler: 'onCreateModeChange',
+    },
+  },
 })
 export default class Create
   extends WalletReactiveFetch
   implements IReactiveFetch {
-  public quantity = 1
-  public isDetailsOpen = false
-  public createMode: keyof typeof CreateMode = CreateMode.FROM_TOKENS
-  public selectedToken: string = addresses.Token
-  public selectedNfts: NFT[] = []
-  public isBtnLoading = false
-  private isOtherUser = false
-  private isCreatorCode = false
-  private otherUser = ''
-  private creatorCode = ''
+  public quantity = 1;
+  public isDetailsOpen = false;
+  public createMode: keyof typeof CreateMode = CreateMode.FROM_TOKENS;
+  public selectedToken: string = addresses.Token;
+  public selectedNfts: NFT[] = [];
+  public isBtnLoading = false;
+  private isOtherUser = false;
+  private isCreatorCode = false;
+  private otherUser = '';
+  private creatorCode = '';
 
   onClose () {
-    this.$router.push('/nodes')
+    this.$router.push('/nodes');
   }
 
   onCreateModeChange (createMode: keyof typeof CreateMode) {
     if (createMode !== CreateMode.FROM_TOKENS) {
-      this.isOtherUser = false
-      this.isCreatorCode = false
+      this.isOtherUser = false;
+      this.isCreatorCode = false;
     }
   }
 
   get canOfferToUser () {
-    return this.createMode === CreateMode.FROM_TOKENS
+    return this.createMode === CreateMode.FROM_TOKENS;
   }
 
   get canUseCreatorCode () {
-    return this.createMode === CreateMode.FROM_TOKENS
+    return this.createMode === CreateMode.FROM_TOKENS;
   }
 
   get availableTokens () {
-    return this.$store.state.tokens.tokens
+    return this.$store.state.tokens.tokens;
   }
 
   created () {
     if (!this.nodeNftName) {
-      this.$router.push('/nodes')
+      this.$router.push('/nodes');
     }
   }
 
   async reactiveFetch () {
     if (!this.isWalletConnected) {
-      return
+      return;
     }
     await {
       allowance: await this.$store.dispatch(
@@ -372,150 +372,150 @@ export default class Create
         this.selectedToken
       ),
       nodes: await (async () => {
-        await this.$store.dispatch('nodes/loadNodeTypes')
-        await this.$store.dispatch('nft/loadMyNFTs')
-      })()
-    }
+        await this.$store.dispatch('nodes/loadNodeTypes');
+        await this.$store.dispatch('nft/loadMyNFTs');
+      })(),
+    };
   }
 
   public get isLevelUpSelected () {
-    return this.createMode === CreateMode.LEVEL_UP
+    return this.createMode === CreateMode.LEVEL_UP;
   }
 
   public set isLevelUpSelected (newVal: boolean) {
-    this.createMode = newVal ? CreateMode.LEVEL_UP : CreateMode.FROM_TOKENS
+    this.createMode = newVal ? CreateMode.LEVEL_UP : CreateMode.FROM_TOKENS;
   }
 
   public get isPendingRewardsSelected () {
-    return this.createMode === CreateMode.FROM_NFT
+    return this.createMode === CreateMode.FROM_NFT;
   }
 
   public set isPendingRewardsSelected (newVal: boolean) {
-    this.createMode = newVal ? CreateMode.FROM_NFT : CreateMode.FROM_TOKENS
+    this.createMode = newVal ? CreateMode.FROM_NFT : CreateMode.FROM_TOKENS;
   }
 
   get nodeType () {
-    return this.$store.getters['nodes/nodeTypeByName'](this.nodeNftName)
+    return this.$store.getters['nodes/nodeTypeByName'](this.nodeNftName);
   }
 
   get dailyEarningPerNode () {
-    return this.nodeType ? NodeType.dailyRewardPerNode(this.nodeType) : null
+    return this.nodeType ? NodeType.dailyRewardPerNode(this.nodeType) : null;
   }
 
   get cost () {
-    return this.nodeType?.cost
+    return this.nodeType?.cost;
   }
 
   get tax () {
-    return this.nodeType?.claimTax
+    return this.nodeType?.claimTax;
   }
 
   get totalCreatedNodes () {
-    return this.nodeType?.totalCreatedNodes
+    return this.nodeType?.totalCreatedNodes;
   }
 
   get maxSlots () {
-    return this.nodeType?.maxSlots
+    return this.nodeType?.maxSlots;
   }
 
   get maxCreationPendingGlobal () {
-    return this.nodeType?.maxCreationPendingGlobal
+    return this.nodeType?.maxCreationPendingGlobal;
   }
 
   get maxCreationPendingUser () {
-    return this.nodeType?.maxCreationPendingUser
+    return this.nodeType?.maxCreationPendingUser;
   }
 
   get maxLevelUpGlobal () {
-    return this.nodeType?.maxLevelUpGlobal
+    return this.nodeType?.maxLevelUpGlobal;
   }
 
   get maxLevelUpUser () {
-    return this.nodeType?.maxLevelUpUser
+    return this.nodeType?.maxLevelUpUser;
   }
 
   get nodeNftName () {
-    return URL_TO_NAME[this.$route.params.id as Url]
+    return URL_TO_NAME[this.$route.params.id as Url];
   }
 
   get video () {
-    return NODENAME_TO_VIDEO[this.nodeNftName]
+    return NODENAME_TO_VIDEO[this.nodeNftName];
   }
 
   public onSelectedTokenInput (token: string) {
-    this.selectedToken = token
+    this.selectedToken = token;
   }
 
   get payWithTokens () {
     return Object.values(this.$store.state.tokens.tokens).map((token: any) => {
       return {
         text: token.symbol,
-        value: token.address
-      }
-    })
+        value: token.address,
+      };
+    });
   }
 
   public onSelectedNftInput (nfts: NFT[]) {
-    this.selectedNfts = nfts
+    this.selectedNfts = nfts;
   }
 
   get nfts () {
     return this.$store.getters['nft/myNFTsByNodeType']?.flatMap(
       ({ nodeType, nfts }: { nodeType: string; nfts: NFT[] }) => {
         if (!nfts?.length) {
-          return []
+          return [];
         }
 
         return [
           { header: nodeType },
           ...nfts.map(nft => ({
             text: `${nodeType} #${nft.tokenId}`,
-            value: { ...nft, nodeType }
+            value: { ...nft, nodeType },
           }))
-        ]
+        ];
       }
-    )
+    );
   }
 
   public onRemove () {
     if (this.quantity > 1) {
-      this.quantity--
+      this.quantity--;
     }
   }
 
   public onAdd () {
-    this.quantity++
+    this.quantity++;
   }
 
   get canCreate () {
     return (
       this.quantity >= 1 &&
       (this.isOtherUser ? ADDRESS_REGEX.test(this.otherUser) : true)
-    )
+    );
   }
 
   get isApprove () {
     return !this.$store.getters['tokens/hasEnoughSwapperAllowance'](
       this.selectedToken,
       this.totalCost
-    )
+    );
   }
 
   public async onApprove () {
     try {
-      this.isBtnLoading = true
+      this.isBtnLoading = true;
       await this.$store.dispatch(
         'tokens/requestSwapperAllowance',
         this.selectedToken
-      )
+      );
     } finally {
-      this.isBtnLoading = false
+      this.isBtnLoading = false;
     }
   }
 
   public async onCreate () {
     try {
-      this.isBtnLoading = true
+      this.isBtnLoading = true;
 
       if (this.createMode === CreateMode.FROM_TOKENS) {
         await this.$store.dispatch('nodes/createNodesFromToken', {
@@ -523,10 +523,10 @@ export default class Create
           count: this.quantity,
           token: this.selectedToken,
           user: this.isOtherUser ? this.otherUser : this.walletAddress,
-          sponso: this.isCreatorCode ? this.creatorCode : null
-        })
+          sponso: this.isCreatorCode ? this.creatorCode : null,
+        });
 
-        this.$router.push('/mynft')
+        this.$router.push('/mynft');
       }
 
       if (this.createMode === CreateMode.FROM_NFT) {
@@ -534,10 +534,10 @@ export default class Create
           selectedNodes: this.selectedNfts,
           tokenOut: this.selectedToken,
           nodeTypeTo: this.nodeNftName,
-          count: this.quantity
-        })
+          count: this.quantity,
+        });
 
-        this.$router.push('/mynft')
+        this.$router.push('/mynft');
       }
 
       if (this.createMode === CreateMode.LEVEL_UP) {
@@ -545,70 +545,70 @@ export default class Create
           selectedNodes: this.selectedNfts,
           tokenOut: this.selectedToken,
           nodeTypeTo: this.nodeNftName,
-          count: this.quantity
-        })
+          count: this.quantity,
+        });
 
-        this.$router.push('/mynft')
+        this.$router.push('/mynft');
       }
     } finally {
-      this.isBtnLoading = false
+      this.isBtnLoading = false;
     }
   }
 
   get totalCost () {
-    return this.cost?.mul(this.quantity) ?? ethers.BigNumber.from(0)
+    return this.cost?.mul(this.quantity) ?? ethers.BigNumber.from(0);
   }
 
   get dataBlocks () {
-    const { totalCost, roi, tax } = this
+    const { totalCost, roi, tax } = this;
     if (!this.nodeType) {
-      return []
+      return [];
     }
     return [
       {
         key: 'Cost:',
         value: ethers.utils.formatEther(totalCost),
-        unit: '$POLAR'
+        unit: '$POLAR',
       },
       { key: 'ROI / day:', value: roi.toFixed(2), unit: '%' },
       { key: 'Claim Tax:', value: tax, unit: '%' }
-    ]
+    ];
   }
 
   get detailsBlocks () {
     if (!this.nodeType) {
-      return []
+      return [];
     }
     return [
       {
         key: 'Max Slots:',
-        value: `${this.totalCreatedNodes} / ${this.maxSlots}`
+        value: `${this.totalCreatedNodes} / ${this.maxSlots}`,
       },
       { key: 'Max Level Up User:', value: this.maxLevelUpUser },
       { key: 'Max Level Up Global:', value: this.maxLevelUpGlobal },
       { key: 'Max Creation Pending User:', value: this.maxCreationPendingUser },
       {
         key: 'Max Creation Pending Global:',
-        value: this.maxCreationPendingGlobal
+        value: this.maxCreationPendingGlobal,
       }
-    ]
+    ];
   }
 
   get totalDailyEarning () {
     if (!this.nodeType) {
-      return 0
+      return 0;
     }
-    const { quantity, dailyEarningPerNode } = this
+    const { quantity, dailyEarningPerNode } = this;
     return parseFloat(
       ethers.utils.formatEther(dailyEarningPerNode?.mul(quantity) ?? 0)
-    ).toFixed(2)
+    ).toFixed(2);
   }
 
   get roi () {
     if (!this.nodeType) {
-      return 0
+      return 0;
     }
-    return NodeType.roi(this.nodeType)
+    return NodeType.roi(this.nodeType);
   }
 }
 </script>
