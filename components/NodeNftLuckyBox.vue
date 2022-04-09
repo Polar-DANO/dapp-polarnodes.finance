@@ -6,7 +6,7 @@
     <div class="divider" />
 
     <img
-      src="../assets/PACK/Lucky Boxes/LUCKY BOX LVL 1.jpg"
+      :src="image"
       class="node-image"
     >
 
@@ -24,6 +24,7 @@ import { PropType } from 'vue'
 import { Component, Vue } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
 import { NodeNftNames } from '~/models/types'
+import { LUCKYBOX_INDEX_TO_IMAGE } from '~/models/constants'
 
 @Component({
   props: {
@@ -35,6 +36,10 @@ import { NodeNftNames } from '~/models/types'
 export default class NodeNft extends Vue {
   public onSelectNode () {
     this.$router.push(`/luckybox/${this.$props.index}`)
+  }
+
+  get image (): any {
+    return (LUCKYBOX_INDEX_TO_IMAGE as any)[this.$props.index]
   }
 
   get price () {

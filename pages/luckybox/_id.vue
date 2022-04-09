@@ -18,9 +18,7 @@
         <VCol cols="12" md="6" class="d-flex align-center flex-col">
           <video class="inline-block node-video" autoplay loop muted>
             <source
-              :src="
-                require('../../assets/PACK/Lucky Boxes/LUCKY BOX LVL 1 ANIM.mp4')
-              "
+              :src="video"
               type="video/mp4"
             >
             Your browser does not support the video tag.
@@ -179,6 +177,7 @@ import WalletReactiveFetch, {
   IReactiveFetch
 } from '~/mixins/wallet-reactive-fetch'
 import addresses from '~/config/addresses'
+import { LUCKYBOX_INDEX_TO_VIDEO } from '~/models/constants'
 
 const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/
 
@@ -227,6 +226,10 @@ export default class Create
 
   get luckyBox () {
     return this.$store.getters['luckyboxes/typeById'](this.$route.params.id)
+  }
+
+  get video () {
+    return (LUCKYBOX_INDEX_TO_VIDEO as any)[this.$route.params.id]
   }
 
   get chances () {
