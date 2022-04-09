@@ -144,7 +144,7 @@
             Approve
           </v-btn>
           <v-btn
-            v-else-if="isOwner"
+            v-else-if="isNextOwner"
             class="node-card__outlined pa-2 mt-4"
             :disabled="isRecoverButtonDisabled"
             dark
@@ -276,8 +276,12 @@ export default class ItemDetailModal extends WalletReactiveFetch {
     return this.$store.getters['wallet/address'] === this.nft.owner;
   }
 
+  get isNextOwner () {
+    return this.$store.getters['wallet/address'] === this.nft.nextOwner;
+  }
+
   get isRecoverButtonDisabled () {
-    return true;
+    return (new Date()).getTime() < this.$props.item.end.getTime();
   }
 
   setDefaultPrice () {

@@ -2,6 +2,7 @@ import { BigNumber } from 'ethers';
 
 export interface NFT {
   owner: string;
+  nextOwner?: string;
   nodeType: string;
   tokenId: BigNumber;
   creationTime: Date;
