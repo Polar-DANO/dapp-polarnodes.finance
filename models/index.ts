@@ -1,1 +1,1 @@
-export * from './vuex-module.class'
+export * from './vuex-module.class';

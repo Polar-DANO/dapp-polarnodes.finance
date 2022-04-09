@@ -87,7 +87,7 @@ export default {
         qrcodeModalOptions: {
           mobileLinks: [
             'metamask',
-            'trust'
+            'trust',
           ],
         },
       });

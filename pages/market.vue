@@ -61,9 +61,9 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
       ...(
         (this.isWalletConnected)
           ? [
-              this.$store.dispatch('tokens/loadAllowance', this.$store.state.tokens.tokens.POLAR.address)
+              this.$store.dispatch('tokens/loadAllowance', this.$store.state.tokens.tokens.POLAR.address),
             ]
-          : [])
+          : []),
     ]);
   }
 }

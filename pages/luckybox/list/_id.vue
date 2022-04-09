@@ -139,7 +139,7 @@ export default class LuckyboxList extends WalletReactiveFetch implements IReacti
     if (this.isWalletConnected) {
       await Promise.all([
         (!this.luckyBox) ? this.$store.dispatch('luckyboxes/loadByTokenId', ethers.BigNumber.from(this.$route.params.id)) : null,
-        this.$store.dispatch('marketplace/loadApproveForNftType', NFTType.LuckyBox)
+        this.$store.dispatch('marketplace/loadApproveForNftType', NFTType.LuckyBox),
       ]);
 
       if (!this.luckyBox || this.luckyBox.owner !== this.$store.getters['wallet/address']) {

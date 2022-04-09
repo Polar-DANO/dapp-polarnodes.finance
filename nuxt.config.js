@@ -36,7 +36,7 @@ export default {
     {
       name: 'format-detection',
       content: 'telephone=no',
-    }
+    },
     ],
     link: [{
       rel: 'icon',
@@ -48,12 +48,12 @@ export default {
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '@/assets/css/main.scss',
-    '@/assets/css/global.css'
+    '@/assets/css/global.css',
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    { src: '~/plugins/ethers', mode: 'client' }
+    { src: '~/plugins/ethers', mode: 'client' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -73,11 +73,11 @@ export default {
           name: 'English',
         }],
         vueI18n: i18n,
-      }
+      },
     ],
     '@nuxt/typescript-build',
     '@nuxt/postcss8',
-    '@nuxtjs/device'
+    '@nuxtjs/device',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules

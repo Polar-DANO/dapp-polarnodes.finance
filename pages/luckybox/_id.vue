@@ -259,7 +259,7 @@ export default class Create
           'tokens/loadAllowance',
           this.selectedToken
         ),
-        this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
+        this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
       ]);
 
       if (!this.luckyBox) {
@@ -332,7 +332,7 @@ export default class Create
         key: 'Cost:',
         value: ethers.utils.formatEther(this.totalCost),
         unit: '$POLAR',
-      }
+      },
     ];
   }
 }

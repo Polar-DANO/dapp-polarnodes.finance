@@ -46,7 +46,7 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
         title: 'My $POLAR Balance',
         price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address) : null,
         percentage: null,
-      }
+      },
     ];
   }
 

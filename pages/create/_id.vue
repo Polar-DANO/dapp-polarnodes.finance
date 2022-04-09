@@ -471,7 +471,7 @@ export default class Create
           ...nfts.map(nft => ({
             text: `${nodeType} #${nft.tokenId}`,
             value: { ...nft, nodeType },
-          }))
+          })),
         ];
       }
     );
@@ -571,7 +571,7 @@ export default class Create
         unit: '$POLAR',
       },
       { key: 'ROI / day:', value: roi.toFixed(2), unit: '%' },
-      { key: 'Claim Tax:', value: tax, unit: '%' }
+      { key: 'Claim Tax:', value: tax, unit: '%' },
     ];
   }
 
@@ -590,7 +590,7 @@ export default class Create
       {
         key: 'Max Creation Pending Global:',
         value: this.maxCreationPendingGlobal,
-      }
+      },
     ];
   }
 
