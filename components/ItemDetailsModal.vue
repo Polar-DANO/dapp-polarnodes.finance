@@ -20,6 +20,7 @@
       <div class="flex flex-wrap md:gap-[64px] mx-[20px] md:mx-[64px] items-center">
         <div class="flex-1 flex-col gap-[16px]">
           <video
+            v-if="video"
             class="flex rounded-[15px] h-[300px] object-cover"
             width="100%"
             height="100%"
@@ -28,6 +29,13 @@
           >
             <source :src="video" type="video/mp4">
           </video>
+          <v-skeleton-loader
+            v-else
+            dark
+            type="image, image"
+            width="100%"
+            max-height="300px"
+          />
           <div v-if="nodeData" class="flex flex-col md:mx-[90px] mt-4">
             <div class="flex flex-col gap-[4px] md:gap-[8px]">
               <div class="flex flex-initial text-center items-center">
@@ -165,7 +173,7 @@
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
 import * as ethers from 'ethers'
-import { NODENAME_TO_VIDEO, LUCKYBOX_VIDEO } from '~/models/constants'
+import axios from 'axios'
 import { NFTType, ItemType } from '~/models/marketplace'
 import * as NodeType from '~/models/NodeType'
 import WalletReactiveFetch from '~/mixins/wallet-reactive-fetch'
@@ -186,6 +194,21 @@ export default class ItemDetailModal extends WalletReactiveFetch {
   private sellGroup: any = [false, false]
   private bid = 100
   private isBtnLoading = false
+  public video: string | null = null
+  public title: string | null = null
+
+  async mounted () {
+    const { tokenId: bigNumTokenId, nft } = this
+    const tokenId = parseInt(bigNumTokenId)
+    const type = nft.nftType === NFTType.LuckyBox ? 'luckybox' : 'node'
+
+    try {
+      const { data } = await axios.get(`https://api.polar.financial/${type}/${tokenId}`)
+
+      this.video = data.animation_url
+      this.title = data.name
+    } catch (_err) {}
+  }
 
   get bidBigNumber () {
     return ethers.utils.parseEther(this.bid + '')
@@ -231,28 +254,6 @@ export default class ItemDetailModal extends WalletReactiveFetch {
     } else {
       return this.$props.item.currentPrice
     }
-  }
-
-  get title () {
-    switch (this.nft.nftType) {
-      case NFTType.LuckyBox:
-        return this.luckyBoxData?.type
-      case NFTType.Node:
-        return this.nodeData?.nodeType
-      default:
-        return null
-    }
-  }
-
-  get video () {
-    switch (this.nft.nftType) {
-      case NFTType.Node:
-        return (NODENAME_TO_VIDEO as any)[this.nodeData?.nodeType]
-      case NFTType.LuckyBox:
-        return LUCKYBOX_VIDEO
-    }
-
-    return null
   }
 
   get nodeType () {
