@@ -170,86 +170,86 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import * as ethers from 'ethers'
-import * as LuckyBox from '~/models/luckybox-type'
+import { Component } from 'nuxt-property-decorator';
+import * as ethers from 'ethers';
+import * as LuckyBox from '~/models/luckybox-type';
 import WalletReactiveFetch, {
   IReactiveFetch
-} from '~/mixins/wallet-reactive-fetch'
-import addresses from '~/config/addresses'
-import { LUCKYBOX_INDEX_TO_VIDEO } from '~/models/constants'
+} from '~/mixins/wallet-reactive-fetch';
+import addresses from '~/config/addresses';
+import { LUCKYBOX_INDEX_TO_VIDEO } from '~/models/constants';
 
-const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/
+const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/;
 
 @Component({
   watch: {
-    selectedToken: { handler: 'onSelectedTokenChange' }
-  }
+    selectedToken: { handler: 'onSelectedTokenChange' },
+  },
 })
 export default class Create
   extends WalletReactiveFetch
   implements IReactiveFetch {
-  private quantity = 1
-  private selectedToken = addresses.Token
-  private isBtnLoading = false
-  private isOtherUser = false
-  private otherUser = ''
-  private isCreatorCode = false
-  private creatorCode: string | null = null
+  private quantity = 1;
+  private selectedToken = addresses.Token;
+  private isBtnLoading = false;
+  private isOtherUser = false;
+  private otherUser = '';
+  private isCreatorCode = false;
+  private creatorCode: string | null = null;
 
   get otherUserValid () {
-    return ADDRESS_REGEX.test(this.otherUser)
+    return ADDRESS_REGEX.test(this.otherUser);
   }
 
   get canCreate () {
     return (
       this.quantity >= 1 &&
       (this.isOtherUser ? ADDRESS_REGEX.test(this.otherUser) : true)
-    )
+    );
   }
 
   get payWithTokens () {
     return Object.values(this.$store.state.tokens.tokens).map((token: any) => {
       return {
         text: token.symbol,
-        value: token.address
-      }
-    })
+        value: token.address,
+      };
+    });
   }
 
   get isApprove () {
     return !this.$store.getters['tokens/hasEnoughSwapperAllowance'](
       this.selectedToken,
       this.totalCost
-    )
+    );
   }
 
   get luckyBox () {
-    return this.$store.getters['luckyboxes/typeById'](this.$route.params.id)
+    return this.$store.getters['luckyboxes/typeById'](this.$route.params.id);
   }
 
   get video () {
-    return (LUCKYBOX_INDEX_TO_VIDEO as any)[this.$route.params.id]
+    return (LUCKYBOX_INDEX_TO_VIDEO as any)[this.$route.params.id];
   }
 
   get chances () {
     if (!this.luckyBox) {
-      return []
+      return [];
     }
 
-    return LuckyBox.getPossibleTypes(this.luckyBox)
+    return LuckyBox.getPossibleTypes(this.luckyBox);
   }
 
   get topOdds () {
-    return this.chances.slice(-3)
+    return this.chances.slice(-3);
   }
 
   get mostCommonType () {
-    return this.chances[0]
+    return this.chances[0];
   }
 
   onClose () {
-    this.$router.push('/nodes#lucky-box')
+    this.$router.push('/nodes#lucky-box');
   }
 
   async reactiveFetch () {
@@ -260,10 +260,10 @@ export default class Create
           this.selectedToken
         ),
         this.$store.dispatch('luckyboxes/loadLuckyBoxTypes')
-      ])
+      ]);
 
       if (!this.luckyBox) {
-        this.$router.push('/nodes')
+        this.$router.push('/nodes');
       }
     }
   }
@@ -272,57 +272,57 @@ export default class Create
     await this.$store.dispatch(
       'tokens/loadAllowance',
       this.selectedToken
-    )
+    );
   }
 
   get name () {
-    return this.luckyBox?.name
+    return this.luckyBox?.name;
   }
 
   get cost () {
-    return this.luckyBox?.price
+    return this.luckyBox?.price;
   }
 
   get totalCost () {
-    return this.cost ? this.cost.mul(this.quantity) : ethers.BigNumber.from(0)
+    return this.cost ? this.cost.mul(this.quantity) : ethers.BigNumber.from(0);
   }
 
   public onRemove () {
     if (this.quantity > 1) {
-      this.quantity--
+      this.quantity--;
     }
   }
 
   public onAdd () {
-    this.quantity++
+    this.quantity++;
   }
 
   public async onApprove () {
     try {
-      this.isBtnLoading = true
+      this.isBtnLoading = true;
       await this.$store.dispatch(
         'tokens/requestSwapperAllowance',
         this.selectedToken
-      )
+      );
     } finally {
-      this.isBtnLoading = false
+      this.isBtnLoading = false;
     }
   }
 
   public async onBuy () {
     try {
-      this.isBtnLoading = true
+      this.isBtnLoading = true;
       await this.$store.dispatch('luckyboxes/buy', {
         luckyBox: this.luckyBox,
         amount: this.quantity,
         withToken: this.selectedToken,
         user: this.isOtherUser ? this.otherUser : this.walletAddress,
-        sponso: this.isCreatorCode ? this.creatorCode : null
-      })
+        sponso: this.isCreatorCode ? this.creatorCode : null,
+      });
 
-      this.$router.push('/mynft')
+      this.$router.push('/mynft');
     } finally {
-      this.isBtnLoading = false
+      this.isBtnLoading = false;
     }
   }
 
@@ -331,9 +331,9 @@ export default class Create
       {
         key: 'Cost:',
         value: ethers.utils.formatEther(this.totalCost),
-        unit: '$POLAR'
+        unit: '$POLAR',
       }
-    ]
+    ];
   }
 }
 </script>

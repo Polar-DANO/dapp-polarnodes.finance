@@ -1,6 +1,6 @@
-import en from '../locales/en.json'
+import en from '../locales/en.json';
 export default {
   locale: 'en',
   fallbackLocale: 'en',
-  messages: { en }
-}
+  messages: { en },
+};

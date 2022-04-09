@@ -36,8 +36,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import LeftSideBar from '~/components/LeftSideBar.vue'
+import { Component, Vue } from 'nuxt-property-decorator';
+import LeftSideBar from '~/components/LeftSideBar.vue';
 
 const IF_INCLUDE_ERROR_MSG = {
   'User denied transaction signature': 'You must accept the transaction',
@@ -45,40 +45,40 @@ const IF_INCLUDE_ERROR_MSG = {
   'Creation with pending limit reached for user': 'Creation with pending limit reached for user',
   'Balance too low for creation': 'Balance too low for creation',
   'Not enough pending': 'You don\'t have enough pending rewards to create a new node',
-  'contract call run out of gas': 'Contract call run out of gas, the transaction was reverted'
-}
+  'contract call run out of gas': 'Contract call run out of gas, the transaction was reverted',
+};
 
 @Component({
   components: { LeftSideBar },
-  transition: 'scale-transition'
+  transition: 'scale-transition',
 })
 export default class Default extends Vue {
-  private error: string | false = false
+  private error: string | false = false;
 
   get displayError () {
-    return this.error !== false
+    return this.error !== false;
   }
 
   set displayError (display: boolean) {
     if (!display) {
-      this.error = false
+      this.error = false;
     }
   }
 
   errorCaptured (error: any) {
-    console.error(error)
+    console.error(error);
     if (error?.code === -32603 && error?.data?.message) {
-      this.error = error.data.message
+      this.error = error.data.message;
     } else {
-      this.error = error?.message ?? error
+      this.error = error?.message ?? error;
     }
 
-    const replaced = Object.entries(IF_INCLUDE_ERROR_MSG).find(([key]) => (this.error as string).toLowerCase().includes(key.toLowerCase()))
+    const replaced = Object.entries(IF_INCLUDE_ERROR_MSG).find(([key]) => (this.error as string).toLowerCase().includes(key.toLowerCase()));
     if (replaced) {
-      this.error = replaced[1]
+      this.error = replaced[1];
     }
 
-    return false
+    return false;
   }
 }
 </script>
