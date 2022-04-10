@@ -230,17 +230,19 @@
               @input="onSelectedTokenInput"
             />
 
-            <div class="mt-4 text-left node-card__danger-text">
-              *** WARNING / ATTENTION: ***
-            </div>
-            <div class="mt-4 text-left node-card__danger-text">
-              Please count the number of NFTs you want to exchange. If you
-              select more than the price of the target NFT, you will lose the
-              excess NFTs.
-            </div>
-            <div class="mt-4 mb-8 text-left node-card__danger-text">
-              Make sure that the total amount of NFTs you exchange corresponds
-              to the price of the target NFT. Be careful!
+            <div v-if="isLevelUpSelected">
+              <div class="mt-4 text-left node-card__danger-text">
+                *** WARNING / ATTENTION: ***
+              </div>
+              <div class="mt-4 text-left node-card__danger-text">
+                Please count the number of NFTs you want to exchange. If you
+                select more than the price of the target NFT, you will lose the
+                excess NFTs.
+              </div>
+              <div class="mt-4 mb-8 text-left node-card__danger-text">
+                Make sure that the total amount of NFTs you exchange corresponds
+                to the price of the target NFT. Be careful!
+              </div>
             </div>
 
             <div class="node-card__content inline-block">
