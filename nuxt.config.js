@@ -20,6 +20,7 @@ export default {
     title: 'Dapp.polarnodes',
     htmlAttrs: {
       lang: 'en',
+      style: 'background: #17171b',
     },
     meta: [{
       charset: 'utf-8',
