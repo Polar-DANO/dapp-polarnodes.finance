@@ -65,10 +65,15 @@
         </tr>
       </table>
     </div>
-    <video v-if="video" autoplay style="width: 100vw; height: 100vh; position: fixed; top:0; left: 0; z-index: 999" @ended="onVideoEnd">
-      <source :src="video" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
+    <iframe
+      v-if="video"
+      :src="video"
+      frameborder="0"
+      width="100%"
+      height="100%"
+      allowfullscreen
+      style="width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 999"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -106,6 +111,9 @@ export default class NodeTable extends Vue {
 
     if (!error) {
       this.video = LUCKYBOX_VIDEO_BY_TYPE[type];
+      setTimeout(() => {
+        this.onVideoEnd();
+      }, 9000);
     }
   }
 
