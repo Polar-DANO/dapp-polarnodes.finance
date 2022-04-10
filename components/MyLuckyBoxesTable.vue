@@ -65,7 +65,7 @@
         </tr>
       </table>
     </div>
-    <video v-if="video" autoplay muted style="width: 100vw; height: 100vh; position: fixed; top:0; left: 0; z-index: 999" @ended="onVideoEnd">
+    <video v-if="video" autoplay style="width: 100vw; height: 100vh; position: fixed; top:0; left: 0; z-index: 999" @ended="onVideoEnd">
       <source :src="video" type="video/mp4">
       Your browser does not support the video tag.
     </video>
