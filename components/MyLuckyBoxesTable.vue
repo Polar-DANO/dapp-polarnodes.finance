@@ -1,6 +1,6 @@
 <template>
-  <div class="overflow-x-auto w-full mb-6">
-    <div class="flex flex-col">
+  <div class="overflow-x-auto w-full">
+    <div v-if="items && items.length > 0" class="flex flex-col mb-6">
       <div class="flex justify-between bg-[#00C6ED]  rounded-t-lg p-[16px] min-w-[420px]">
         <div class="text-white text-[16px]">
           My Lucky Boxes
@@ -43,16 +43,21 @@
             {{ lb.type }}
           </td>
           <td class="text-right pr-4">
-            <button
-              class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px] my-[10px] ml-[16px]"
-              @click="() => onReveal(lb.tokenId)"
+            <v-btn
+              dark
+              text
+              small
+              :loading="isRevealButtonLoading[i]"
+              :disabled="isRevealButtonLoading[i]"
+              class="text-none text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px] my-[10px] ml-[16px]"
+              @click="onReveal(lb, i)"
             >
               <div>Reveal</div>
-            </button>
+            </v-btn>
             <button
               v-if="canSell(lb)"
               class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px] my-[10px] ml-[16px]"
-              @click="()=> onList(lb.tokenId)"
+              @click="onList(lb.tokenId)"
             >
               <div>List</div>
             </button>
@@ -60,11 +65,16 @@
         </tr>
       </table>
     </div>
+    <video v-if="video" autoplay muted style="width: 100vw; height: 100vh; position: fixed; top:0; left: 0; z-index: 999" @ended="onVideoEnd">
+      <source :src="video" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator';
 import { LuckyBox } from '~/models/luckybox';
+import { LUCKYBOX_VIDEO_BY_TYPE } from '~/models/constants';
 
 @Component({
   props: {
@@ -72,8 +82,36 @@ import { LuckyBox } from '~/models/luckybox';
   },
 })
 export default class NodeTable extends Vue {
-  async onReveal (tokenId: LuckyBox['tokenId']) {
-    await this.$store.dispatch('luckyboxes/reveal', [tokenId]);
+  public video: string | null = null;
+  public isRevealButtonLoading: boolean[] = [];
+
+  created () {
+    this.isRevealButtonLoading = this.$props.items.map(() => false);
+  }
+
+  async onReveal (luckyBox: LuckyBox, index: number) {
+    const { isRevealButtonLoading } = this;
+    const { tokenId, type } = luckyBox;
+    let error = false;
+    isRevealButtonLoading[index] = true;
+    this.isRevealButtonLoading = [...isRevealButtonLoading];
+
+    try {
+      await this.$store.dispatch('luckyboxes/reveal', [tokenId]);
+    } catch (_err) {
+      error = true;
+    }
+    isRevealButtonLoading[index] = false;
+    this.isRevealButtonLoading = [...isRevealButtonLoading];
+
+    if (!error) {
+      this.video = LUCKYBOX_VIDEO_BY_TYPE[type];
+    }
+  }
+
+  onVideoEnd () {
+    this.video = null;
+    this.$emit('scroll-to-table');
   }
 
   async onAllReveal () {

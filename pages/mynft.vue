@@ -15,8 +15,10 @@
       <MigrationTable />
     </div>
     <div class="md:mt-[40px]">
-      <MyLuckyBoxesTable v-if="luckyBoxes.length > 0" :items="luckyBoxes" />
-      <NodeTable :items="nfts" />
+      <MyLuckyBoxesTable :items="luckyBoxes" @scroll-to-table="onScrollToTable" />
+      <div ref="table">
+        <NodeTable :items="nfts" />
+      </div>
     </div>
   </div>
 </template>
@@ -27,6 +29,14 @@ import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fe
 
 @Component
 export default class Mynft extends WalletReactiveFetch implements IReactiveFetch {
+  onScrollToTable () {
+    const el = this.$refs.table;
+
+    if (el) {
+      (el as any).scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
   get nodeStation () {
     return [
       {

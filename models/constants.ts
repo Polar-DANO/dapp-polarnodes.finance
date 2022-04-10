@@ -49,3 +49,10 @@ export const LUCKYBOX_INDEX_TO_VIDEO = [
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 3 ANIM.mp4'),
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 4 ANIM.mp4'),
 ];
+
+export const LUCKYBOX_VIDEO_BY_TYPE: Record<string, string> = {
+  'Neutral Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OPENING LVL 1.mp4'),
+  'Fresh Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OPENING LVL 2.mp4'),
+  'Icy Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OPENING LVL 3.mp4'),
+  'Placeholder Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OPENING LVL 4.mp4'),
+};
