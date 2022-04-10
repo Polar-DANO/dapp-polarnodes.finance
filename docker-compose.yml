@@ -6,7 +6,7 @@ services:
     container_name: polar.financial
     restart: always
     ports:
-      - "7000:7000"
+      - "7500:7500"
     # command: "npm run start"
     networks:
       - nuxt-network
