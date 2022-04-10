@@ -15,7 +15,8 @@ import { abi as POLAR_LUCKY_BOX_ABI } from '~/hardhat/artifacts/contracts/PolarL
 import { abi as POLAR_MARKETPLACE_ABI } from '~/hardhat/artifacts/contracts/PolarMarketPlace.sol/PolarMarketPlace.json'
 import { abi as POLAR_NODE_ABI } from '~/hardhat/artifacts/contracts/PolarNode.sol/PolarNode.json'
 import { abi as ERC_721_ABI } from '~/hardhat/artifacts/@openzeppelin/contracts/token/ERC721/ERC721.sol/ERC721.json'
-import { abi as ERC_20_ABI } from '~/hardhat/artifacts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json'
+// import { abi as ERC_20_ABI } from '~/hardhat/artifacts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json'
+import {abi as ERC_20_ABI} from '~/hardhat/artifacts/contracts/ERC20.sol/ERC20.json'
 import {abi as OLD_ABI} from '~/hardhat/artifacts/contracts/Old.sol/Old.json'
 export interface ContractsPlugin {
   $contracts?: {

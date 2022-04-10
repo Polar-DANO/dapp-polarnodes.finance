@@ -79,7 +79,7 @@ export default class Nodes extends WalletReactiveFetch implements IReactiveFetch
       {
         icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
         title: 'My $POLAR Balance',
-        price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address) : null,
+        price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens[0].address) : null,
         percentage: null
       }
     ]
@@ -100,7 +100,7 @@ export default class Nodes extends WalletReactiveFetch implements IReactiveFetch
         ...(
         (this.isWalletConnected)
           ? [
-              this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),
+              this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens[0].address),
             ]
           : [])
       ])
