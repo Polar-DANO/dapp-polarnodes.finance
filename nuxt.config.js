@@ -8,16 +8,16 @@ export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
   server: {
-    port: 7000, // default: 3000
-    host: '0.0.0.0' // default: localhost
+    port: 7500, // default: 3000
+    host: '0.0.0.0', // default: localhost
   }, // other configs
   generate: {
     minify: false
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - Dapp.polarnodes',
-    title: 'Dapp.polarnodes',
+    titleTemplate: '%s - app.polar.financial',
+    title: 'app.polar.financial',
     htmlAttrs: {
       lang: 'en',
       style: 'background: #17171b',
