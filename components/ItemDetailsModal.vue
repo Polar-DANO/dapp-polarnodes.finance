@@ -94,7 +94,7 @@
           <div v-if="isAuction" class="flex flex-initial flex-col gap-[8px] md:gap-[14px]">
             <div class="flex flex-col gap-[4px] md:gap-[8px]">
               <div class="white--text text-right mr-2">
-                Auction End: {{ item.end.toDateString() }}
+                Auction End: {{ item.end.toUTCString() }}
               </div>
 
               <div class="flex flex-initial text-center items-center">
