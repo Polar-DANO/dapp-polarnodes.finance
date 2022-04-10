@@ -5,22 +5,41 @@
         <div class="text-white text-[16px]">
           My Lucky Boxes
         </div>
-        <v-btn
-          class="tex text-white font-normal text-[16px] border-solid border-[white] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px]"
-          dark
-          text
-          :loading="isClaimAllBtnLoading"
-          :disabled="isClaimAllBtnLoading"
-          @click="onAllReveal"
-        >
-          Reveal All Boxes
-        </v-btn>
+        <div>
+          <!--
+          <v-btn
+            class="tex text-white font-normal text-[16px] border-solid border-[white] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px]"
+            dark
+            text
+            :loading="isClaimAllBtnLoading"
+            :disabled="isClaimAllBtnLoading"
+            @click="onAllReveal"
+          >
+            Reveal All Boxes
+          </v-btn>
+          -->
+          <v-btn
+            class="tex text-white font-normal text-[16px] border-solid border-[white] border-[2px] hover:bg-[#00C6ED] rounded-[14px] px-[20px]"
+            dark
+            text
+            @click="onSelectedReveal"
+          >
+            Reveal Selected Boxes
+          </v-btn>
+        </div>
       </div>
       <table
         class="mx-auto w-[100%] min-w-[420px] rounded-b-lg bg-[#17171B]"
       >
         <thead>
           <tr>
+            <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
+              <v-checkbox
+              class="mt-2"       
+              color="#00C6ED"
+              @change="onSelectAllLuckyBox"
+              />            
+            </th>
             <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
               <span class="text-[#00c6ed]">ID</span>
             </th>
@@ -32,6 +51,14 @@
         </thead>
         <tbody class="divide-white/10 divide-y-[1px] px-[16px]" />
         <tr v-for="(lb, i) in items" :key="`${lb.type}-${i}`">
+          <td class="py-[12px] pl-[16px] text-left text-[12px] text-white">
+            <v-checkbox
+              class="mt-2"
+              v-model="selectedLuckyBox"
+              :value="lb.tokenId.toNumber()"                  
+              color="#00C6ED"              
+            />
+          </td>
           <td
             class="py-[12px] pl-[16px] text-left text-[12px] text-white"
           >
@@ -63,31 +90,51 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator';
-import { LuckyBox } from '~/models/luckybox';
+import { Component, Vue } from 'nuxt-property-decorator'
+import { LuckyBox } from '~/models/luckybox'
 
 @Component({
   props: {
-    items: Array as () => LuckyBox[],
-  },
+    items: Array as () => LuckyBox[]
+  }
 })
-export default class NodeTable extends Vue {
+export default class MyLuckyBoxesTable extends Vue {
+  private selectedLuckyBox : any = []
+
   async onReveal (tokenId: LuckyBox['tokenId']) {
-    await this.$store.dispatch('luckyboxes/reveal', [tokenId]);
+    await this.$store.dispatch('luckyboxes/reveal', [tokenId])
   }
 
-  async onAllReveal () {
-    const tokenIds:any = [];
-    this.$props.items.map((item: LuckyBox) => tokenIds.push(item.tokenId));
-    await this.$store.dispatch('luckyboxes/reveal', tokenIds);
+  async onAllReveal() {
+    let tokenIds:any = [];
+    console.log(this.$props.items,"itmes")
+    this.$props.items.map((item:LuckyBox,id:any) => tokenIds.push(item.tokenId))
+    await this.$store.dispatch('luckyboxes/reveal', tokenIds)
+  }
+
+  async onSelectedReveal() {
+    let tokenIds:any = [];
+    console.log(this.$props.items,"itmes")  
+    this.selectedLuckyBox.map((id : number) => tokenIds.push(id))
+    //this.$props.items.map((item:LuckyBox,id:any) => tokenIds.push(item.tokenId));
+    await this.$store.dispatch('luckyboxes/reveal', tokenIds)
+  }
+
+  onSelectAllLuckyBox (value : any) {
+    if(value) {
+      this.selectedLuckyBox = []
+      this.$props.items.map((item:LuckyBox,id:any) => this.selectedLuckyBox.push(item.tokenId.toNumber()));      
+    } else {
+      this.selectedLuckyBox = []      
+    }
   }
 
   onList (tokenId: LuckyBox['tokenId']) {
-    this.$router.push(`/luckybox/list/${tokenId._hex}`);
+    this.$router.push(`/luckybox/list/${tokenId._hex}`)
   }
 
   canSell (item: LuckyBox) {
-    return item.attribute !== '';
+    return item.attribute !== ''
   }
 }
 </script>

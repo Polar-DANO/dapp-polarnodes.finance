@@ -11,9 +11,9 @@
           text
           :loading="isClaimAllBtnLoading"
           :disabled="isClaimAllBtnLoading"
-          @click="onClaimAll"
+          @click="onClaimSelected"
         >
-          Claim All
+          Claim Selected NFTs
         </v-btn>
       </div>
       <table
@@ -21,6 +21,13 @@
       >
         <thead>
           <tr>
+            <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
+              <v-checkbox
+              class="mt-5"              
+              color="#00C6ED"
+              @change="onSelectAllNFT"
+              />
+            </th>
             <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
               <span class="text-[#00c6ed]">NFT ID</span>
             </th>
@@ -69,12 +76,22 @@
             <td
               class="py-[12px] pl-[16px] text-left text-[12px] text-white"
             >
+              <v-checkbox
+              class="mt-5"
+              v-model="selectedNFTs"
+              :value="nft.tokenId.toNumber()"
+              color="#00C6ED"              
+            />
+            </td>
+            <td
+              class="py-[12px] pl-[16px] text-left text-[12px] text-white"
+            >
               #{{ nft.tokenId }}
             </td>
             <td
               class="py-[12px] pl-[16px] text-left text-[12px] text-white"
             >
-              {{ nft.nodeType }} {{ nft.attribute }}
+              {{ nft.nodeType }}
             </td>
             <td
               class="py-[12px] pl-[16px] text-left text-[12px] text-white"
@@ -112,51 +129,79 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator';
-import * as ethers from 'ethers';
-import { NFT } from '~/models/nft';
+import { Component, Vue } from 'nuxt-property-decorator'
+import * as ethers from 'ethers'
+import { NFT } from '~/models/nft'
 
 @Component({
   props: {
-    items: Array as () => NFT[] | null,
-  },
+    items: Array as () => NFT[] | null
+  }
 })
 export default class NodeTable extends Vue {
-  private nftSellSectionModal = false;
-  private nftSellModal = false;
-  private selectedNft: NFT | null = null;
-  private isClaimAllBtnLoading = false;
+  private nftSellSectionModal = false
+  private nftSellModal = false
+  private selectedNft: NFT | null = null
+  private isClaimAllBtnLoading = false
+  private selectedNFTs : any = []
 
   formatDate (date: Date) {
-    return new Intl.DateTimeFormat('default', { dateStyle: 'medium' }).format(date);
+    return new Intl.DateTimeFormat('default', { dateStyle: 'medium' }).format(date)
   }
 
   private clickedSellSectionModal () {
-    this.nftSellSectionModal = true;
-    this.nftSellModal = false;
+    this.nftSellSectionModal = true
+    this.nftSellModal = false
   }
 
   public openSellModal (nft: NFT) {
-    this.selectedNft = nft;
-    this.nftSellModal = true;
-    this.nftSellSectionModal = false;
+    this.selectedNft = nft
+    this.nftSellModal = true
+    this.nftSellSectionModal = false
   }
 
   async onClaimAll () {
     try {
-      this.isClaimAllBtnLoading = true;
-      await this.$store.dispatch('nft/claimAll');
+      this.isClaimAllBtnLoading = true
+      await this.$store.dispatch('nft/claimAll')
     } finally {
-      this.isClaimAllBtnLoading = false;
+      this.isClaimAllBtnLoading = false
+    }
+  }
+
+  async onClaimSelected() {
+    try {
+      this.isClaimAllBtnLoading = true
+      console.log(this.selectedNFTs)
+      let selNFTs = []
+
+      for(let i = 0 ; i < this.$props.items.length ; i++) {
+        if(this.selectedNFTs.includes(this.$props.items[i].tokenId.toNumber())){
+          selNFTs.push(this.$props.items[i])
+        }
+      }
+      console.log(selNFTs)
+      await this.$store.dispatch('nft/claimRewards',selNFTs)
+    } finally {
+      this.isClaimAllBtnLoading = false
+    }
+  }
+
+  onSelectAllNFT (value : any) {
+    if(value) {
+      this.selectedNFTs = []
+      this.$props.items.map((item:NFT,id:any) => this.selectedNFTs.push(item.tokenId.toNumber()));      
+    } else {
+      this.selectedNFTs = []      
     }
   }
 
   public formatEther (bn: ethers.BigNumber) {
     if (ethers.BigNumber.isBigNumber(bn)) {
-      return parseFloat(ethers.utils.formatEther(bn)).toFixed(4);
+      return parseFloat(ethers.utils.formatEther(bn)).toFixed(4)
     }
 
-    return bn;
+    return bn
   }
 }
 </script>
