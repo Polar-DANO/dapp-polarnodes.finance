@@ -80,109 +80,109 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import * as ethers from 'ethers'
-import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
-import { NFTType } from '~/models/marketplace'
+import { Component } from 'nuxt-property-decorator';
+import * as ethers from 'ethers';
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
+import { NFTType } from '~/models/marketplace';
 
 @Component({
   watch: {
     luckyBox: {
-      handler: 'setDefaultPrices'
-    }
-  }
+      handler: 'setDefaultPrices',
+    },
+  },
 })
 export default class LuckyboxList extends WalletReactiveFetch implements IReactiveFetch {
-  private selectedSellMode: 'fixed' | 'auction' | null = null
-  private minimumBid = 100
-  private fixedPrice = 100
-  private isBtnLoading = false
+  private selectedSellMode: 'fixed' | 'auction' | null = null;
+  private minimumBid = 100;
+  private fixedPrice = 100;
+  private isBtnLoading = false;
 
   setDefaultPrices () {
-    if (!this.luckyBox) { return }
+    if (!this.luckyBox) { return; }
 
-    const luckyBoxType = this.$store.getters['luckyboxes/typeByName'](this.luckyBox.type)
-    if (!luckyBoxType) { return }
-    const defaultPrice = parseFloat(ethers.utils.formatEther(luckyBoxType.price))
-    this.minimumBid = this.fixedPrice = defaultPrice
+    const luckyBoxType = this.$store.getters['luckyboxes/typeByName'](this.luckyBox.type);
+    if (!luckyBoxType) { return; }
+    const defaultPrice = parseFloat(ethers.utils.formatEther(luckyBoxType.price));
+    this.minimumBid = this.fixedPrice = defaultPrice;
   }
 
   get isApprove () {
-    return !this.$store.getters['marketplace/isApprovedForNFTType'](NFTType.LuckyBox)
+    return !this.$store.getters['marketplace/isApprovedForNFTType'](NFTType.LuckyBox);
   }
 
   get name () {
-    return this.luckyBox?.type
+    return this.luckyBox?.type;
   }
 
   get tokenId () {
-    return this.luckyBox?.tokenId
+    return this.luckyBox?.tokenId;
   }
 
   get isFixedPrice () {
-    return this.selectedSellMode === 'fixed'
+    return this.selectedSellMode === 'fixed';
   }
 
   get isAuction () {
-    return this.selectedSellMode === 'auction'
+    return this.selectedSellMode === 'auction';
   }
 
   changeSellMode (event: any, mode: 'fixed' | 'auction') {
-    this.selectedSellMode = event ? mode : null
+    this.selectedSellMode = event ? mode : null;
   }
 
   get luckyBox () {
-    return this.$store.getters['luckyboxes/byTokenId'](ethers.BigNumber.from(this.$route.params.id))
+    return this.$store.getters['luckyboxes/byTokenId'](ethers.BigNumber.from(this.$route.params.id));
   }
 
   async reactiveFetch () {
     if (this.isWalletConnected) {
       await Promise.all([
         (!this.luckyBox) ? this.$store.dispatch('luckyboxes/loadByTokenId', ethers.BigNumber.from(this.$route.params.id)) : null,
-        this.$store.dispatch('marketplace/loadApproveForNftType', NFTType.LuckyBox)
-      ])
+        this.$store.dispatch('marketplace/loadApproveForNftType', NFTType.LuckyBox),
+      ]);
 
       if (!this.luckyBox || this.luckyBox.owner !== this.$store.getters['wallet/address']) {
-        this.$router.push('/mynft')
+        this.$router.push('/mynft');
       }
     }
   }
 
   async onApprove () {
     try {
-      this.isBtnLoading = true
-      await this.$store.dispatch('marketplace/approveForNftType', NFTType.LuckyBox)
+      this.isBtnLoading = true;
+      await this.$store.dispatch('marketplace/approveForNftType', NFTType.LuckyBox);
     } finally {
-      this.isBtnLoading = false
+      this.isBtnLoading = false;
     }
   }
 
   async onList () {
     if (!this.selectedSellMode) {
-      return
+      return;
     }
 
     try {
-      this.isBtnLoading = true
+      this.isBtnLoading = true;
 
       if (this.selectedSellMode === 'fixed') {
         await this.$store.dispatch('marketplace/sellOffer', {
           nftType: NFTType.LuckyBox,
           tokenId: this.tokenId,
-          price: this.fixedPrice
-        })
+          price: this.fixedPrice,
+        });
       } else {
         await this.$store.dispatch('marketplace/sellAuction', {
           nftType: NFTType.LuckyBox,
           tokenId: this.tokenId,
           price: this.fixedPrice,
-          end: ~~(new Date().getTime() / 1000) + 604800 // now + 1 week
-        })
+          end: ~~(new Date().getTime() / 1000) + 604800, // now + 1 week
+        });
       }
 
-      this.$router.push('/market')
+      this.$router.push('/market');
     } finally {
-      this.isBtnLoading = false
+      this.isBtnLoading = false;
     }
   }
 }

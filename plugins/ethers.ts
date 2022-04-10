@@ -59,65 +59,65 @@ declare module 'vuex/types/index' {
 
 async function registerMetamask () {
   const provider: any = await detectEthereumProvider({
-    mustBeMetaMask: true
-  })
+    mustBeMetaMask: true,
+  });
 
   if (!provider) {
-    throw new Error('Metamask not detected')
+    throw new Error('Metamask not detected');
   }
 
-  await provider.request({ method: 'eth_requestAccounts' })
-  return new ethers.providers.Web3Provider(provider)
+  await provider.request({ method: 'eth_requestAccounts' });
+  return new ethers.providers.Web3Provider(provider);
 }
 
 async function registerWalletConnect () {
   const walletConnect = new WalletConnectProvider({
     rpc: {
       97: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
-      56: 'https://bsc-dataseed1.binance.org/'
+      56: 'https://bsc-dataseed1.binance.org/',
     },
     bridge: 'https://bridge.myhostedserver.com',
     qrcodeModalOptions: {
       mobileLinks: [
         'metamask',
-        'trust'
-      ]
-    }
-  })
+        'trust',
+      ],
+    },
+  });
 
-  await walletConnect.enable()
-  return new ethers.providers.Web3Provider(walletConnect)
+  await walletConnect.enable();
+  return new ethers.providers.Web3Provider(walletConnect);
 }
 
 function setupListeners (w3p: ethers.providers.Web3Provider, store: Store<any>) {
-  const eth = w3p.provider as any
+  const eth = w3p.provider as any;
   eth.on('accountsChanged', (accounts: string[]) => {
     if (accounts.length) {
-      store.commit('wallet/setAddress', accounts[0])
+      store.commit('wallet/setAddress', accounts[0]);
     } else {
-      store.commit('wallet/setAddress', null)
+      store.commit('wallet/setAddress', null);
     }
-  })
+  });
 
   eth.on('chainChanged', (networkId: number) => {
-    store.commit('wallet/setChainId', networkId)
-  })
+    store.commit('wallet/setChainId', networkId);
+  });
 
-  eth.on('disconnect', () => store.dispatch('wallet/logout'))
+  eth.on('disconnect', () => store.dispatch('wallet/logout'));
 }
 
 function checkConnection (makePlugin: (provider: ethers.providers.Web3Provider, isSigned : boolean) => Promise<void>) {
-  if (window.ethereum) {    
-    makePlugin(new ethers.providers.Web3Provider(window.ethereum,"any"), false)
+  if (window.ethereum) {
+    makePlugin(new ethers.providers.Web3Provider(window.ethereum, 'any'), false);
   }
 }
 
 async function switchNetwork (provider: ethers.providers.Web3Provider, isTestnet: boolean) {
-  const network = await provider.getNetwork()
-  const chainId = network.chainId
+  const network = await provider.getNetwork();
+  const chainId = network.chainId;
 
   if (chainId === (isTestnet ? 0xA869 : 0xA86A)) {
-    return
+    return;
   }
 
   const testnetParams = {
@@ -128,9 +128,9 @@ async function switchNetwork (provider: ethers.providers.Web3Provider, isTestnet
     nativeCurrency: {
       name: 'AVAX',
       symbol: 'AVAX',
-      decimals: 18
-    }
-  }
+      decimals: 18,
+    },
+  };
 
   const mainnetParams = {
     chainId: '0xa86a',
@@ -140,32 +140,32 @@ async function switchNetwork (provider: ethers.providers.Web3Provider, isTestnet
     nativeCurrency: {
       name: 'AVAX',
       symbol: 'AVAX',
-      decimals: 18
-    }
-  }
+      decimals: 18,
+    },
+  };
 
   await (provider.provider as any).request({
     method: 'wallet_addEthereumChain',
-    params: [(isTestnet ? testnetParams : mainnetParams)]
-  })
+    params: [(isTestnet ? testnetParams : mainnetParams)],
+  });
 }
 
 const ethersPlugin: Plugin = ({ store, env }, inject) => {
   const makePlugin = async (provider: ethers.providers.Web3Provider | null, isSigned : boolean | false) => {
     if (!provider) {
-      inject('web3Provider', null)
-      inject('contracts', null)
-      inject('logout', null)
-      return
+      inject('web3Provider', null);
+      inject('contracts', null);
+      inject('logout', null);
+      return;
     }
-    
-    inject('web3Provider', provider) 
+
+    inject('web3Provider', provider);
 
     const mainnetProvider = new ethers.providers.JsonRpcProvider('https://api.avax.network/ext/bc/C/rpc');
-    const testnetProvider = new ethers.providers.JsonRpcProvider('https://api.avax-test.network/ext/bc/C/rpc');    
-  
+    const testnetProvider = new ethers.providers.JsonRpcProvider('https://api.avax-test.network/ext/bc/C/rpc');
+
     const signer = isSigned ? provider.getSigner() : env.isTestnet ? testnetProvider : mainnetProvider;
-    const nameContractsMap: Record<string, ethers.Contract> = {}
+    const nameContractsMap: Record<string, ethers.Contract> = {};
 
     const contracts: ContractsPlugin['$contracts'] = {
       old: new ethers.Contract(addresses.Old, OLD_ABI, signer),
@@ -177,49 +177,48 @@ const ethersPlugin: Plugin = ({ store, env }, inject) => {
       marketplace: new ethers.Contract(addresses.MarketPlace, POLAR_MARKETPLACE_ABI, signer),
       async nodeTypeByName (name: string) {
         if (!nameContractsMap[name]) {
-          const address = await this.handler.getNodeTypesAddress(name)
-          nameContractsMap[name] = new ethers.Contract(address, NODE_TYPE_ABI, signer)
+          const address = await this.handler.getNodeTypesAddress(name);
+          nameContractsMap[name] = new ethers.Contract(address, NODE_TYPE_ABI, signer);
         }
 
-        return nameContractsMap[name]
+        return nameContractsMap[name];
       },
       erc721 (address: string) {
-        return new ethers.Contract(address, ERC_721_ABI, signer)
+        return new ethers.Contract(address, ERC_721_ABI, signer);
       },
       erc20 (address: string) {
-        return new ethers.Contract(address, ERC_20_ABI, signer)
-      }
-    }    
-    
-    inject('contracts', contracts) 
+        return new ethers.Contract(address, ERC_20_ABI, signer);
+      },
+    };
 
-    await switchNetwork(provider, env.isTestnet)
-    setupListeners(provider, store)
-    
+    inject('contracts', contracts);
+
+    await switchNetwork(provider, env.isTestnet);
+    setupListeners(provider, store);
+
     const { address, network } = {
       address: await provider.getSigner().getAddress(),
-      network: await provider.getNetwork()
-    }
+      network: await provider.getNetwork(),
+    };
 
-    store.commit('wallet/setAddress', address)
-    store.commit('wallet/setChainId', network.chainId)    
+    store.commit('wallet/setAddress', address);
+    store.commit('wallet/setChainId', network.chainId);
 
     inject('logout', () => {
-      store.commit('wallet/logout')
-      makePlugin(null,false)
-    })
-       
-  }
+      store.commit('wallet/logout');
+      makePlugin(null, false);
+    });
+  };
 
   const register = {
     metamask: async () => await makePlugin(await registerMetamask(), true),
-    walletConnect: async () => await makePlugin(await registerWalletConnect(), true)
-  }
+    walletConnect: async () => await makePlugin(await registerWalletConnect(), true),
+  };
 
-  inject('register', register)
-  inject('addresses', addresses)
+  inject('register', register);
+  inject('addresses', addresses);
 
-  checkConnection(makePlugin)
-}
+  checkConnection(makePlugin);
+};
 
-export default ethersPlugin
+export default ethersPlugin;

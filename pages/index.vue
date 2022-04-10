@@ -27,11 +27,11 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch'
+import { Component } from 'nuxt-property-decorator';
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
 
 @Component({
-  layout: 'page'
+  layout: 'page',
 })
 export default class IndexVue extends WalletReactiveFetch implements IReactiveFetch {
   get protocolStats () {
@@ -40,27 +40,27 @@ export default class IndexVue extends WalletReactiveFetch implements IReactiveFe
         icon: require('../assets/img/dashboardIcon/price_icon.svg'),
         title: '$POLAR Price',
         price: this.$store.state.coingecko.price,
-        percentage: this.$store.state.coingecko.percentage24h
+        percentage: this.$store.state.coingecko.percentage24h,
       },
       {
         icon: require('../assets/img/dashboardIcon/marketcap_icon.svg'),
         title: 'Market Cap',
         price: this.$store.state.coingecko.marketCap,
-        percentage: null
+        percentage: null,
       },
       {
         icon: require('../assets/img/dashboardIcon/circsupply_icon.svg'),
         title: 'Total Supply',
         price: this.$store.state.coingecko.totalSupply,
-        percentage: null
+        percentage: null,
       },
       {
         icon: require('../assets/img/dashboardIcon/totalnode_icon.svg'),
         title: 'Total Nodes',
         price: this.$store.getters['nodes/totalCreated'],
-        percentage: null
-      }
-    ]
+        percentage: null,
+      },
+    ];
   }
 
   get personalStats () {
@@ -69,7 +69,7 @@ export default class IndexVue extends WalletReactiveFetch implements IReactiveFe
         icon: require('../assets/img/dashboardIcon/mynode_icon.svg'),
         title: 'My Nodes',
         price: this.isWalletConnected ? this.$store.getters['nodes/myTotalCreated'] : null,
-        percentage: null
+        percentage: null,
       },
       {
         icon: require('../assets/img/dashboardIcon/polarbalance_icon.svg'),
@@ -81,15 +81,15 @@ export default class IndexVue extends WalletReactiveFetch implements IReactiveFe
         icon: require('../assets/img/dashboardIcon/dailyrewards_icon.svg'),
         title: 'Daily Rewards',
         price: this.isWalletConnected ? this.$store.getters['nodes/totalDailyRewards'] : null,
-        percentage: null
+        percentage: null,
       },
       {
         icon: require('../assets/img/dashboardIcon/pendingrewards_icon.svg'),
         title: 'Pending Rewards',
         price: this.isWalletConnected ? this.$store.getters['nodes/totalPendingRewards'] : null,
-        percentage: null
-      }
-    ]
+        percentage: null,
+      },
+    ];
   }
 
   async reactiveFetch () {
@@ -101,8 +101,8 @@ export default class IndexVue extends WalletReactiveFetch implements IReactiveFe
           ? [
               this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens[0].address),              
             ]
-          : [])
-    ])
+          : []),
+    ]);
   }
 }
 </script>

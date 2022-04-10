@@ -74,7 +74,7 @@
             <td
               class="py-[12px] pl-[16px] text-left text-[12px] text-white"
             >
-              {{ nft.nodeType }}
+              {{ nft.nodeType }} {{ nft.attribute }}
             </td>
             <td
               class="py-[12px] pl-[16px] text-left text-[12px] text-white"
@@ -112,51 +112,51 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import * as ethers from 'ethers'
-import { NFT } from '~/models/nft'
+import { Component, Vue } from 'nuxt-property-decorator';
+import * as ethers from 'ethers';
+import { NFT } from '~/models/nft';
 
 @Component({
   props: {
-    items: Array as () => NFT[] | null
-  }
+    items: Array as () => NFT[] | null,
+  },
 })
 export default class NodeTable extends Vue {
-  private nftSellSectionModal = false
-  private nftSellModal = false
-  private selectedNft: NFT | null = null
-  private isClaimAllBtnLoading = false
+  private nftSellSectionModal = false;
+  private nftSellModal = false;
+  private selectedNft: NFT | null = null;
+  private isClaimAllBtnLoading = false;
 
   formatDate (date: Date) {
-    return new Intl.DateTimeFormat('default', { dateStyle: 'medium' }).format(date)
+    return new Intl.DateTimeFormat('default', { dateStyle: 'medium' }).format(date);
   }
 
   private clickedSellSectionModal () {
-    this.nftSellSectionModal = true
-    this.nftSellModal = false
+    this.nftSellSectionModal = true;
+    this.nftSellModal = false;
   }
 
   public openSellModal (nft: NFT) {
-    this.selectedNft = nft
-    this.nftSellModal = true
-    this.nftSellSectionModal = false
+    this.selectedNft = nft;
+    this.nftSellModal = true;
+    this.nftSellSectionModal = false;
   }
 
   async onClaimAll () {
     try {
-      this.isClaimAllBtnLoading = true
-      await this.$store.dispatch('nft/claimAll')
+      this.isClaimAllBtnLoading = true;
+      await this.$store.dispatch('nft/claimAll');
     } finally {
-      this.isClaimAllBtnLoading = false
+      this.isClaimAllBtnLoading = false;
     }
   }
 
   public formatEther (bn: ethers.BigNumber) {
     if (ethers.BigNumber.isBigNumber(bn)) {
-      return parseFloat(ethers.utils.formatEther(bn)).toFixed(4)
+      return parseFloat(ethers.utils.formatEther(bn)).toFixed(4);
     }
 
-    return bn
+    return bn;
   }
 }
 </script>
