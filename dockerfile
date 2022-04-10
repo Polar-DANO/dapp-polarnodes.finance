@@ -16,12 +16,12 @@ RUN npm install @types/mocha
 RUN sh -c "IS_TESTNET=true npm run build"
 
 # expose 5000 on container
-EXPOSE 7000
+EXPOSE 7500
 
 # set app serving to permissive / assigned
 ENV NUXT_HOST=0.0.0.0
 # set app port
-ENV NUXT_PORT=7000
+ENV NUXT_PORT=7500
 
 # start the app
 CMD [ "npm", "start" ]
