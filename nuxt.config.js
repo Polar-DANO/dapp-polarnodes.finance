@@ -8,7 +8,7 @@ export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
   server: {
-    port: 7000, // default: 3000
+    port: 7500, // default: 3000
     host: '0.0.0.0', // default: localhost
   }, // other configs
   generate: {
