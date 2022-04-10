@@ -284,7 +284,7 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
 
       return ~~(new Date(date).getTime() / 1000) + timeTimestamp;
     }
-    return ~~(new Date().getTime() / 1000) + 604800;
+    return ~~(new Date().getTime() / 1000) + 604800; // now + 1 week
   }
 
   async onList () {
@@ -306,7 +306,7 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
           nftType: NFTType.Node,
           tokenId: this.nft.tokenId,
           price: this.minimumBid,
-          end: this.getAuctionDate(), // now + 1 week
+          end: this.getAuctionDate(),
         });
       }
 
