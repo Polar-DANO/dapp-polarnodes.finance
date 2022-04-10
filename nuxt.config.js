@@ -19,7 +19,8 @@ export default {
     titleTemplate: '%s - Dapp.polarnodes',
     title: 'Dapp.polarnodes',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'en',
+      style: 'background: #17171b',
     },
     meta: [{
       charset: 'utf-8'

@@ -15,8 +15,10 @@
       <MigrationTable />
     </div>
     <div class="md:mt-[40px]">
-      <MyLuckyBoxesTable v-if="luckyBoxes.length > 0" :items="luckyBoxes" />
-      <NodeTable :items="nfts" />
+      <MyLuckyBoxesTable :items="luckyBoxes" @scroll-to-table="onScrollToTable" />
+      <div ref="table">
+        <NodeTable :items="nfts" />
+      </div>
     </div>
   </div>
 </template>
@@ -24,9 +26,18 @@
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator';
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
+import addresses from '~/config/addresses'
 
 @Component
 export default class Mynft extends WalletReactiveFetch implements IReactiveFetch {
+  onScrollToTable () {
+    const el = this.$refs.table;
+
+    if (el) {
+      (el as any).scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
   get nodeStation () {
     return [
       {
@@ -44,7 +55,7 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
       {
         icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
         title: 'My $POLAR Balance',
-        price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens[0].address) :null,
+        price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](addresses.Token) :null,
         percentage: null
       }
     ]
@@ -64,7 +75,7 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
       await {
         lbTypes: await this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
         myLbs: await this.$store.dispatch('luckyboxes/loadMyLuckyBoxes'),
-        polarBalance: await this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens[0].address),
+        polarBalance: await this.$store.dispatch('tokens/loadBalance', addresses.Token),
         myNFTs: await (async () => {
           await this.$store.dispatch('nodes/loadNodeTypes');
           await this.$store.dispatch('nft/loadMyNFTs');

@@ -82,6 +82,40 @@
                 @input="datepickerMenu = false"
               />
             </v-menu>
+
+            <v-menu
+              v-if="isAuction && date"
+              ref="timePickerMenu"
+              v-model="timePickerMenu"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              :return-value.sync="time"
+              transition="scale-transition"
+              offset-y
+              max-width="290px"
+              min-width="290px"
+            >
+              <template #activator="{ on, attrs }">
+                <v-text-field
+                  v-model="time"
+                  dark
+                  label="Picker in menu"
+                  prepend-icon="mdi-clock-time-four-outline"
+                  readonly
+                  clearable
+                  v-bind="attrs"
+                  v-on="on"
+                />
+              </template>
+              <v-time-picker
+                v-if="timePickerMenu"
+                v-model="time"
+                format="24hr"
+                full-width
+                @click:minute="$refs.timePickerMenu.save(time)"
+              />
+            </v-menu>
+
             <div class="flex flex-initial items-center text-center">
               <div class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] text-[center] w-[50%] py-[8px] font-[600]">
                 Minimum Bid:
@@ -135,6 +169,8 @@ import * as ethers from 'ethers';
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
 import { NFTType } from '~/models/marketplace';
 
+type SellMode = 'fixed' | 'auction';
+
 @Component({
   props: {
     nft: Object,
@@ -144,10 +180,12 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
   public minimumBid: number | null = null;
   public fixedPrice: number | null = null;
   public video: string | null = null;
-  public selectedSellMode: 'fixed' | 'auction' | null = null;
+  public selectedSellMode: SellMode | null = null;
   public isBtnLoading = false;
   public date: string | null = null;
   public datepickerMenu = false;
+  public time: string | null = null;
+  public timePickerMenu = false;
 
   async mounted () {
     const { $props: { nft } } = this;
@@ -235,6 +273,20 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
     }
   }
 
+  getAuctionDate (): number {
+    const { date, time } = this;
+
+    if (date) {
+      const [hour, minute] = time?.split(':') || [];
+      const hourNumber = parseInt(hour ?? 0);
+      const minuteNumber = parseInt(minute ?? 0);
+      const timeTimestamp = hourNumber * 3600 + minuteNumber * 60;
+
+      return ~~(new Date(date).getTime() / 1000) + timeTimestamp;
+    }
+    return ~~(new Date().getTime() / 1000) + 604800; // now + 1 week
+  }
+
   async onList () {
     if (!this.selectedSellMode) {
       return;
@@ -254,9 +306,7 @@ export default class NFTSellSectionModal extends WalletReactiveFetch implements 
           nftType: NFTType.Node,
           tokenId: this.nft.tokenId,
           price: this.minimumBid,
-          end: this.date
-            ? ~~(new Date(this.date).getTime() / 1000)
-            : ~~(new Date().getTime() / 1000) + 604800, // now + 1 week
+          end: this.getAuctionDate(),
         });
       }
 

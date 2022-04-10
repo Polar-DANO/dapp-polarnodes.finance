@@ -94,7 +94,7 @@
           <div v-if="isAuction" class="flex flex-initial flex-col gap-[8px] md:gap-[14px]">
             <div class="flex flex-col gap-[4px] md:gap-[8px]">
               <div class="white--text text-right mr-2">
-                Auction End: {{ item.end.toDateString() }}
+                Auction End: {{ item.end.toUTCString() }}
               </div>
 
               <div class="flex flex-initial text-center items-center">
@@ -178,7 +178,7 @@ import axios from 'axios';
 import { NFTType, ItemType } from '~/models/marketplace';
 import * as NodeType from '~/models/NodeType';
 import WalletReactiveFetch from '~/mixins/wallet-reactive-fetch';
-
+import addresses from '~/config/addresses'
 @Component({
   props: {
     item: Object,
@@ -346,7 +346,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
   }
 
   get isPolarApproved () {
-    return this.$store.getters['tokens/hasEnoughMarketplaceAllowance'](this.$store.state.tokens.tokens[0].address, this.price)
+    return this.$store.getters['tokens/hasEnoughMarketplaceAllowance'](addresses.Token, this.price)
   }
 
   async onApprove () {
@@ -359,7 +359,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
       }
 
       if (!this.isPolarApproved) {
-        await this.$store.dispatch('tokens/requestMarketplaceAllowance', this.$store.state.tokens.tokens[0].address)
+        await this.$store.dispatch('tokens/requestMarketplaceAllowance', addresses.Token)
       }
     } finally {
       this.isBtnLoading = false;
@@ -370,7 +370,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
     if (this.isWalletConnected) {
       await Promise.all([
         this.$store.dispatch('marketplace/loadApproveForNftType', this.nft.nftType),
-        this.$store.dispatch('tokens/loadAllowance', this.$store.state.tokens.tokens[0].address)
+        this.$store.dispatch('tokens/loadAllowance', addresses.Token)
       ])
     }
   }

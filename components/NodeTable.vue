@@ -139,11 +139,11 @@ import { NFT } from '~/models/nft'
   }
 })
 export default class NodeTable extends Vue {
-  private nftSellSectionModal = false
-  private nftSellModal = false
-  private selectedNft: NFT | null = null
-  private isClaimAllBtnLoading = false
-  private selectedNFTs : any = []
+  public nftSellSectionModal = false
+  public nftSellModal = false
+  public selectedNft: NFT | null = null
+  public isClaimAllBtnLoading = false
+  public selectedNFTs : any = []
 
   formatDate (date: Date) {
     return new Intl.DateTimeFormat('default', { dateStyle: 'medium' }).format(date)
@@ -172,7 +172,6 @@ export default class NodeTable extends Vue {
   async onClaimSelected() {
     try {
       this.isClaimAllBtnLoading = true
-      console.log(this.selectedNFTs)
       let selNFTs = []
 
       for(let i = 0 ; i < this.$props.items.length ; i++) {
@@ -180,7 +179,6 @@ export default class NodeTable extends Vue {
           selNFTs.push(this.$props.items[i])
         }
       }
-      console.log(selNFTs)
       await this.$store.dispatch('nft/claimRewards',selNFTs)
     } finally {
       this.isClaimAllBtnLoading = false
