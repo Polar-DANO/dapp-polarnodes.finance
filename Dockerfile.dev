@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json ./app
 COPY . /app
 RUN npm install
-EXPOSE 7000
+EXPOSE 7500
 
 ENV NUXT_HOST=0.0.0.0
-ENV NUXT_PORT=7000
+ENV NUXT_PORT=7500
