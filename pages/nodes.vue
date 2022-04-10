@@ -89,6 +89,7 @@ export default class Nodes extends WalletReactiveFetch implements IReactiveFetch
     return this.$store.state.luckyboxes.luckyBoxTypes ?? [];
   }
 
+
   get nodeNames () {
     return this.$store.getters['nodes/nodeTypesNames'];
   }
