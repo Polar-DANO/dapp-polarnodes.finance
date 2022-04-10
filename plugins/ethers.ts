@@ -160,10 +160,13 @@ const ethersPlugin: Plugin = ({ store, env }, inject) => {
 
     inject('web3Provider', provider);
 
-    const mainnetProvider = new ethers.providers.JsonRpcProvider('https://api.avax.network/ext/bc/C/rpc');
-    const testnetProvider = new ethers.providers.JsonRpcProvider('https://api.avax-test.network/ext/bc/C/rpc');
+    // TODO: why this 👇 ???
+    // const mainnetProvider = new ethers.providers.JsonRpcProvider('https://api.avax.network/ext/bc/C/rpc');
+    // const testnetProvider = new ethers.providers.JsonRpcProvider('https://api.avax-test.network/ext/bc/C/rpc');
 
-    const signer = isSigned ? provider.getSigner() : env.isTestnet ? testnetProvider : mainnetProvider;
+    // const signer = isSigned ? provider.getSigner() : env.isTestnet ? testnetProvider : mainnetProvider;
+
+    const signer = provider.getSigner();
     const nameContractsMap: Record<string, ethers.Contract> = {};
 
     const contracts: ContractsPlugin['$contracts'] = {
