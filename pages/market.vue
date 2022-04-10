@@ -36,6 +36,7 @@
 import { Component } from 'nuxt-property-decorator';
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
 import { Item } from '~/models/marketplace';
+import addresses from '~/config/addresses'
 
 @Component
 export default class Market extends WalletReactiveFetch implements IReactiveFetch {
@@ -61,7 +62,7 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
       ...(
         (this.isWalletConnected)
           ? [
-              this.$store.dispatch('tokens/loadAllowance', this.$store.state.tokens.tokens.POLAR.address),
+              this.$store.dispatch('tokens/loadAllowance', addresses.Token),
             ]
           : []),
     ]);
