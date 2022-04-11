@@ -21,6 +21,10 @@
         <span class="node-nft__blue-text">Claim tax: </span>
         {{ claimTax }}%
       </div>
+      <div class="mt-1">
+        <span class="node-nft__blue-text">Global tax: </span>
+        {{ globalTax }}%
+      </div>
     </div>
   </div>
 </template>
@@ -63,6 +67,10 @@ export default class NodeNft extends Vue {
 
   get claimTax () {
     return this.nodeType.claimTax;
+  }
+
+  get globalTax () {
+    return this.nodeType.globalTax;
   }
 }
 </script>
@@ -107,7 +115,7 @@ export default class NodeNft extends Vue {
   cursor: pointer;
   text-align: center;
   font-size: 12px;
-  height: 242px;
+  height: 253px;
   padding: 12px 0;
   border-radius: 14px;
   border: solid 1px #00c6ed;

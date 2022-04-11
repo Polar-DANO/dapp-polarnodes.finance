@@ -76,13 +76,13 @@ export const actions: ActionTree<State, {}> = {
           throw new Error('Contracts not loaded');
         }
         const nodeTypeContract = await this.$contracts.nodeTypeByName(name);
-
         const userAddress = rootGetters['wallet/address'];
         return {
           index,
           name,
           cost: await nodeTypeContract.price(),
           claimTax: (await nodeTypeContract.claimTaxRoi()).div(100).toNumber(),
+          globalTax:(await nodeTypeContract.globalTax()).div(100).toNumber(),
           rewardAmount: await nodeTypeContract.rewardAmount(),
           userCount: (userAddress)
             ? (await nodeTypeContract.getTotalNodesNumberOf(userAddress)).toNumber()

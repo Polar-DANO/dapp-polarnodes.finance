@@ -61,7 +61,7 @@
               </div>
               <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]">
                 <div class="px-[4px] py-[8px]">
-                  <span class="text-[white] text-[14px] mr-[16px] font-[500]">{{ roi.toFixed(2) }}%</span>
+                  <span class="text-[white] text-[14px] mr-[16px] font-[500]">{{ roi}}%</span>
                 </div>
               </div>
             </div>
@@ -72,6 +72,16 @@
               <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]">
                 <div class="px-[4px] py-[8px]">
                   <span class="text-[white] text-[14px] mr-[16px] font-[500]">{{ claimTax }}%</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center text-center">
+              <div class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[8px] font-[600]">
+                Global Tax:
+              </div>
+              <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]">
+                <div class="px-[4px] py-[8px]">
+                  <span class="text-[white] text-[14px] mr-[16px] font-[500]">{{ globalTax }}%</span>
                 </div>
               </div>
             </div>
@@ -123,7 +133,10 @@ export default class NFTSellModal extends Vue {
     const tokenId = parseInt(nft.tokenId);
 
     const { data } = await axios.get(`https://api.polar.financial/node/${tokenId}`);
-    this.video = data.animation_url;
+    this.video = data.animation_url;    
+    await Promise.all([
+      this.$store.dispatch('nft/loadSpecialROI', nft.tokenId)
+    ]);    
   }
 
   get nodeType () {
@@ -141,9 +154,13 @@ export default class NFTSellModal extends Vue {
   get claimTax () {
     return this.nodeType.claimTax;
   }
+  
+  get globalTax () {
+    return this.nodeType.globalTax;
+  }
 
   get roi () {
-    return NodeType.roi(this.nodeType);
+    return (NodeType.roi(this.nodeType) + this.$store.getters['nft/spROI']).toFixed(2);
   }
 
   get canSell () {

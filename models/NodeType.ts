@@ -7,10 +7,10 @@ export interface NodeType {
   rewardAmount: ethers.BigNumber;
   cost: ethers.BigNumber;
   claimTax: number;
+  globalTax: number;
   userCount?: number;
   userRewards?: ethers.BigNumber;
   userFees?: ethers.BigNumber;
-
   totalCreatedNodes: number;
   maxSlots: number;
   maxLevelUpUser: number;

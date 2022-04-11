@@ -412,6 +412,10 @@ export default class Create
     return this.nodeType?.claimTax;
   }
 
+  get globalTax () {
+    return this.nodeType?.globalTax;
+  }
+
   get totalCreatedNodes () {
     return this.nodeType?.totalCreatedNodes;
   }
@@ -562,7 +566,7 @@ export default class Create
   }
 
   get dataBlocks () {
-    const { totalCost, roi, tax } = this;
+    const { totalCost, roi, tax, globalTax } = this;
     if (!this.nodeType) {
       return [];
     }
@@ -574,6 +578,7 @@ export default class Create
       },
       { key: 'ROI / day:', value: roi.toFixed(2), unit: '%' },
       { key: 'Claim Tax:', value: tax, unit: '%' },
+      { key: 'Global Tax', value: globalTax, unit: '%'}
     ];
   }
 

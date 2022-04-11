@@ -6,6 +6,7 @@ import { NFT } from '~/models/nft';
 export const state = () => ({
   myNfts: {} as Record<string, NFT[]>,
   byTokenId: {} as Record<string, NFT | null>,
+  specialROI : {} as number| null
 });
 
 export type State = ReturnType<typeof state>;
@@ -26,6 +27,8 @@ export const getters: GetterTree<State, {}> = {
         (a, b) => (b.creationTime.getTime() - a.creationTime.getTime())
       ),
   byTokenId: state => (tokenId: BigNumber) => state.byTokenId[tokenId.toString()] ?? null,
+  spROI: state => state.specialROI
+  // specialROI: state =>(tokenId: BigNumber) => state.specialROI[tokenId.toString()] ?? null
 };
 
 export const mutations: MutationTree<State> = {
@@ -46,6 +49,10 @@ export const mutations: MutationTree<State> = {
       [tokenId.toString()]: nft,
     };
   },
+
+  setSpecialROI(state, {specialROI}:{specialROI: number| null}){    
+    state.specialROI = specialROI    
+  }
 };
 
 export const actions: ActionTree<State, {}> = {
@@ -203,4 +210,21 @@ export const actions: ActionTree<State, {}> = {
 
     commit('setByTokenId', { tokenId, nft });
   },
+
+  async loadSpecialROI({commit}, tokenId:BigNumber){
+    if (!this.$contracts) {
+      throw new Error('Contracts not loaded');
+    }
+    const nodeType = await this.$contracts.polarNodeNft.tokenIdsToType(tokenId);
+    if (nodeType === '') {
+      // commit('setByTokenId', null);
+      return;
+    }
+
+    const attribute = await this.$contracts.polarNodeNft.getAttribute(tokenId);
+    const nodeContract = await this.$contracts.nodeTypeByName(nodeType);
+    const tmp = await nodeContract.featureToBoostRate(attribute);    
+    const specialROI = parseInt(tmp._hex)/100;        
+    commit('setSpecialROI',{specialROI})
+  }
 };
