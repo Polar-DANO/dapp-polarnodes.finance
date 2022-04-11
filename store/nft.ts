@@ -224,7 +224,7 @@ export const actions: ActionTree<State, {}> = {
     const attribute = await this.$contracts.polarNodeNft.getAttribute(tokenId);
     const nodeContract = await this.$contracts.nodeTypeByName(nodeType);
     const tmp = await nodeContract.featureToBoostRate(attribute);    
-    const specialROI = parseInt(tmp._hex)/100;        
+    const specialROI = parseInt(tmp._hex);        
     commit('setSpecialROI',{specialROI})
   }
 };

@@ -144,7 +144,8 @@ export default class NFTSellModal extends Vue {
   }
 
   get rewardAmount () {
-    return NodeType.dailyRewardPerNode(this.nodeType);
+    const rt = (10000 + this.$store.getters['nft/spROI'])/10000
+    return NodeType.dailyRewardPerNode(this.nodeType).mul(rt)
   }
 
   get pendingRewards () {
@@ -160,7 +161,7 @@ export default class NFTSellModal extends Vue {
   }
 
   get roi () {
-    return (NodeType.roi(this.nodeType) + this.$store.getters['nft/spROI']).toFixed(2);
+    return this.$props.nft.attribute != "" ? (NodeType.roi(this.nodeType) + NodeType.roi(this.nodeType) * this.$store.getters['nft/spROI']/10000).toFixed(2) : NodeType.roi(this.nodeType).toFixed(2);
   }
 
   get canSell () {

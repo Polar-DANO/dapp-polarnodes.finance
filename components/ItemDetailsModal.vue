@@ -280,7 +280,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
 
   get roi () {
     if (!this.nodeType) { return null; }
-    return (NodeType.roi(this.nodeType) + this.$store.getters['nft/spROI']).toFixed(2);
+    return this.nft.attribute != "" ? (NodeType.roi(this.nodeType) + NodeType.roi(this.nodeType) * this.$store.getters['nft/spROI']/10000).toFixed(2) : NodeType.roi(this.nodeType).toFixed(2);
   }
 
   get claimTax () {
