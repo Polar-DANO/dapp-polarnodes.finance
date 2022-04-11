@@ -177,6 +177,7 @@ import * as ethers from 'ethers';
 import axios from 'axios';
 import { NFTType, ItemType } from '~/models/marketplace';
 import WalletReactiveFetch from '~/mixins/wallet-reactive-fetch';
+import * as NodeType from '~/models/NodeType';
 
 @Component({
   props: {
@@ -263,7 +264,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
 
   get roi () {
     if (!this.nodeType) { return null; }
-    return 1.7;
+    return NodeType.roi(this.nodeType).toFixed(2);
   }
 
   get claimTax () {
