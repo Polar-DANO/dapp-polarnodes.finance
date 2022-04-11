@@ -13,7 +13,7 @@
           <span class="text-[16px] text-[#FF0000]"
             >
             The migration from Polar v3 is complete.
-            If you lost your node, don't worry, use the option "My NFTs" in the menu "Migrate Node".
+            If you lost your node, don't worry, use the option "Migrate Node" in the menu "My NFTs" .
             For more information please join the discord:
             https://discord.com/invite/polarnodes
           </span>
