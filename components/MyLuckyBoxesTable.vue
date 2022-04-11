@@ -113,7 +113,7 @@ export default class NodeTable extends Vue {
       this.video = LUCKYBOX_VIDEO_BY_TYPE[type];
       setTimeout(() => {
         this.onVideoEnd();
-      }, 9000);
+      }, 13000);
     }
   }
 
