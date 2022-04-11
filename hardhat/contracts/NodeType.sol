@@ -5,8 +5,6 @@ pragma solidity ^0.8.0;
 import "./IOld.sol";
 import "./Owners.sol";
 
-import "hardhat/console.sol";
-
 
 contract NodeType is Owners {
 
@@ -19,6 +17,7 @@ contract NodeType is Owners {
 		bool isBoostedNft;
 		bool isBoostedToken;
 		string feature;
+		uint price;
 	}
 
 	struct User {
@@ -60,7 +59,7 @@ contract NodeType is Owners {
 	uint public maxMultiObtaining;
 	uint public maxMultiClaim;
 
-	bool public canBeBoostedNftToken = true;
+	bool public canBeBoostedNftToken = false;
 	bool public canBeBoostedNftLevelUp = false;
 	bool public canBeBoostedNftPending = false;
 	bool public canBeBoostedNftLucky = false;
@@ -131,7 +130,7 @@ contract NodeType is Owners {
 		claimTimeReference = values[18];
 		claimTimeRate = values[19];
 		maxMultiObtaining = values[20];
-		maxMultiClaim = values[20];
+		maxMultiClaim = values[21];
 
 		handler = _handler;
 		old = _old;
@@ -622,8 +621,10 @@ contract NodeType is Owners {
 	{
 		uint[] memory rois = new uint[](iEnd - iStart);
 		User storage u = userOf[user];
-		for (uint256 i = iStart; i < iEnd; i++)
-			rois[i - iStart] = price * claimTime / rewardAmount + u.values[u.keys[i]].creationTime;
+		for (uint256 i = iStart; i < iEnd; i++) {
+			Node memory node = u.values[u.keys[i]];
+			rois[i - iStart] = node.price * claimTime / rewardAmount + node.creationTime;
+		}
 		return rois;
 	}
 
@@ -650,7 +651,13 @@ contract NodeType is Owners {
 	}
 
 	function getAttribute(uint tokenId) external view returns(string memory) {
-		return userOf[tokenIdToOwner[tokenId]].values[tokenId].feature;
+		Node memory node = userOf[tokenIdToOwner[tokenId]].values[tokenId];
+
+        if (node.isBoostedAirDropRate > 0)
+            return "Yes";
+        else if (node.isBoostedNft)
+            return "Yes";
+        return node.feature;
 	}
 	
 	function getNodeOwnersBetweenIndexes(
@@ -757,7 +764,8 @@ contract NodeType is Owners {
 				isBoostedAirDropRate: isBoostedAirDropRate,
 				isBoostedNft: areBoostedNft[i],
 				isBoostedToken: isBoostedToken,
-				feature: feature
+				feature: feature,
+				price: price
 			});
 			userSet(userOf[user], tokenIds[i], node);
 			tokenIdToOwner[tokenIds[i]] = user;
@@ -792,10 +800,10 @@ contract NodeType is Owners {
 		if (node.isBoostedAirDropRate > 0)
 			rewardsTotal = rewardsTotal * (10000 + node.isBoostedAirDropRate) / 10000;
 
-		if (node.isBoostedNft)
+		if (node.isBoostedNft && isBoostedNftRate > 0)
 			rewardsTotal = rewardsTotal * (10000 + isBoostedNftRate) / 10000;
 
-		if (node.isBoostedToken)
+		if (node.isBoostedToken && isBoostedTokenRate > 0)
 			rewardsTotal = rewardsTotal * (10000 + isBoostedTokenRate) / 10000;
 		
 		if (featureToBoostRate[node.feature] > 0)
@@ -804,11 +812,10 @@ contract NodeType is Owners {
 		if (block.timestamp - node.lastClaimTime > noClaimTimeReference)
 			rewardsTotal += noClaimRewardAmount;
 
-		if (rewardAmount * (block.timestamp - node.creationTime) / claimTime < price && 
+		if (rewardAmount * (block.timestamp - node.creationTime) / claimTime < node.price && 
 				claimTaxRoi > 0)
-			fees += rewardsTotal * claimTaxRoi / 10000;
-		
-		if (globalTax > 0)
+			rewardsTotal -= rewardsTotal * claimTaxRoi / 10000;
+		else if (globalTax > 0)
 			fees += rewardsTotal * globalTax / 10000;
 
 		return (rewardsTotal - fees, fees);

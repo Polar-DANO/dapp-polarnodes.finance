@@ -8,9 +8,31 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./Owners.sol";
 import "./IPolarNft.sol";
 
-import "hardhat/console.sol";
 
 contract PolarMarketPlace is Owners, ReentrancyGuard {
+	event NewOffer(
+		address indexed _nft, 
+		uint _tokenId, 
+		uint _price
+	);
+	
+	event PurchaseOffer(
+		address indexed _nft, 
+		uint _tokenId 
+	);
+	
+	event NewAuction(
+		address indexed _nft, 
+		uint _tokenId, 
+		uint _currentPrice, 
+		uint _end
+	);
+	
+	event PurchaseAuction(
+		address indexed _nft, 
+		uint _tokenId, 
+		uint _currentPrice
+	);
 
 	struct Offer {
 		address owner;
@@ -166,6 +188,8 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 			price: _price,
 			creationTime: block.timestamp
 		}));
+
+		emit NewOffer(_nft, _tokenId, _price);
 	}
 
 	function purchaseOfferItem(address _nft, uint _tokenId) external nonReentrant {
@@ -185,6 +209,8 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 
 		mapOfferRemove(nft.values[_nft].mapOffer, _tokenId);
 		mapNftDelete(_nft);
+		
+		emit PurchaseOffer(_nft, _tokenId);
 	}
 
 	function recoverOfferItem(address _nft, uint _tokenId) external nonReentrant {
@@ -240,6 +266,8 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 			end: _end,
 			creationTime: block.timestamp
 		}));
+		
+		emit NewAuction(_nft, _tokenId, _currentPrice, _end);
 	}
 	
 	function purchaseAuctionItem(address _nft, uint _tokenId, uint _currentPrice) external nonReentrant {
@@ -269,6 +297,8 @@ contract PolarMarketPlace is Owners, ReentrancyGuard {
 			end: endTime,
 			creationTime: auction.creationTime
 		}));
+		
+		emit PurchaseAuction(_nft, _tokenId, _currentPrice);
 	}
 
 	function recoverAuctionItem(address _nft, uint _tokenId) external nonReentrant {

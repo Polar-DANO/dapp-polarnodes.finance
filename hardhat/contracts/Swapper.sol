@@ -6,8 +6,6 @@ import "./PaymentSplitter.sol";
 import "./IJoeRouter02.sol";
 import "./Owners.sol";
 
-import "hardhat/console.sol";
-
 
 contract Swapper is PaymentSplitter, Owners {
 	struct Path {
@@ -29,6 +27,7 @@ contract Swapper is PaymentSplitter, Owners {
 		uint released;
 		uint claimable;
 		address[] path;
+		uint discountRate;
 	}
 
 	MapPath private mapPath;
@@ -58,7 +57,6 @@ contract Swapper is PaymentSplitter, Owners {
 	bool private swapPayee = true;
 
 	uint public swapTokensAmountCreate;
-	uint public swapTokensAmountClaim;
 
 	address public handler;
 
@@ -74,7 +72,7 @@ contract Swapper is PaymentSplitter, Owners {
 		uint256[] memory shares,
 		address[] memory addresses,
 		uint256[] memory fees,
-		uint256[] memory _swAmounts,
+		uint256 _swAmount,
 		address _handler
 	) PaymentSplitter(payees, shares) {
 		polar = addresses[0];
@@ -89,8 +87,7 @@ contract Swapper is PaymentSplitter, Owners {
 		rewardsFee = fees[1];
 		lpFee = fees[2];
 
-		swapTokensAmountCreate = _swAmounts[0];
-		swapTokensAmountClaim = _swAmounts[1];
+		swapTokensAmountCreate = _swAmount;
 
 		handler = _handler;
 	}
@@ -145,7 +142,8 @@ contract Swapper is PaymentSplitter, Owners {
 		address to,
 		uint until,
 		uint rate,
-		address[] memory path
+		address[] memory path,
+		uint discountRate
 	) 
 		external
 		onlyOwners
@@ -161,7 +159,8 @@ contract Swapper is PaymentSplitter, Owners {
 			until: until,
 			released: 0,
 			claimable: 0,
-			path: path
+			path: path,
+			discountRate: discountRate
 		});
 	}
 
@@ -169,7 +168,8 @@ contract Swapper is PaymentSplitter, Owners {
 		string memory name,
 		uint until,
 		uint rate,
-		address[] memory path
+		address[] memory path,
+		uint discountRate
 	)
 		external
 		onlyOwners
@@ -184,7 +184,8 @@ contract Swapper is PaymentSplitter, Owners {
 			until: until,
 			released: cur.released,
 			claimable: cur.claimable,
-			path: path
+			path: path,
+			discountRate: discountRate
 		});
 	}
 
@@ -211,7 +212,7 @@ contract Swapper is PaymentSplitter, Owners {
 		cur.claimable = 0;
 
 		IERC20(cur.path[cur.path.length - 1])
-			.transferFrom(distri, cur.to, amount);
+			.transferFrom(futur, cur.to, amount);
 	}
 
 	function swapCreateNodesWithTokens(
@@ -368,10 +369,6 @@ contract Swapper is PaymentSplitter, Owners {
 		swapTokensAmountCreate = _new;
 	}
 
-	function setSwapTokensAmountClaim(uint _new) external onlyOwners {
-		swapTokensAmountClaim = _new;
-	}
-	
 	function setOpenSwapCreateNodesWithTokens(bool _new) external onlyOwners {
 		openSwapCreateNodesWithTokens = _new;
 	}
@@ -468,8 +465,11 @@ contract Swapper is PaymentSplitter, Owners {
 		require(price > 0, "Swapper: Nothing to swap");
 		
 		if (influInserted[sponso]) {
-			if (block.timestamp <= influData[sponso].until)
+			if (block.timestamp <= influData[sponso].until) {
+				if (influData[sponso].discountRate > 0)
+					price -= price * influData[sponso].discountRate / 10000;
 				influData[sponso].claimable += price * influData[sponso].rate / 10000;
+			}
 		}
 
 		if (tokenIn == polar) {
@@ -523,7 +523,7 @@ contract Swapper is PaymentSplitter, Owners {
 
         IJoeRouter02(router).swapExactTokensForTokensSupportingFeeOnTransferTokens(
             toTransfer,
-            price,
+            0, // if transfer fee
             mapPath.values[tokenIn].pathIn,
             address(this),
             block.timestamp
@@ -543,9 +543,6 @@ contract Swapper is PaymentSplitter, Owners {
 				IERC20(polar).transferFrom(distri, address(this), rewardsTotal + feesTotal);
 			else if (rewardsTotal > 0)
 				IERC20(polar).transferFrom(distri, address(this), rewardsTotal);
-
-			if (swapLiquifyClaim && feesTotal > swapTokensAmountClaim)
-				swapTokensForEth(feesTotal);
 
 			if (tokenOut == polar) {
 				if (rewardsTotal > 0)

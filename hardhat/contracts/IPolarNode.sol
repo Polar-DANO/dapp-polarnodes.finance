@@ -13,5 +13,5 @@ interface IPolarNode {
 	
 	function burnBatch(address user, uint[] memory tokenIds) external;
 
-	function setTokenIdToNodeType(uint tokenId, string memory nodeType) external;
+	function setTokenIdToType(uint tokenId, string memory nodeType) external;
 }

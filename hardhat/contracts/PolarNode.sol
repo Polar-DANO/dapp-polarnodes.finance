@@ -20,6 +20,8 @@ contract PolarNode is ERC721, ERC721Enumerable, Owners {
 	string private uriBase;
 
 	mapping(address => bool) public isBlacklisted;
+	bool public onlyAuthorized = true;
+	mapping(address => bool) public isAuthorized;
 
 	bool public openCreateNft = false;
 
@@ -98,6 +100,14 @@ contract PolarNode is ERC721, ERC721Enumerable, Owners {
 		openCreateNft = _new;
 	}
 
+	function setOnlyAuthorized(bool _new) external onlyOwners {
+		onlyAuthorized = _new;
+	}
+
+	function setIsAuthorized(address _new, bool _value) external onlyOwners {
+		isAuthorized[_new] = _value;
+	}
+
 	// external view
 	function baseURI() external view returns(string memory) {
 		return _baseURI();
@@ -165,6 +175,13 @@ contract PolarNode is ERC721, ERC721Enumerable, Owners {
 		require(!isBlacklisted[from] && !isBlacklisted[to], 
 			"PolarNode: Blacklisted address");
 
+		if (onlyAuthorized) {
+			require(!_isContract(from) || isAuthorized[from],
+				"PolarNode: Unauthorized contract");
+			require(!_isContract(to) || isAuthorized[to],
+				"PolarNode: Unauthorized contract");
+		}
+
 		if (nodeOwnersInserted[to] == false) {
 			nodeOwners.push(to);
 			nodeOwnersInserted[to] = true;
@@ -172,6 +189,12 @@ contract PolarNode is ERC721, ERC721Enumerable, Owners {
 
 		IHandler(handler).transferFrom(from, to, tokenId);
 		super._transfer(from, to, tokenId);
+	}
+
+	function _isContract(address addr) internal view returns(bool) {
+		uint size;
+		assembly { size := extcodesize(addr) }
+		return size > 0;
 	}
 
 	// ERC721 && ERC721Enumerable required overriding
@@ -193,5 +216,30 @@ contract PolarNode is ERC721, ERC721Enumerable, Owners {
 		returns(bool)
 	{
 		return super.supportsInterface(interfaceId);
+	}
+
+	function _setApprovalForAll(
+		address owner,
+		address operator,
+		bool approved
+	)
+		internal
+		override(ERC721)
+	{
+		if (onlyAuthorized) {
+			require(!_isContract(owner) || isAuthorized[owner],
+				"PolarNode: Unauthorized contract");
+			require(!_isContract(operator) || isAuthorized[operator],
+				"PolarNode: Unauthorized contract");
+		}
+		super._setApprovalForAll(owner, operator, approved);
+	}
+
+	function _approve(address to, uint256 tokenId) internal override(ERC721) {
+		if (onlyAuthorized) {
+			require(!_isContract(to) || isAuthorized[to],
+				"PolarNode: Unauthorized contract");
+		}
+		super._approve(to, tokenId);
 	}
 }

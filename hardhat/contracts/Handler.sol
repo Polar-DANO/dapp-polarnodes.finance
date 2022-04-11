@@ -8,7 +8,6 @@ import "./IPolarLuckyBox.sol";
 import "./ISwapper.sol";
 import "./Owners.sol";
 
-import "hardhat/console.sol";
 
 contract Handler is Owners {
 	event NewNode(
@@ -296,7 +295,7 @@ contract Handler is Owners {
 				feature
 			);
 
-		IPolarNode(nft).setTokenIdToNodeType(tokenIds[0], name);
+		IPolarNode(nft).setTokenIdToType(tokenIds[0], name);
 	}
 
 	function claimRewardsAll(address tokenOut, address user) external {
