@@ -26,7 +26,7 @@
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator';
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
-
+import addresses from '~/config/addresses'
 @Component
 export default class Mynft extends WalletReactiveFetch implements IReactiveFetch {
   onScrollToTable () {
@@ -54,8 +54,8 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
       {
         icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
         title: 'My $POLAR Balance',
-        price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address) : null,
-        percentage: null,
+        price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](addresses.Token) :null,
+        percentage: null
       },
     ];
   }
@@ -74,7 +74,7 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
       await {
         lbTypes: await this.$store.dispatch('luckyboxes/loadLuckyBoxTypes'),
         myLbs: await this.$store.dispatch('luckyboxes/loadMyLuckyBoxes'),
-        polarBalance: await this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),
+        polarBalance: await this.$store.dispatch('tokens/loadBalance', addresses.Token),
         myNFTs: await (async () => {
           await this.$store.dispatch('nodes/loadNodeTypes');
           await this.$store.dispatch('nft/loadMyNFTs');

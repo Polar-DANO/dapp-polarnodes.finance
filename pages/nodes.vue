@@ -49,6 +49,7 @@
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator';
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
+import addresses from '~/config/addresses'
 
 @Component
 export default class Nodes extends WalletReactiveFetch implements IReactiveFetch {
@@ -79,7 +80,7 @@ export default class Nodes extends WalletReactiveFetch implements IReactiveFetch
       {
         icon: require('../assets/img/nodesIcon/polarbalance_icon.svg'),
         title: 'My $POLAR Balance',
-        price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](this.$store.state.tokens.tokens.POLAR.address) : null,
+        price: this.isWalletConnected ? this.$store.getters['tokens/balanceForToken'](addresses.Token) : null,
         percentage: null,
       },
     ];
@@ -100,8 +101,7 @@ export default class Nodes extends WalletReactiveFetch implements IReactiveFetch
       ...(
         (this.isWalletConnected)
           ? [
-              this.$store.dispatch('tokens/loadBalance', this.$store.state.tokens.tokens.POLAR.address),
-            ]
+              this.$store.dispatch('tokens/loadBalance', addresses.Token),            ]
           : []),
     ]);
   }

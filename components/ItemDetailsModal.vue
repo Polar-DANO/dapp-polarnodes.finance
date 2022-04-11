@@ -178,7 +178,7 @@ import axios from 'axios';
 import { NFTType, ItemType } from '~/models/marketplace';
 import WalletReactiveFetch from '~/mixins/wallet-reactive-fetch';
 import * as NodeType from '~/models/NodeType';
-
+import addresses from '~/config/addresses'
 @Component({
   props: {
     item: Object,
@@ -346,7 +346,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
   }
 
   get isPolarApproved () {
-    return this.$store.getters['tokens/hasEnoughMarketplaceAllowance'](this.$store.state.tokens.tokens.POLAR.address, this.price);
+    return this.$store.getters['tokens/hasEnoughMarketplaceAllowance'](addresses.Token, this.price);
   }
 
   async onApprove () {
@@ -359,7 +359,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
       }
 
       if (!this.isPolarApproved) {
-        await this.$store.dispatch('tokens/requestMarketplaceAllowance', this.$store.state.tokens.tokens.POLAR.address);
+        await this.$store.dispatch('tokens/requestMarketplaceAllowance', addresses.Token)
       }
     } finally {
       this.isBtnLoading = false;
@@ -370,7 +370,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
     if (this.isWalletConnected) {
       await Promise.all([
         this.$store.dispatch('marketplace/loadApproveForNftType', this.nft.nftType),
-        this.$store.dispatch('tokens/loadAllowance', this.$store.state.tokens.tokens.POLAR.address),
+        this.$store.dispatch('tokens/loadAllowance', addresses.Token)
       ]);
     }
   }

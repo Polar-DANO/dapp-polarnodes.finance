@@ -1,12 +1,9 @@
 import { GetterTree, MutationTree, ActionTree } from 'vuex';
 import { BigNumber } from 'ethers';
 import addresses from '~/config/addresses';
-
+import {TokenType} from '../models/tokenType'
 export const state = () => ({
-  tokens: {
-    POLAR: { address: addresses.Token, symbol: '$POLAR' },
-    DAI: { address: addresses.Dai, symbol: 'DAI' },
-  },
+  tokens: [{address:addresses.Token, symbol:'$POLAR'}] as TokenType[],
   balance: {} as { [tokenAddress: string]: (BigNumber | null) },
   allowance: {} as { [tokenAddress: string] : { [address: string]: BigNumber } },
   ...(process.env.isTestnet)
@@ -27,6 +24,12 @@ export const getters: GetterTree<State, {}> = {
 };
 
 export const mutations: MutationTree<State> = {
+  setTokenType(state, tokenTypes:TokenType[]) {
+    tokenTypes.map((data:any, index: number) => {
+      state.tokens?.push(data)
+    })
+    // state.tokens = state.tokens?.push(token) tokenTypes
+  },
   setBalance (state, { balance, token }: { balance: BigNumber, token: string }) {
     state.balance = {
       ...state.balance,
@@ -60,7 +63,16 @@ export const mutations: MutationTree<State> = {
 
 export const actions: ActionTree<State, {}> = {
   async loadBalance ({ commit, rootGetters }, token: string) {
-    const userAddress = rootGetters['wallet/address'];
+    const mapPathSize = await this.$contracts?.swapper.getMapPathSize();
+    const addresses = await this.$contracts?.swapper.getMapPathKeysBetweenIndexes(0,parseInt(mapPathSize._hex));
+    const tokenTypes = await Promise.all(addresses.map(async(address:string, index:number):Promise<TokenType> => {
+      const symbol = await this.$contracts?.erc20(address).symbol();
+      return { address: address, symbol:symbol}
+    }))
+    // console.log(tokenTypes,"11111111111111111")
+
+    commit('setTokenType', tokenTypes)
+    const userAddress = rootGetters['wallet/address']
     if (!userAddress) {
       throw new Error('Current user address not found');
     }
