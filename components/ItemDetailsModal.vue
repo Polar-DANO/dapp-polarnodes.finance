@@ -38,7 +38,7 @@
           />
           <div v-if="nodeData" class="flex flex-col md:mx-[90px] mt-4">
             <div class="flex flex-col gap-[4px] md:gap-[8px]">
-              <div class="flex flex-initial text-center items-center">
+              <!-- <div class="flex flex-initial text-center items-center">
                 <div
                   class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]"
                 >
@@ -53,12 +53,12 @@
                     >{{ roi }}%</span>
                   </div>
                 </div>
-              </div>
+              </div> -->
               <div class="flex flex-initial text-center items-center">
                 <div
                   class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]"
                 >
-                  Claim Tax:
+                  Claim Before ROI:
                 </div>
                 <div
                   class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]"
