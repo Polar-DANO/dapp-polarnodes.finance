@@ -116,6 +116,7 @@
 import { Component, Vue } from 'nuxt-property-decorator';
 import * as ethers from 'ethers';
 import axios from 'axios';
+import WalletReactiveFetch from '~/mixins/wallet-reactive-fetch';
 import * as NodeType from '~/models/NodeType';
 import { NFT } from '~/models/nft';
 
@@ -124,7 +125,7 @@ import { NFT } from '~/models/nft';
     nft: Object as () => NFT,
   },
 })
-export default class NFTSellModal extends Vue {
+export default class NFTSellModal extends WalletReactiveFetch {
   public isClaimBtnLoading = false;
   public video = null;
 
@@ -134,9 +135,6 @@ export default class NFTSellModal extends Vue {
 
     const { data } = await axios.get(`https://api.polar.financial/node/${tokenId}`);
     this.video = data.animation_url;    
-    await Promise.all([
-      this.$store.dispatch('nft/loadSpecialROI', nft.tokenId)
-    ]);    
   }
 
   get nodeType () {
@@ -145,7 +143,7 @@ export default class NFTSellModal extends Vue {
 
   get rewardAmount () {
     const rt = (10000 + this.$store.getters['nft/spROI'])/10000
-    return NodeType.dailyRewardPerNode(this.nodeType).mul(rt)
+    return rt ? NodeType.dailyRewardPerNode(this.nodeType).mul(rt) : NodeType.dailyRewardPerNode(this.nodeType)
   }
 
   get pendingRewards () {
@@ -183,6 +181,14 @@ export default class NFTSellModal extends Vue {
     }
 
     return bn;
+  }
+
+  async reactiveFetch () {
+    if (this.isWalletConnected) {
+      await Promise.all([
+        this.$store.dispatch('nft/loadSpecialROI', this.$props.nft.tokenId)
+      ]);
+    }
   }
 }
 </script>
