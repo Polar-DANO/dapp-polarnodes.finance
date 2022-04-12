@@ -27,7 +27,7 @@
         </div>
         <div class="flex flex-col gap-[12px] md:gap-[15px]">
           <div class="border-solid border-[#00C6ED] border-[2px] rounded-[14px] text-center p-[23px]">
-            <span class="text-[white] text-[16px] font-[600]">Earning {{ formatBigNumber(rewardAmount) }} $POLAR per day</span>
+            <span class="text-[white] text-[16px] font-[600]">Earning {{ rewardAmount }} $POLAR per day</span>
           </div>
           <div class="flex gap-2 items-center">
             <div class="flex text-center  w-[70%]">
@@ -141,8 +141,8 @@ export default class NFTSellModal extends Vue {
   }
 
   get rewardAmount () {
-    const rt = (10000 + this.$store.getters['nft/spROI'])/10000     
-    return rt ? NodeType.dailyRewardPerNode(this.nodeType).mul(rt) : NodeType.dailyRewardPerNode(this.nodeType)
+    const rt = (10000 + this.$store.getters['nft/spROI'])/10000 
+    return rt ? this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType)) as any * rt : this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType))
   }
 
   get pendingRewards () {
