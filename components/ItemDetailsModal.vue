@@ -91,7 +91,12 @@
         </div>
         <div class="flex-1 flex-col gap-[8px] md:gap-[43px]">
           <div v-if="isOffer" class="flex flex-initial flex-col gap-[8px] md:gap-[14px]">
-            <div class="flex flex-initial text-center items-center">
+            <div>
+              <div class="white--text text-right mr-2">
+                Earn By Days: {{ rewardAmount }} $POLAR
+              </div>
+            </div>
+            <div class="flex flex-initial text-center items-center">              
               <div
                 class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]"
               >
@@ -131,8 +136,13 @@
                   </div>
                   </template>
               </countdown>
+
               <div class="white--text text-right mr-2">
                 Auction End: {{ item.end.toUTCString() }}
+              </div>
+
+              <div class="white--text text-right mr-2">
+                Earn By Days: {{ rewardAmount }} $POLAR
               </div>
 
               <div class="flex flex-initial text-center items-center">
@@ -310,6 +320,11 @@ export default class ItemDetailModal extends WalletReactiveFetch {
     return this.nft.attribute != "" ? (NodeType.roi(this.nodeType) + NodeType.roi(this.nodeType) * this.$store.getters['nft/spROI']/10000).toFixed(2) : NodeType.roi(this.nodeType).toFixed(2);
   }
 
+  get rewardAmount () {
+    const rt = (10000 + this.$store.getters['nft/spROI'])/10000 
+    return rt ? (this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType)) as any * rt).toFixed(2) : this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType))
+  }
+
   get claimTax () {
     if (!this.nodeType) { return null; }
     return this.nodeType.claimTax;
@@ -412,6 +427,14 @@ export default class ItemDetailModal extends WalletReactiveFetch {
     } finally {
       this.isBtnLoading = false;
     }
+  }
+
+  formatBigNumber (bn: unknown, decimals = 2) {
+    if (ethers.BigNumber.isBigNumber(bn)) {
+      return parseFloat(ethers.utils.formatEther(bn)).toFixed(decimals);
+    }
+
+    return bn;
   }
 
   async reactiveFetch () {

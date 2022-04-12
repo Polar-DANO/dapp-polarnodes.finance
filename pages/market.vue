@@ -49,8 +49,10 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
     return this.$store.getters['marketplace/view/current'];
   }
 
-  private onClick (item: Item) {
-    this.selectedItem = item;
+  async onClick (item: Item) {
+    await this.$store.dispatch('nft/loadSpecialROI', item.nft.tokenId).then(res => {
+      this.selectedItem = item;
+    })    
   }
 
   async reactiveFetch () {
