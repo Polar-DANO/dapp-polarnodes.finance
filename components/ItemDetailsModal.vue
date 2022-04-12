@@ -93,7 +93,7 @@
           <div v-if="isOffer" class="flex flex-initial flex-col gap-[8px] md:gap-[14px]">
             <div>
               <div class="white--text text-right mr-2">
-                Earn By Days: {{ rewardAmount }} $POLAR
+                Earn By Day: {{ rewardAmount }} $POLAR
               </div>
             </div>
             <div class="flex flex-initial text-center items-center">              
@@ -142,7 +142,7 @@
               </div>
 
               <div class="white--text text-right mr-2">
-                Earn By Days: {{ rewardAmount }} $POLAR
+                Earn By Day: {{ rewardAmount }} $POLAR
               </div>
 
               <div class="flex flex-initial text-center items-center">
