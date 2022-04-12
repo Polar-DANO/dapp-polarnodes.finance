@@ -249,7 +249,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
   private bid = 100;
   private isBtnLoading = false;
   public video: string | null = null;
-  public title: string | null = null;
+  public title: string | null = null;  
 
   async mounted () {
     const { tokenId: bigNumTokenId, nft } = this;
@@ -321,7 +321,8 @@ export default class ItemDetailModal extends WalletReactiveFetch {
   }
 
   get rewardAmount () {
-    const rt = (10000 + this.$store.getters['nft/spROI'])/10000 
+    if (!this.nodeType) { return null; }
+    const rt = (10000 + this.$store.getters['nft/spROI'])/10000     
     return rt ? (this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType)) as any * rt).toFixed(2) : this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType))
   }
 
