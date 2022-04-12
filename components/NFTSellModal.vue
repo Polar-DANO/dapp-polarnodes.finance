@@ -116,7 +116,6 @@
 import { Component, Vue } from 'nuxt-property-decorator';
 import * as ethers from 'ethers';
 import axios from 'axios';
-import WalletReactiveFetch from '~/mixins/wallet-reactive-fetch';
 import * as NodeType from '~/models/NodeType';
 import { NFT } from '~/models/nft';
 
@@ -125,7 +124,7 @@ import { NFT } from '~/models/nft';
     nft: Object as () => NFT,
   },
 })
-export default class NFTSellModal extends WalletReactiveFetch {
+export default class NFTSellModal extends Vue {
   public isClaimBtnLoading = false;
   public video = null;
 
@@ -142,7 +141,7 @@ export default class NFTSellModal extends WalletReactiveFetch {
   }
 
   get rewardAmount () {
-    const rt = (10000 + this.$store.getters['nft/spROI'])/10000
+    const rt = (10000 + this.$store.getters['nft/spROI'])/10000     
     return rt ? NodeType.dailyRewardPerNode(this.nodeType).mul(rt) : NodeType.dailyRewardPerNode(this.nodeType)
   }
 
@@ -159,7 +158,8 @@ export default class NFTSellModal extends WalletReactiveFetch {
   }
 
   get roi () {
-    return this.$props.nft.attribute != "" ? (NodeType.roi(this.nodeType) + NodeType.roi(this.nodeType) * this.$store.getters['nft/spROI']/10000).toFixed(2) : NodeType.roi(this.nodeType).toFixed(2);
+    const rt = this.$store.getters['nft/spROI'] ? this.$store.getters['nft/spROI']/10000 : 0
+    return this.$props.nft.attribute != "" ? (NodeType.roi(this.nodeType) + NodeType.roi(this.nodeType) * rt).toFixed(2) : NodeType.roi(this.nodeType).toFixed(2);
   }
 
   get canSell () {
@@ -183,13 +183,6 @@ export default class NFTSellModal extends WalletReactiveFetch {
     return bn;
   }
 
-  async reactiveFetch () {
-    if (this.isWalletConnected) {
-      await Promise.all([
-        this.$store.dispatch('nft/loadSpecialROI', this.$props.nft.tokenId)
-      ]);
-    }
-  }
 }
 </script>
 <style>
