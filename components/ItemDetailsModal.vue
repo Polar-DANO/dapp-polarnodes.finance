@@ -36,7 +36,7 @@
             width="100%"
             max-height="300px"
           />
-          <div v-if="nodeData" class="flex flex-col md:mx-[90px] mt-4">
+          <div v-if="nodeData" class="flex flex-col md:mx-[80px] mt-4">
             <div class="flex flex-col gap-[4px] md:gap-[8px]">
               <div class="flex flex-initial text-center items-center">
                 <div
@@ -50,7 +50,7 @@
                   <div class="py-[4px] md:py-[8px]">
                     <span
                       class="text-[white] text-[14px] text-center font-[500]"
-                    >{{ roi }}%</span>
+                    >{{ roi}}%</span>
                   </div>
                 </div>
               </div>
@@ -67,6 +67,22 @@
                     <span
                       class="text-[white] text-[14px] text-center font-[500]"
                     >{{ claimTax }}%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-initial text-center items-center">
+                <div
+                  class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]"
+                >
+                  Tax After ROI:
+                </div>
+                <div
+                  class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]"
+                >
+                  <div class="py-[4px] md:py-[8px]">
+                    <span
+                      class="text-[white] text-[14px] text-center font-[500]"
+                    >{{ globalTax }}%</span>
                   </div>
                 </div>
               </div>
@@ -264,12 +280,17 @@ export default class ItemDetailModal extends WalletReactiveFetch {
 
   get roi () {
     if (!this.nodeType) { return null; }
-    return NodeType.roi(this.nodeType).toFixed(2);
+    return this.nft.attribute != "" ? (NodeType.roi(this.nodeType) + NodeType.roi(this.nodeType) * this.$store.getters['nft/spROI']/10000).toFixed(2) : NodeType.roi(this.nodeType).toFixed(2);
   }
 
   get claimTax () {
     if (!this.nodeType) { return null; }
     return this.nodeType.claimTax;
+  }
+
+  get globalTax () {
+    if (!this.nodeType) { return null; }
+    return this.nodeType.globalTax;
   }
 
   get isOwner () {
@@ -370,7 +391,8 @@ export default class ItemDetailModal extends WalletReactiveFetch {
     if (this.isWalletConnected) {
       await Promise.all([
         this.$store.dispatch('marketplace/loadApproveForNftType', this.nft.nftType),
-        this.$store.dispatch('tokens/loadAllowance', addresses.Token)
+        this.$store.dispatch('tokens/loadAllowance', addresses.Token),
+        this.$store.dispatch('nft/loadSpecialROI',this.nft.tokenId)
       ]);
     }
   }

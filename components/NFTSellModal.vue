@@ -27,7 +27,7 @@
         </div>
         <div class="flex flex-col gap-[12px] md:gap-[15px]">
           <div class="border-solid border-[#00C6ED] border-[2px] rounded-[14px] text-center p-[23px]">
-            <span class="text-[white] text-[16px] font-[600]">Earning {{ formatBigNumber(rewardAmount) }} $POLAR per day</span>
+            <span class="text-[white] text-[16px] font-[600]">Earning {{ rewardAmount }} $POLAR per day</span>
           </div>
           <div class="flex gap-2 items-center">
             <div class="flex text-center  w-[70%]">
@@ -61,7 +61,7 @@
               </div>
               <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]">
                 <div class="px-[4px] py-[8px]">
-                  <span class="text-[white] text-[14px] mr-[16px] font-[500]">{{ roi.toFixed(2) }}%</span>
+                  <span class="text-[white] text-[14px] mr-[16px] font-[500]">{{ roi}}%</span>
                 </div>
               </div>
             </div>
@@ -72,6 +72,16 @@
               <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]">
                 <div class="px-[4px] py-[8px]">
                   <span class="text-[white] text-[14px] mr-[16px] font-[500]">{{ claimTax }}%</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center text-center">
+              <div class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[8px] font-[600]">
+                Global Tax:
+              </div>
+              <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]">
+                <div class="px-[4px] py-[8px]">
+                  <span class="text-[white] text-[14px] mr-[16px] font-[500]">{{ globalTax }}%</span>
                 </div>
               </div>
             </div>
@@ -123,7 +133,7 @@ export default class NFTSellModal extends Vue {
     const tokenId = parseInt(nft.tokenId);
 
     const { data } = await axios.get(`https://api.polar.financial/node/${tokenId}`);
-    this.video = data.animation_url;
+    this.video = data.animation_url;    
   }
 
   get nodeType () {
@@ -131,7 +141,8 @@ export default class NFTSellModal extends Vue {
   }
 
   get rewardAmount () {
-    return NodeType.dailyRewardPerNode(this.nodeType);
+    const rt = (10000 + this.$store.getters['nft/spROI'])/10000 
+    return rt ? this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType)) as any * rt : this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType))
   }
 
   get pendingRewards () {
@@ -141,9 +152,14 @@ export default class NFTSellModal extends Vue {
   get claimTax () {
     return this.nodeType.claimTax;
   }
+  
+  get globalTax () {
+    return this.nodeType.globalTax;
+  }
 
   get roi () {
-    return NodeType.roi(this.nodeType);
+    const rt = this.$store.getters['nft/spROI'] ? this.$store.getters['nft/spROI']/10000 : 0
+    return this.$props.nft.attribute != "" ? (NodeType.roi(this.nodeType) + NodeType.roi(this.nodeType) * rt).toFixed(2) : NodeType.roi(this.nodeType).toFixed(2);
   }
 
   get canSell () {
@@ -166,6 +182,7 @@ export default class NFTSellModal extends Vue {
 
     return bn;
   }
+
 }
 </script>
 <style>

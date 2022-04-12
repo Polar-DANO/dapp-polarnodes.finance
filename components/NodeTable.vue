@@ -136,10 +136,13 @@ export default class NodeTable extends Vue {
     this.nftSellModal = false;
   }
 
-  public openSellModal (nft: NFT) {
+  async openSellModal (nft: NFT) {
     this.selectedNft = nft;
-    this.nftSellModal = true;
-    this.nftSellSectionModal = false;
+    
+    await this.$store.dispatch('nft/loadSpecialROI', nft.tokenId).then(res => {
+      this.nftSellModal = true;
+      this.nftSellSectionModal = false;
+    })    
   }
 
   async onClaimAll () {
