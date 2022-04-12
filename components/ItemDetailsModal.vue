@@ -58,7 +58,7 @@
                 <div
                   class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]"
                 >
-                  Tax Before ROI:
+                  Before ROI:
                 </div>
                 <div
                   class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]"
