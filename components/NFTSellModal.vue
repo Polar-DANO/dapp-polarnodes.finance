@@ -142,7 +142,7 @@ export default class NFTSellModal extends Vue {
 
   get rewardAmount () {
     const rt = (10000 + this.$store.getters['nft/spROI'])/10000 
-    return rt ? this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType)) as any * rt : this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType))
+    return rt ? (this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType)) as any * rt).toFixed(2) : this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType))
   }
 
   get pendingRewards () {
