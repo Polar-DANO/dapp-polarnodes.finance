@@ -92,7 +92,7 @@
         <div class="flex-1 flex-col gap-[8px] md:gap-[43px]">
           <div v-if="isOffer" class="flex flex-initial flex-col gap-[8px] md:gap-[14px]">
             <div>
-              <div class="white--text text-right mr-2">
+              <div class="white--text text-right mr-2 node-card__outlined pa-2 text-center">
                 Earn By Day: {{ rewardAmount }} $POLAR
               </div>
             </div>
@@ -141,8 +141,8 @@
                 Auction End: {{ item.end.toUTCString() }}
               </div>
 
-              <div class="white--text text-right mr-2">
-                Earn By Day: {{ rewardAmount }} $POLAR
+              <div class="white--text text-right mr-2 node-card__outlined pa-2 text-center">
+                Earn By Day : {{ rewardAmount }} $POLAR
               </div>
 
               <div class="flex flex-initial text-center items-center">
