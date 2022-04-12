@@ -51,8 +51,8 @@ export const LUCKYBOX_INDEX_TO_VIDEO = [
 ];
 
 export const LUCKYBOX_VIDEO_BY_TYPE: Record<string, string> = {
-  'Neutral Lucky Box': 'https://streamable.com/e/ip6o4z?autoplay=1&nocontrols=1&loop=0&muted=0',
-  'Fresh Lucky Box': 'https://streamable.com/e/hbtqvz?autoplay=1&nocontrols=1&loop=0&muted=0',
-  'Icy Lucky Box': 'https://streamable.com/e/01zzmf?autoplay=1&nocontrols=1&loop=0&muted=0',
-  'Placeholder Lucky Box': 'https://streamable.com/e/terfsa?autoplay=1&nocontrols=1&loop=0&muted=0',
+  'Neutral Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OPENING LVL 1.mp4'),
+  'Fresh Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OPENING LVL 2.mp4'),
+  'Icy Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OPENING LVL 3.mp4'),
+  'Placeholder Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OPENING LVL 4.mp4'),
 };
