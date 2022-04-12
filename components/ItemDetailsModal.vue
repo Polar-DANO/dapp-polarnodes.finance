@@ -58,7 +58,7 @@
                 <div
                   class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]"
                 >
-                  Tax Before ROI:
+                  Before ROI:
                 </div>
                 <div
                   class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]"
@@ -91,7 +91,12 @@
         </div>
         <div class="flex-1 flex-col gap-[8px] md:gap-[43px]">
           <div v-if="isOffer" class="flex flex-initial flex-col gap-[8px] md:gap-[14px]">
-            <div class="flex flex-initial text-center items-center">
+            <div>
+              <div class="white--text text-right mr-2 node-card__outlined pa-2 text-center">
+                Earn By Day: {{ rewardAmount }} $POLAR
+              </div>
+            </div>
+            <div class="flex flex-initial text-center items-center">              
               <div
                 class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]"
               >
@@ -109,8 +114,35 @@
           </div>
           <div v-if="isAuction" class="flex flex-initial flex-col gap-[8px] md:gap-[14px]">
             <div class="flex flex-col gap-[4px] md:gap-[8px]">
+              <countdown :time="item.end.getTime() - new Date().getTime()">
+                <template slot-scope="props"> 
+                  <div class="text-[white] text-[34px] flex gap-x-[12px] mb-[20px]">
+                    <div class="flex-1 flex flex-col gap-y-4 text-center">
+                      <span class="bg-[#00C6ED] rounded-[8px] px-[12px] py-[12px]">{{ props.days < 10 ? '0'+props.days : props.days }} </span>
+                      <span> Days </span>
+                    </div>
+                    <div class="flex-1 flex flex-col gap-y-4 text-center">
+                      <span class="bg-[#00C6ED] rounded-[8px] px-[12px] py-[12px]">{{ props.hours < 10 ? '0'+props.hours : props.hours }}</span> 
+                      <span> Hours </span>
+                    </div>
+                    <div class="flex-1 flex flex-col gap-y-4 text-center">
+                      <span class="bg-[#00C6ED] rounded-[8px] px-[12px] py-[12px]">{{ props.minutes < 10 ? '0'+props.minutes : props.minutes }}</span> 
+                      <span> Minutes </span>
+                    </div>
+                    <div class="flex-1 flex flex-col gap-y-4 text-center">
+                      <span class="bg-[#00C6ED] rounded-[8px] px-[12px] py-[12px]">{{ props.seconds < 10 ? '0'+props.seconds : props.seconds }}</span>
+                      <span> Seconds </span>
+                    </div>
+                  </div>
+                  </template>
+              </countdown>
+
               <div class="white--text text-right mr-2">
                 Auction End: {{ item.end.toUTCString() }}
+              </div>
+
+              <div class="white--text text-right mr-2 node-card__outlined pa-2 text-center">
+                Earn By Day : {{ rewardAmount }} $POLAR
               </div>
 
               <div class="flex flex-initial text-center items-center">
@@ -188,13 +220,18 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator';
+import { Vue, Component } from 'nuxt-property-decorator';
 import * as ethers from 'ethers';
 import axios from 'axios';
 import { NFTType, ItemType } from '~/models/marketplace';
 import WalletReactiveFetch from '~/mixins/wallet-reactive-fetch';
 import * as NodeType from '~/models/NodeType';
 import addresses from '~/config/addresses'
+
+import VueCountdown from '@chenfengyuan/vue-countdown';
+
+Vue.component(VueCountdown.name, VueCountdown);
+
 @Component({
   props: {
     item: Object,
@@ -212,7 +249,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
   private bid = 100;
   private isBtnLoading = false;
   public video: string | null = null;
-  public title: string | null = null;
+  public title: string | null = null;  
 
   async mounted () {
     const { tokenId: bigNumTokenId, nft } = this;
@@ -281,6 +318,12 @@ export default class ItemDetailModal extends WalletReactiveFetch {
   get roi () {
     if (!this.nodeType) { return null; }
     return this.nft.attribute != "" ? (NodeType.roi(this.nodeType) + NodeType.roi(this.nodeType) * this.$store.getters['nft/spROI']/10000).toFixed(2) : NodeType.roi(this.nodeType).toFixed(2);
+  }
+
+  get rewardAmount () {
+    if (!this.nodeType) { return null; }
+    const rt = (10000 + this.$store.getters['nft/spROI'])/10000     
+    return rt ? (this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType)) as any * rt).toFixed(2) : this.formatBigNumber(NodeType.dailyRewardPerNode(this.nodeType))
   }
 
   get claimTax () {
@@ -385,6 +428,14 @@ export default class ItemDetailModal extends WalletReactiveFetch {
     } finally {
       this.isBtnLoading = false;
     }
+  }
+
+  formatBigNumber (bn: unknown, decimals = 2) {
+    if (ethers.BigNumber.isBigNumber(bn)) {
+      return parseFloat(ethers.utils.formatEther(bn)).toFixed(decimals);
+    }
+
+    return bn;
   }
 
   async reactiveFetch () {
