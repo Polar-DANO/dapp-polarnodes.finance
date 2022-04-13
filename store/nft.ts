@@ -178,14 +178,14 @@ export const actions: ActionTree<State, {}> = {
       throw new Error('Contracts not loaded');
     }
 
-    const estimatedGas = await this.$contracts.handler.estimateGas.claimRewardsAll(
-      this.$addresses.Token,
-      userAddress
-    );
+    // const estimatedGas = await this.$contracts.handler.estimateGas.claimRewardsAll(
+    //   this.$addresses.Token,
+    //   userAddress
+    // );
     const tx = await this.$contracts.handler.claimRewardsAll(
       this.$addresses.Token,
       userAddress,
-      { gasLimit: estimatedGas.toNumber() + 1500000 }
+      // { gasLimit: estimatedGas.toNumber() + 1500000 }
     );
 
     await tx.wait();
