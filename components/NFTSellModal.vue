@@ -32,7 +32,8 @@
           <div class="flex gap-2 items-center">
             <div class="flex text-center  w-[70%]">
               <div class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[70%] py-[8px] font-[600]">
-                Pending Rewards:
+                Pending Rewards<br>
+                (Including ROI tax)
               </div>
               <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[30%]">
                 <div class="p-[10px] md:py-[8px]">
