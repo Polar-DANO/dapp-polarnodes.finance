@@ -33,25 +33,25 @@
       >
         <thead>
           <tr>
-            <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <th class="w-[14%] pt-[6px] pl-[12px] text-left text-[12px]">
               <v-checkbox
               class="mt-2"       
               color="#00C6ED"
               @change="onSelectAllLuckyBox"
               />            
             </th>
-            <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <th class="w-[14%] pt-[6px] pl-[12px] text-left text-[12px]">
               <span class="text-[#00c6ed]">ID</span>
             </th>
-            <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <th class="w-[14%] pt-[6px] pl-[12px] text-left text-[12px]">
               <span class="text-[#00c6ed]">Tier</span>
             </th>
-            <th class="w-[20%] pt-[12px] pl-[16px] text-left text-[12px]" />
+            <th class="w-[20%] pt-[6px] pl-[12px] text-left text-[12px]" />
           </tr>
         </thead>
         <tbody class="divide-white/10 divide-y-[1px] px-[16px]" />
         <tr v-for="(lb, i) in items" :key="`${lb.type}-${i}`">
-          <td class="py-[12px] pl-[16px] text-left text-[12px] text-white">
+          <td class="py-[6px] pl-[12px] text-left text-[12px] text-white">
             <v-checkbox
               class="mt-2"
               v-model="selectedLuckyBox"
@@ -60,12 +60,12 @@
             />
           </td>
           <td
-            class="py-[12px] pl-[16px] text-left text-[12px] text-white"
+            class="py-[6px] pl-[12px] text-left text-[12px] text-white"
           >
             #{{ lb.tokenId.toNumber() }}
           </td>
           <td
-            class="py-[12px] pl-[16px] text-left text-[12px] text-white"
+            class="py-[6px] pl-[12px] text-left text-[12px] text-white"
           >
             {{ lb.type }}
           </td>
