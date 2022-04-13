@@ -147,7 +147,7 @@ export const actions: ActionTree<State, {}> = {
     }, {} as Record<string, BigNumber[]>);
 
 
-    const estimatedGas = await this.$contracts.handler.estimateGas.claimRewardsAll(
+    const estimatedGas = await this.$contracts.handler.estimateGas.claimRewardsBatch(
       this.$addresses.Token,
       userAddress,
       Object.keys(groupped),
