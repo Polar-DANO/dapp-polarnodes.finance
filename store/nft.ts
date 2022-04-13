@@ -146,11 +146,21 @@ export const actions: ActionTree<State, {}> = {
       return nodeTypeGroups;
     }, {} as Record<string, BigNumber[]>);
 
-    const tx = await this.$contracts.handler.claimRewardsBatch(
+
+    const estimatedGas = await this.$contracts.handler.estimateGas.claimRewardsAll(
       this.$addresses.Token,
       userAddress,
       Object.keys(groupped),
       Object.values(groupped)
+    );
+
+    const tx = await this.$contracts.handler.claimRewardsBatch(
+      this.$addresses.Token,
+      userAddress,
+      Object.keys(groupped),
+      Object.values(groupped),
+      { gasLimit: estimatedGas.toNumber() + 1500000 }
+
     );
 
     await tx.wait();

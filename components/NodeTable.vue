@@ -11,9 +11,9 @@
           text
           :loading="isClaimAllBtnLoading"
           :disabled="isClaimAllBtnLoading"
-          @click="onClaimAll"
+          @click="onClaimSelected"
         >
-          Claim All
+          Claim Selected NFTs
         </v-btn>
       </div>
       <table
@@ -21,25 +21,32 @@
       >
         <thead>
           <tr>
-            <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <th class="w-[5%] pt-[12px] pl-[16px] text-left text-[12px]">
+              <v-checkbox
+              class="mt-5"              
+              color="#00C6ED"
+              @change="onSelectAllNFT"
+              />
+            </th>
+            <th class="w-[10%] pt-[6px] pl-[12px] text-left text-[12px]">
               <span class="text-[#00c6ed]">NFT ID</span>
             </th>
-            <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <th class="w-[10%] pt-[6px] pl-[12px] text-left text-[12px]">
               <span class="text-[#00c6ed]">NFT Tier</span>
             </th>
-            <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <th class="w-[14%] pt-[6px] pl-[12px] text-left text-[12px]">
               <span class="text-[#00c6ed]">Date</span>
             </th>
-            <th class="w-[14%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <th class="w-[14%] pt-[6px] pl-[12px] text-left text-[12px]">
               <span class="text-[#00c6ed]">Last Claim Date</span>
             </th>
-            <th class="w-[15%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <th class="w-[15%] pt-[6px] pl-[12px] text-left text-[12px]">
               <span class="text-[#00c6ed]">ROI Date</span>
             </th>
-            <th class="w-[20%] pt-[12px] pl-[16px] text-left text-[12px]">
+            <th class="w-[20%] pt-[6px] pl-[12px] text-left text-[12px]">
               <span class="text-[#00c6ed]">Pending Rewards</span>
             </th>
-            <th class="w-[20%] pt-[12px] pl-[16px] text-left text-[12px]" />
+            <th class="w-[20%] pt-[6px] pl-[12px] text-left text-[12px]" />
           <!-- <th class="pt-[12px] pl-[16px] text-left text-[12px]">
             <button
               class="text-center text-white font-normal text-[16px] border-solid border-[#00C6ED] border-[1px] hover:bg-[#00C6ED] rounded-[14px] px-[30%] my-[10px]"
@@ -67,28 +74,38 @@
           </tr>
           <tr v-for="nft in items" :key="`${nft.tokenId}-${nft.nodeType}`" class="align-middle">
             <td
-              class="py-[12px] pl-[16px] text-left text-[12px] text-white"
+              class="py-[6px] pl-[12px] text-left text-[12px] text-white"
+            >
+              <v-checkbox
+              class="mt-5"
+              v-model="selectedNFTs"
+              :value="nft.tokenId.toNumber()"
+              color="#00C6ED"              
+            />
+            </td>
+            <td
+              class="py-[6px] pl-[12px] text-left text-[12px] text-white"
             >
               #{{ nft.tokenId }}
             </td>
             <td
-              class="py-[12px] pl-[16px] text-left text-[12px] text-white"
+              class="py-[6px] pl-[12px] text-left text-[12px] text-white"
             >
               {{ nft.nodeType }} {{ nft.attribute }}
             </td>
             <td
-              class="py-[12px] pl-[16px] text-left text-[12px] text-white"
+              class="py-[6px] pl-[12px] text-left text-[12px] text-white"
             >
               {{ formatDate(nft.creationTime) }}
             </td>
 
-            <td class="py-[12px] pl-[16px] text-left text-[12px] text-white">
+            <td class="py-[6px] pl-[12px] text-left text-[12px] text-white">
               {{ formatDate(nft.lastClaimTime) }}
             </td>
-            <td class="py-[12px] pl-[16px] text-left text-[12px] text-white">
+            <td class="py-[6px] pl-[12px] text-left text-[12px] text-white">
               {{ formatDate(nft.timeRoi) }}
             </td>
-            <td class="flex flex-wrap items-center justify-center py-[12px] pl-[16px] text-[12px] text-white">
+            <td class="text-left py-[6px] pl-[12px] text-[12px] text-white">
               {{ formatEther(nft.userPendingRewards) || '-' }} $POLAR
             </td>
             <td class="pr-4">
@@ -126,6 +143,7 @@ export default class NodeTable extends Vue {
   private nftSellModal = false;
   private selectedNft: NFT | null = null;
   private isClaimAllBtnLoading = false;
+  public selectedNFTs : any = []
 
   formatDate (date: Date) {
     return new Intl.DateTimeFormat('default', { dateStyle: 'medium' }).format(date);
@@ -151,6 +169,31 @@ export default class NodeTable extends Vue {
       await this.$store.dispatch('nft/claimAll');
     } finally {
       this.isClaimAllBtnLoading = false;
+    }
+  }
+
+  async onClaimSelected() {
+    try {
+      this.isClaimAllBtnLoading = true
+      let selNFTs = []
+
+      for(let i = 0 ; i < this.$props.items.length ; i++) {
+        if(this.selectedNFTs.includes(this.$props.items[i].tokenId.toNumber())){
+          selNFTs.push(this.$props.items[i] as never)
+        }
+      }
+      await this.$store.dispatch('nft/claimRewards',selNFTs)
+    } finally {
+      this.isClaimAllBtnLoading = false
+    }
+  }
+
+  onSelectAllNFT (value : any) {
+    if(value) {
+      this.selectedNFTs = []
+      this.$props.items.map((item:NFT,id:any) => this.selectedNFTs.push(item.tokenId.toNumber()));      
+    } else {
+      this.selectedNFTs = []      
     }
   }
 
