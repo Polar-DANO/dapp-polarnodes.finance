@@ -18,11 +18,11 @@
         {{ cost }} $POLAR
       </div>
       <div class="mt-1">
-        <span class="node-nft__blue-text">Claim tax: </span>
+        <span class="node-nft__blue-text">Tax before ROI</span>
         {{ claimTax }}%
       </div>
       <div class="mt-1">
-        <span class="node-nft__blue-text">Global tax: </span>
+        <span class="node-nft__blue-text">Tax after ROI</span>
         {{ globalTax }}%
       </div>
     </div>

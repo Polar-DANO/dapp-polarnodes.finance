@@ -67,7 +67,7 @@
             </div>
             <div class="flex items-center text-center">
               <div class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[8px] font-[600]">
-                Claim Tax:
+                TAX before ROI
               </div>
               <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]">
                 <div class="px-[4px] py-[8px]">
@@ -77,7 +77,7 @@
             </div>
             <div class="flex items-center text-center">
               <div class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[8px] font-[600]">
-                Global Tax:
+                Tax after ROI
               </div>
               <div class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]">
                 <div class="px-[4px] py-[8px]">
