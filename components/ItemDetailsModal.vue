@@ -200,7 +200,7 @@
             :loading="isBtnLoading"
             @click="() => onRecover()"
           >
-            Recover
+            Recover my NFT
           </v-btn>
           <v-btn
             v-else
@@ -218,7 +218,7 @@
             class="node-card__outlined pa-2 mt-4"            
             dark
             text
-            :loading="isBtnLoading"
+            :loading="isRecoverBtnLoading"
             @click="() => onRecover()"
           >
             Recover
@@ -258,6 +258,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
   private sellGroup: any = [false, false];
   private bid = 100;
   private isBtnLoading = false;
+  private isRecoverBtnLoading = false;
   public video: string | null = null;
   public title: string | null = null;  
 
@@ -399,7 +400,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
 
   async onRecover () {
     try {
-      this.isBtnLoading = true;
+      this.isRecoverBtnLoading = true;
       await this.$store.dispatch('marketplace/recover', {
         nft: this.nft,
         type: this.$props.item.type,
@@ -407,7 +408,7 @@ export default class ItemDetailModal extends WalletReactiveFetch {
 
       this.$router.push('/mynft');
     } finally {
-      this.isBtnLoading = false;
+      this.isRecoverBtnLoading = false;
     }
   }
 
