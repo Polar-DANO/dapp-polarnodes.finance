@@ -68,7 +68,7 @@
                 Go Back To Main
               </div>
             </div>
-            <div class="mt-8 d-flex align-center node-card__details__options">
+            <div v-if="this.maxCreationPendingUser != 0 && this.maxCreationPendingGlobal !=0" class="mt-8 d-flex align-center node-card__details__options">
               <VCheckbox
                 v-model="isPendingRewardsSelected"
                 hide-details
@@ -77,7 +77,7 @@
               />
               Create this Mountain NFT with Pending Rewards
             </div>
-            <div class="mt-1 d-flex align-center node-card__details__options">
+            <div v-if="this.maxLevelUpUser !=0 && this.maxLevelUpGlobal !=0" class="mt-1 d-flex align-center node-card__details__options">
               <VCheckbox
                 v-model="isLevelUpSelected"
                 hide-details

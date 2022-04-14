@@ -13,7 +13,7 @@
           :disabled="isClaimAllBtnLoading"
           @click="onClaimSelected"
         >
-          Claim Selected NFTs
+          Claim Selected <span class="text-[black] font-bold">({{this.selectedNFTs.length}}/{{this.$props.items.length}})</span> NFTs
         </v-btn>
       </div>
       <table
@@ -139,11 +139,11 @@ import { NFT } from '~/models/nft';
   },
 })
 export default class NodeTable extends Vue {
-  private nftSellSectionModal = false;
-  private nftSellModal = false;
-  private selectedNft: NFT | null = null;
-  private isClaimAllBtnLoading = false;
-  public selectedNFTs : any = []
+  public nftSellSectionModal = false;
+  public nftSellModal = false;
+  public selectedNft: NFT | null = null;
+  public isClaimAllBtnLoading = false;
+  public selectedNFTs : any = [];
 
   formatDate (date: Date) {
     return new Intl.DateTimeFormat('default', { dateStyle: 'medium' }).format(date);
