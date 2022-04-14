@@ -203,16 +203,6 @@
             Recover
           </v-btn>
           <v-btn
-            v-else-if="isOwner"
-            class="node-card__outlined pa-2 mt-4"            
-            dark
-            text
-            :loading="isBtnLoading"
-            @click="() => onRecover()"
-          >
-            Recover
-          </v-btn>
-          <v-btn
             v-else
             class="node-card__outlined pa-2 mt-4"
             dark
@@ -222,6 +212,16 @@
             @click="() => isAuction ? onBidAuction() : onBuyNow()"
           >
             {{ isAuction ? 'Bid': 'Buy' }}
+          </v-btn>
+          <v-btn
+            v-if="isOwner"
+            class="node-card__outlined pa-2 mt-4"            
+            dark
+            text
+            :loading="isBtnLoading"
+            @click="() => onRecover()"
+          >
+            Recover
           </v-btn>
         </div>
       </div>
