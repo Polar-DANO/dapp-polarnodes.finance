@@ -475,7 +475,7 @@ export default class Create
         return [
           { header: nodeType },
           ...nfts.map(nft => ({
-            text: `${nodeType} #${nft.tokenId}`,
+            text: `${nodeType} ${nft.attribute} #${nft.tokenId}`,
             value: { ...nft, nodeType },
           })),
         ];

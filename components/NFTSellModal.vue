@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col justify-center fixed bg-[#000000da] top-0 right-0 bottom-0 left-0 md:ml-[244px] md:pt-[190px] md:pb-[90px] md:px-[100px]">
     <div class="bg-[#00C6ED] text-[white] rounded-t-[20px] text-[18px] md:text-[24px] p-[16px]">
-      Sell {{ nft.nodeType }} {{ nft.attribute }} #{{ nft.tokenId }} NFT 🗻️
+      Manage {{ nft.nodeType }} {{ nft.attribute }} #{{ nft.tokenId }} NFT 🗻️
       <div class="cursor-pointer inline absolute right-0 md:px-[100px]">
         <v-btn class="mr-[20px]" icon @click="$emit('closeSellModal')">
           <v-icon class="text-white">
