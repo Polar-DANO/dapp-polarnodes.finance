@@ -1,0 +1,129 @@
+general
+	tout en polar
+	enchere + achat + buy
+	swapper linked
+	swapper not called
+		=> swap at next created node
+	possible de blacklist des nft contract
+	pas de booleen pour disable telle ou telle fonction
+
+function sellOfferItem(address _nft, uint _tokenId, uint _price)
+	proposer un nft a vender
+	nft stocke sur contrat
+	_nft = nft contract address
+	_tokenId = nft id
+	_price = prix de vente
+
+function purchaseOfferItem(address _nft, uint _tokenId)
+	acheter item a la vente
+	pas possible pour celui qui propose la vente
+	transfer polar from acheteur to vendeur base sur previous _price
+	fee envoye a swapper, refer fee part
+
+function recoverOfferItem(address _nft, uint _tokenId)
+	recuperer item a la vente
+	que owner contract ou item.owner
+	transfer nft back to owner
+
+function sellAuctionItem(address _nft, uint _tokenId,uint _currentPrice, uint _end)
+	proposer un nft aux enchere
+	nft stocke sur contrat
+	_nft = nft contract address
+	_tokenId = nft id
+	_price = prix de vente
+	_end = fin des encheres
+		=> pas de check de duree
+		=> si le mec souhaite mettre son nft aux enchere pendant 100 ans il pourra
+
+function purchaseAuctionItem(address _nft, uint _tokenId,uint _currentPrice)
+	proposer une enchere sur le nft
+	pas possible pour le owner original du nft
+	faut que le prix propose soit superieur au dernier annonce
+	transfer polar to contrat
+	renvoie ceux de la derniere enchere au dernier proprietaire
+	_currnentPrice = nouveau prix propose
+
+function recoverAuctionItem(address _nft, uint _tokenId)
+	recuperer un nft apres une enchere
+	il est necessaire que lenchere soit finie
+	envoie la derniere somme a lancien proprio si il y a eu au moins une mise
+	envoie le nft au nouveau proprio
+	que le nouveau owner du nft et le owner du contrat peuvent appeler cette fonction
+	fee envoye a swapper, refer to fee part
+
+
+fee:
+	fee = rate commun entre offer et auction
+	le prix affiche contient le fee
+		=> le fee est directement integre dans le prix dans le des cas
+		=> un mec met en vente pour 10 polar et fee a 10%
+			=> il recevra 9 polar
+			=> swapper 1 polar
+	swapper nest pas call, il recoit juste les polar
+		=> swapper les convertira quand un node sera cree en suivant la logique deja etablie
+
+structure
+	3 iterable map
+		1. nft
+			keys = nft contract address
+			values = map offer et map auction
+				=> cette map ne contient pas les contrats historique comme dans dautres contrat
+				=> uniquement ceux actifs pour permettre un get du front plus rapide
+		2. offer
+			keys = nft token id
+			values Offer struct
+		2. auction
+			keys = nft token id
+			values Auction struct
+
+	Offer struct {
+		address owner; // owner du nft
+		uint tokenId; // nft token id
+		uint price; // price de vente
+	}
+		=> tokenId en tant que value pour permettre un call unique au front
+
+	Auction struct {
+		address owner; // owner original
+		uint tokenId; // nft token id
+		uint currentPrice; // last bid price
+		address nextOwner; // last bid owner
+		uint end; // end of auction
+	}
+		=> nextOwner initial set a nft owner
+		=> currentPrice initial set par le prix defini par le nft owner au ft call
+			=> il peut set un minimum price, celui ci peut etre 0
+		=> tokenId en tant que value pour permettre un call unique au front
+
+getters
+function getNftSize() external view returns(uint)
+	return map nft key size
+		=> le nombre de contrat nft qui ont au moins un token en vente ou en auction
+
+function getNftAddressBetweenIndexes(uint iStart, uint iEnd) external view returns(address[] memory)
+	return values of nft map between indexes
+		=> permet de choper les addresses des contrats nft ayant au moins item en vente ou auction
+
+function getNftAddressAll() external view returns(address[] memory)
+	return nft keys
+		=> toutes les address nft stocke
+		=> peut planter si trop de contrat, dou le between index avant
+
+function getOfferOfSize(address _nft) external view returns(uint)
+	return le nombre doffre de vente du contrat nft stocke sur le contrat
+
+function getOfferOfKeysBetweenIndexes(address _nft, uint iStart, uint iEnd) external view returns(uint[] memory)
+	return les tokenids en vente correspondant au contrat nft entre indexes
+
+function getOfferOfBetweenIndexes(address _nft, uint iStart, uint iEnd) external view returns(Offer[] memory)
+	return toutes les offres en vente correspondant au contrat nft entre indexes
+
+function getAuctionOfSize(address _nft) external view returns(uint)
+	return le nombre denchere du contrat nft stocke sur le contrat
+
+function getAuctionOfKeysBetweenIndexes(address _nft, uint iStart, uint iEnd) external view returns(uint[] memory)
+	return les tokenids en enchere correspondant au contrat nft entre indexes
+
+function getAuctionOfBetweenIndexes(address _nft, uint iStart, uint iEnd) external view returns(Auction[] memory)
+	return toutes les enchere correspondant au contrat nft entre indexes
+

@@ -1,0 +1,13 @@
+const Owner = ""; // POLAROWNER 0xE964346CeA0fA249c3FE5EECb4FEA289964799Fa
+const Addresses = [
+	"", 
+	"", 
+	"", 
+	"", 
+	"", 
+]
+const Metamask = ""; 
+
+module.exports = {
+	Owner, Addresses, Metamask
+}

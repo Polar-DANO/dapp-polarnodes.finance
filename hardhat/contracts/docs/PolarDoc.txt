@@ -1,0 +1,556 @@
+General:
+	Architecture pluggable:
+		Si bug, on peut fix sans tout changer en theorie
+		Si on veut update une des logics, on peut le faire avec une migration ciblee (pas tous les contrats, juste le contrat contenant la logique a changer et derriere on le plug au reste)
+	Architecture:
+		Chaque contrat est independant et gere une logique interne
+		Il y a une exception, le Handler
+			lui cest lorchestrateur
+			il sassure de trigger les logiques internes de tous les autres dans le bon ordre
+		Toutes les fonctions ont des noms dedies a chaque logique et chaque logique de contrat
+			exemple swapper contiendra les fonction swapCreateNodesWithTokens, swapCreateNodeWithPending etc
+				tu peux imaginer differente logiques pour chacune des fonctionnalite dans chacun des contrats et donc des updates de logique pour des events particuliers si lenvie nous en prend
+	Owners:
+		2 types de owners, le super owner et les autres
+		la seule diff entre les deux cest que le super owner peut ajouter/enlever des owners
+		apres en termes de settings ils ont les memes rights
+	Dynamique:
+		Tout est dynamique et ait donc scallable
+		On pourra rajouter demain un type de node sans avoir besoin de faire la moindre migration
+		pareil luckybox
+		pareil en interne pour les features de node ex: Gold/Diamond etc
+	Boolean:
+		Toutes les logiques internes sont controles par des boolean et sont donc activable/desactivable a souhait
+		ex tu peux desactiver la creation de fuji uniquement par createWithPending par exemple
+		pareil pour le swapper
+	name:
+		Les names sont immutable, quelquil soit
+		Ils assurent le lien/identification entre chacun des contrats, les modifier nest et ne sera pas possible
+	User interaction:
+		Toutes les interaction utilisateurs seront via le handler car cest lui lorchestrateur
+		En revanche tous les contrats possedent des getters internes pour la lecture de donnees
+	Lecture de donnees:
+		Toutes les datas, dans tous les contrats sont readable/gettable, sans exception
+	tokenIds:
+		Tous les calls sont tokenIds driven
+		Tous les nodes ont un tokenId unique, cest lidentifiant nft
+			Tous les nodes sont des nft
+		Il permet de rendre chaque node unique et identifiable sur chaque contrat
+		Tous les calls sont appliquable au choix des tokenIds input par le user
+		Ca veut dire quil peut level up/createWithPending/claim etc que certains nodes, ceux quil a choisit
+		exemple, il pourra claim uniquement les nodes avec le roi atteint ou quoi
+	gas:
+		Les calls de maniere general demanderont plus de gas, cest inevitable, plus de possibilite, plus de check, plus dinstruction, plus de temps de travail
+	msg.sender:
+		Tous les calls sont fait par un user pour lui meme
+		Un user pourra pas demander de claim les rewards dun autre user, les owners pourront
+	Iterable Mapping:
+		Toutes les datas custom iterables sont sauvegardes dans des map iterable non library afin de save du gas
+			exemple: les nodes dans un node type ne sont pas un array mais bien un iterable mapping, les lucky box pareil etc etc
+	Pourdimillieme:
+		Tous les rates sont en pourdimillieme. 100 = 1% | 10000 = 100%
+		ca permet des decimals: 9.23% sera possible
+		donc quand je parle de pourcentage plus bas cest un fait des pourdimillieme
+	Randomness:
+		Tout faisant appel a la randomness est pseudo random et non reellement random
+	Setters:
+		Toute valeur intervenant dans une logique de calcul  sans exception est modifiable/parametrable
+
+Contrats:
+	Handler:
+		Le handler, cest le boss. Cest lui qui decide quoi faire et les autres obeissent
+			Analogie electricite: le handler est master tous les autres sont slave si ca vous parle
+		Toutes les tx passent par lui et uniquement par lui pour le user
+	NodeType:
+		Il y a un node type par type de node. ex 1 contrat fuji, 1 autre ushuaia
+		Tous ses node type sont independant les uns des autres
+		On peut en rajouter, en updater, pas en suprimer
+	PolarNode:
+		Cest le contrat node nft
+		Il contient la seule fonction written qui nest pas directement appele par le handler, a savoir transferFrom, on en reparle plus bas
+	PolarLuckyBox
+		Cest le contrat lucky box. Les lucky box sont des nft echangeble/tradable
+	Swapper
+		Il contient toute la logique des input/output de token
+		Cest notamment lui quil faudra approve avec la distri ou que le user devra approve quand il buy un node
+
+
+
+User calls:
+
+handler.createNodesWithTokens(address tokenIn, string name, uint count, string sponso)
+	Ca cest le call quun user doit faire pour creer un ou plusiquers nodes avec des tokens
+	Tu peux creer plusieurs nodes mais tous de meme types, exemple 3 Fuji ok / 1 Fuji 1 Mont Blanc not ok
+	params:
+		tokenIn: le token utilise pour paye, par default le Polar uniquement est accepte
+			on peut en rajouter mais on doit les valider en tant que owner pour eviter des failles de reentrances
+			mon setup permet de rajouter le dai et le wavax
+			il ne sera pas possible de payer en avax directement
+		name: le nom du node a creer, ex Fuji/Mont Blanc etc
+		count: nombre de node a creer
+		sponso: code createur, cest une chaine de character, on en reparle plus bas
+
+handler.createNodesLevelUp(address tokenOut, string[] nameFrom, uint[][]tokenIdsToBurn, string nameTo, uint count)
+	Ca cest le call quun user doit faire pour level up des nodes
+	Il fait parti des 2 seuls calls pouvant burn des nodes nft, createLuckyBoxesWithNodes etant lautre
+	Le user peut selectionner les nodes specific a detruire via les tokenIds
+		Ces nodes ne sont pas forcement de meme type, il pourra burn 4 Mont Blanc et 1 Fuji pour avoir un Kili par exemple
+	Le/les nodes obtenus seront encore une fois de meme type, exemple 3 Kili ok / 1 Kili 1 Mont Blanc not ok
+	Les rewards des nodes burn sont claim et envoye au user
+	IMPORTANT:
+		Il ny a pas de check de valeur en details
+		Tu peux level up un Kili avec 5 Everest, les 5 everest seront burn
+		Je ne peux pas implementer ce check sans exploser tous les records de gas consomme
+		Il faudra dire au user de faire gaffe
+		La condition cest: Si la totalite du prix de tes nodes a burn est superieur aux prix des nodes a creer, ca passe, sinon non. Donc 5 everest pour un Fuji, ca marcherait
+	params:
+		tokenOut: token utilise pour payer les claimed rewards, par default seul le polar sera possible mais on pourra imaginer payer en dai ou quoi si vous le souhaitez (pression baissiere donc peut etre jamais)
+		nameFrom: array de nodeType name, cest un gas saver. il est associe au param tokenIdsToBurn
+		tokenIdsToBurn: array darray de tokenIds, vous vous en doutez, ceux a burn. Associe a nameFrom
+			exemple mieux que des mots:
+				tokenIdsToBurn = [[0,1],[18]] | nameFrom = ["Kilimanajro", "Fuji"]
+				ca veut dire, va dans le contrat kili et burn les ids 0,1 puis va dans Fuji et burn lid 18
+		nameTo: le nom du node a creer, ex Fuji/Mont Blanc etc
+		count: nombre de node a creer
+
+handler.createNodesWithPending(address tokenOut, string[] nameFrom, uint[][]tokenIdsToClaim, string nameTo, uint count)
+	Ca cest le call quun user doit faire pour creer un/des nodes avec des pending
+	Le user peut selectionner les nodes specific a claim via les tokenIds
+		Ces nodes ne sont pas forcement de meme type, il pourra claim 4 Mont Blanc et 1 Fuji pour avoir un Kili par exemple
+	Le/les nodes obtenus seront encore une fois de meme type, exemple 3 Kili ok / 1 Kili 1 Mont Blanc not ok
+	Les rewards des nodes claim en surplus sont envoye au user
+		exemple 100 polar en attente sur les ids specifies et tu crees un fuji, tu recevras 70 polar
+	params:
+		tokenOut: token utilise pour payer les claimed rewards, par default seul le polar
+		nameFrom: pareil que nameFrom dans createNodesLevelUp
+		tokenIdsToClaim: pareil que tokenIdsToBurn dans createNodesLevelUp mais cette fois a claim et pas burn
+		nameTo: le nom du node a creer, ex Fuji/Mont Blanc etc
+		count: nombre de node a creer
+
+handler.createNodesWithLuckyBoxes(uint[] tokenIdsLuckyBoxes)
+	Ca cest le call pour ouvrir une lucky box
+	Ca va burn la/les luckybox et creer les nodes associe dans les contrats associes
+	Il fait parti des 2 seuls calls pouvant creer plusieurs types de nodes differents, createNodesMigration etant lautre
+		exemple: tu ouvres de box et tu obtiens un Kili et un ushuaia
+	Tu peux ouvrir plusieurs type de box en meme temps car logique interne des lucky box est independante et situe dans un contrat unique
+		exemple: tu peux ouvrir des tier 1 et tier 3 en meme temps
+	params:
+		tokenIdsLuckyBoxes: array de id de lucky box a ouvrir, evidemment ces ids sont ceux du contrat lucky box, pas ceux des nodes
+
+handler.createNodesMigration(string[] nameFrom, uint[] count)
+	Call pour migrer les nodes
+	Un user peut migrer plusieurs types de nodes dun coup
+	Faudra neanmoins leur dire de pas en mettre trop pour des histoires de gas
+	Les datas concernant le nombre de levelUp et nombre de createWithPending de lancien contrat sont recuperees
+	Les name doivent correspondre
+		Ca veut dire que les noms des nodes seront les meme avant et avec la maj
+	params:
+		nameFrom: array de name a migrer
+		count: array de nombre de nodes a migrer par name associe
+
+handler.createNodeAirDrop(string name, address user, uint isBoostedAirDropRate, bool[] areBoostedNft, bool isBoostedToken, string feature, uint count)
+	Seul les owners peuvent appeler cette fonction
+	Elle permet de creer un/des nodes tous identiques et full customise, avec les boost, les features quon veut etc
+	params:
+		name: nodeType name a creer
+		user: le user qui receive le/les nodes
+		areBoostedNft: array qui doit avoir une taille de 1, cest pour respecter les autres prototypes de fonctions et save un peu de gas
+		count: nombre de nodes a creer, ils seront tous identiques
+		autres params: refer to Node Struct
+
+handler.createLuckyBoxesWithTokens(address tokenIn, string name, uint count, string sponso)
+	Tout pareil que createNodesWithTokens mais pour la creation de lucky boxes
+
+handler.createLuckyBoxesWithNodes(address tokenOut, string[] nameFrom, uint[][]tokenIdsToBurn, string nameTo, uint count)
+	Tout pareil que createNodesLevelUp mais pour la creation de lucky boxes
+
+handler.createLuckyBoxesAirDrop(string name, address user, count)
+	Tout pareil que createNodeAirDrop mais pour la creation de lucky boxes
+
+handler.nodeEvolution(string name, address user, uint[] tokenIds, uint isBoostedAirDropRate, bool[] areBoostedNft, bool isBoostedToken, string feature, uint count)
+	Seul les owners peuvent appeler cette fonction
+	Elle permet de changer le type de nun node sans changer son token id
+		pareil que pour createNodeAirDrop, le node cree est full customisable
+	Tu pourras changer un kili en everest, un everest en everest gold etc
+	Important:
+		Les datas internes du node sont reset
+			lastClaimTime, obtainingTime etc
+		Fondamentalement ca detruit un node pour en faire un autre
+
+handler.claimRewardsAll(address tokenOut, address user)
+	Cest la fonction a call si vous voulez claim tous vos nodes dun coup
+	Je ne recommande pas cette fonction car elle plantera si le user a trop de nodes, claimRewardsBatch est mieux
+	params:
+		tokenOut: token utilise pour payer les claimed rewards, par default seul le polar
+		user: address du user a claim. seul user == msg.sender ou msg.sender == owner est accepte
+			ce param est juste la pour donner la possibilite aux owner de claim pour quelquun dans le cas dun bug
+			il ne pourra pas etre use pour claim les rewards dun autre et donc on fuck pas les autres roi etc
+
+handler.claimRewardsBatch(address tokenOut, address user, string[] names, uint[][] tokenIds)
+	Cette fonction permet de claim uniquement les token ids fournis
+	Tu peux lui filer que les token ids de ceux qui ont deja atteint le roi par exemple et donc les autre ne seront pas claim et donc pas de tax
+	Cette fonction est beaucoup plus puissant que claimRewardsAll car tu defini le nombre de node a claim et donc permet a un user davoir 500000 nodes et de pouvoir tous les claim
+	params:
+		tokenOut: token utilise pour payer les claimed rewards, par default seul le polar
+		user: comme pour claimRewardsAll
+		names et tokenIds: pareil que createNodesWithPending mais la cest uniquement pour claim
+
+handler.claimRewardsNodeType(addres tokenOut, address user, string name)
+	Cette fonction permet de claim toutes les rewards dun node type specifique
+	Elle a lavantage detre moins couteuse en gas que claimRewardsAll et claimRewardsBatch si un mec a que des Mont Blanc et veut tous les claim dun coup, ou bien sil a plein de type de nodes different mais souhaite juste claim tous ses mont blanc
+	params:
+		tokenOut: pareil quavant
+		user: pareil quavant
+		name: le nodeType ou on veut tout claim
+
+nft.transferFrom(address from, address to, uint tokenId)
+	cette fonction cest un peu lexception qui confirme la regle
+	Cest le dernier call et il est fait sur le contrat PolarNode, donc le contrat nft et non le contrat handler
+	Cette fonction va call le handler pour que lui fasse lupdate de data dans tous les contrats associe lors dechange de nft
+	Par default cela marchera pour tout le monde/toutes les market place etc
+	Il est possible de blacklist des addresses et donc empecher tout transfer, imaginons on veut pas etre sur market place, on peut la blacklist et elle ne pourra pas vendre nos nft
+	params:
+		refer to erc721 doc
+
+Bon voila on a fait le tour des calls write dun user, avons nous fini? absolument pas, on vient de commencer
+
+
+
+Logique:
+
+Nodes
+	Commencons par la structure
+	Un node est defini par: {
+		address owner; (owner du node)
+		uint creationTime; (date de creation du node, epoch)
+		uint lastClaimTime; (date de last claim, epoch)
+		uint obtainingTime; (date dobtention, epoch)
+		uint isBoostedAirDropRate; (entier pour definir un boost unique au nft, on en reparle plus bas)
+		bool isBoostedNft; (booleen pour appliquer le boost nft, on en reparle apres)
+		bool isBoostedToken; (booleen pour appliquer le boost token, pareil on en reparle)
+		string feature; (defini la feature, if any dun node, ex gold)
+	}
+	Chaque node, chaque nft est defini par cette structure. Celle ci etant identifiable grace au tokenId
+	Un owner peut modifier les params specifiques a un node a lexception du owner et des timers
+		Il peut donc booster/unbooster un node avec un ou plusieurs types de boost pour un node specifique
+	on peut definir un nombre max de type de nodes que lon peut creer par tout le monde, egalement par user
+	on peut definir un nombre max total de create with pending et level up globalement et par user. les nombres max par lucky box sont gere par le contrat lucky box
+	Lucky box et air drop creation ne sont pas impacte par ses valeurs
+		il sera toujours possible de creer un node avec une lucky box ou si un owner le souhaite sans changer les params de max
+	Comme dit precedemment, chaque interaction specifque peut etre bloque pour un type de node en particulier
+		exemple: tu peux bloquer la creation de Kili seulement avec des lucky boxes maisn laisser tout le reste open
+	Chaque type de boost qui peut survenir lors de creation de nodes est customisable avec un booleen
+		exemple: tas un boost si tu crees avec tokens, et si un jour tu veux que ce boost sapplique a la creation avec lucky boxes tu pourras, tu veux le mettre pour les pending tu peux, tu veux lenlever quelque part, tu peux
+	Types de boost:
+		air drop boost: cela est un pourcentage (on se souvient pourdimillieme) de boost pour un node unique
+			ca veut dire quil est possible de boost uniquement un node en particulier avec la valeur que lon veut en tant que owner, puis on peut lenlever, le modifier etc comme on veut. Cela permet de rendre des nodes uniques ou des air drop ou ce que vous voulez
+		nft boost: boost dont la valeur est commune a tous les nodes du meme type layant
+			ce boost peut etre obtenu avec un certaine probabilite lorsque lon cree un nft
+			il est possible via des booleen dautoriser ou dempecher forcement ce boost lors de la creation dun node selon une methode specifique
+				ca veut dire quon peut dire que si cest un levelUp par exemple, il aura forcement pas le boost ou bien on peut lui calculer et voir sil a la chance de lavoir
+		token boost: boost dont la valeur est commune a tous les nodes du meme type layant
+			ce boost est forcement obtenu si le booleen associe a la methode de creation est set a true, a linverse ce boost ne sera pas obtenu si ce booleen est set a false
+		feature boost: boost qui ne peut etre obtenu que via une lucky box ou lors devolution ou un owner qui cree un node custom
+			les features doivent etre associees a un pourcentage representant la valeur du boost
+			tous les everest diamond auront le meme boost, tous les emerald auront egalement le meme mais il peut etre different du diamond
+		no claim boost: boost qui nest pas un pourcentage mais qui est en flat
+			si tu claim pas pendant plus de x temps, ton node generera par default 10 polar en plus lors de ton prochain claim
+			oui oui, mettre ce x temps eleve et la reward bonus eleve peut drastiquement reduire la pression baissiere jusqua que x temps soit passee, ca peut permettre de tempo une migration si on a une temporalite
+		obtaining time boost: boost plus ou moins exponentiel base sur le temps dobtention dun node, celui ci est reset lors dun transfer par exemple, market place etc
+			fondamentalement, plus du keep ton node longtemps plus tes rewards augmentent
+			ce boost est dangereux, il peut exploser la tokenomics du projet si mal set up. Ne pas modifier sans etre sur et certain de savoir ce que lon fait
+	Maths pour les rewards:
+		airdrop/nft/token/feature: tous ces boost sont rated
+			ca veut dire que ce sont des pourcentages a appliquer au rewards normal
+			exemple nft boost active et a 10%, le gars gagnera 1.1*sesRewards
+		noClaim: celui la est en nombre de polar
+			ca veut dire que si le mec na pas claim depuis plus longtemps quune valeur parametrable, il gagnera un nombre fixe de polar en plus polarEnPlus+sesRewards
+		obtainingTime: ce boost est rated base sur une echelle de temps
+			ce que ca veut dire cest que si lechelle de temps est mettons une journee et le boost 10%
+				jour2: son node rapporte 110%
+				jour3: 120%
+				jour12: 210%
+				jour31: 400%
+			oui cest dangereux et oui faut eviter de mal le setup, je vous laisse imaginer si le temps de reference est de 4h avec un boost a 10%
+			par contre cest incroyablement puissant pour forcer les mecs a hold et ne pas claim avec un boost garantie de multiplier toutes les rewards accumulated
+			lastClaimTime na aucun impact sur ce boost, cest bel et bien obtentionTime
+		fees: si apres roi, no fees, sinon cest un pourcentage de la totalite des rewards, parametrable evidemment
+			les fees sappliquent apres le calcul de tous les boost et donc 40% cest 50% de la totalite des rewards + boost
+			le roi est calcule sans lappliquation dauncun boost, uniquement creationTime, sinon le gas prendrait tarif et en plus ca nous fait gagner du temps pour forcer les gens a pas claim
+
+LuckyBox
+	un type de lucky box est defini par: {
+		uint priceTokens; (prix de la box en polar)
+		uint[] probability; (proba pour chaque output)
+		string[] nodeType; (les nodeTypes name output associe aux proba, order matters)
+		string[] feature; (les features output associe aux proba, order matters)
+		uint[] counter; (nombre de resultat de chaque type de node obtenu en ouvrant ce type de box)
+		uint[] remaining; (nombre quil reste de chaque output, orders matters)
+		uint createdBox; (nombre de ce type de box cree)
+		uint openBox; (nombre de ce type de box ouvertes)
+		uint maxBox; (nombre max de box a creer)
+		uint maxUser; (nombre max de box a creer pour un user)
+	}
+	comme dit precedemment, les lucky box sont echangeable comme des nft normaux
+	comme pour tous le reste chaque fonctionnalite est activable/desactivable avec un booleen
+	on peut ajouter autant de type de lucky box que lon veut, on ne peut pas en enlever, ni modifier leur nom, par contre on peut empecher le mint de nimporte quel type de box
+	il est egalement possible de modifier les parametres de chaque type de lucky box en respectant certain critere, on en reparle pendant les maths
+	les arrays dans la structure associe a un type de lucky box doivent tous avoir la meme size
+	il est possible de dire quun type de lucky box peut donner au maximum 10 dun node type en particulier
+		exemple: la tier 1 peut donner 5 everest maximum. les parametres, probabilites supdateront automatiquement lorsquil nyen a plus de dispo afin dempecher de break la logique, refer la partie math
+	il est possible de set up un max de box par user et en global
+	Air drop par un owner nest pas soumis a ces maximum, en revanche il est soumis a la verification de lintegrite de la lucky box, on en reparle dans les maths
+	il est possible de blacklist une addresse afin dempecher les transfer
+		un peu comme pour le contrat nft, on peut bloquer/authoriser des market place
+	Maths:
+		probability: les proba doivent faire 100% au total, sinon ca marchera pas
+			il faut fournir ce param sous forme darrays: exemple [1000,5000,4000] (pourdimillieme)
+				ca ca veut dire 10% output1, 50% output2, 40% output3
+			en revanche elles sont stockee en somme croissante: donc larray au dessus est stocke comme [1000,6000,10000]
+			les probabilites supdatent automatiquement si le nombre doutput reminaing atteint les 0
+				cette update se fait de maniere backward
+				ca veut dire quavec les [1000,6000,10000], si il ny plus de remiaing possible pour les 6000
+					les proba deviendront [6000,0,10000], et oui faut que ca fasse 100%
+				a linverse si le nombre de remaining du cas 1 tombe a 0, les proba deviendront [0,6000,10000]
+			ces proba supdate a laide dune loop backward, donc si on a un moment [1000,5000,0,10000]
+				et que le 10000 tombe a 0, on obtiendra [1000,10000,0,0], oui cela permet deviter les 0
+		box integrite: une box doit repondre a certain critere en permanence pour eviter detre broken
+			cela permet deviter de fucke le setup, meme par un owner, je mexplique
+			un owner ne pourra pas dire quil reste 2 mont blanc et 2 fuji sil est possible de vendre 5 box car 2 + 2 = 4 output possibles mais 5 boxes au total
+			cela marche aussi pour les proba
+			cela prend en compte les box deja cree et non ouverte, les box cree et ouverte, les remaining et le nombre max de box
+			les regles sont les suivantes:
+				1. si une probabilite nest pas 0, il faut au miminum 1 remaining output
+				2. si le valeur la plus grande entre le nombre max de box et le nombre de box deja cree a laquel on soustrait le nombre de box deja ouverte est inferieur au nombre de remaining total ayant des proba de non 0, cela ne marchera pas
+			en gros: tu crees une box que si tu pourras forcement avoir un output et les owner ne pourront pas fuck cette logique, il ny a pas de booleen pour regler cette feature et cest volontaire. un mec a une box, il peut louvrir et il aura un truc, ce truc nest pas limite par le nombre max dans le contrat nodeType associe, donc ca marchera
+
+Swapper:
+	un booleen permet dauthoriser de maniere global toute interaction commune avec une methode faisant intervenir un input/output de token
+		exemple: on peut bloque tous les contrats node type de creationWithPending via ce contrat, on peut empecher de claim etc etc
+	ce contrat contient des mapPath, cest ce qui permet de definir les chemins traderjoe
+		evidemment iterable mapping non librairie
+		cest ce qui permet de un node en thor
+	tous les transfer internes sont activable/desactivable par des booleen
+		on peut bloquer les transfer vers la treso mais tout le reste fonctionnera toujours
+		cela permet entre autre de changer la valeur du pourcentage recu par les payee sans changer les valeur public des ratios, oui oui cest tricky, jaime beaucoup
+	chacun des swap a une methode associee/unique call par le handler
+		on peut changer le swapper pour quil nyest plus de fee lorsque lon cree un node with pending, cela demandera juste la reecriture du contrat pour le swap associe et ensuite de le plug au handler
+	ce contrat est pluggable, il sera donc possible de changer les addresses payee sans faire de migration si on le souhaite
+	un influ est defini par {
+		address to; (address du gars)
+		uint rate; (pourcentage quil a)
+		uint until; (date dexpiration de la promo)
+		uint released; (valeur total en polar quil a recup)
+		uint claimable; (valeur en polar quil peut claim au moment du call)
+		address[] path;
+	}
+	le path permet 2 choses:
+		1. connaitre le chemin pour faire la conversion traderjoe de la valeur en polar pour les tokens quil veut
+		2. de savoir avec quel token il veut etre paye
+	oui un influ peut etre paye en nimporte quel token, dai, wavax etc, pas avax
+		cela nimplique aucune pression baissiere
+	les rewards des influs sont payes par la treso directement, il faut dont que la treso approve avec le token doutput
+	une sponso a une duree de vie limite, il est possible de dire que tel influ aura son bonus pendant 1 semaine ou quoi et apres ce sera plus le cas
+	les influs peuvent recevoir des rewards que si les nodes/lucky box sont crees avec des tokens
+	le rate applique est sur la totalite du prix des nodes crees
+		donc 10% cest 10% du prix total et non des payees
+	un influ doit release ses rewards, il sera toujours payer avec le token defini par le contrat
+		ce token est updatable
+		un influ pourra release ses claimable meme si son code promo nest plus operationnel et quil lui reste des claimable
+	je repete, payer un influ en dai naura aucun impact sur la pool et nappliquera aucune pression baissiere
+		le path cest juste pour la conversion, pas pour un swap
+
+
+	
+Getters:
+
+Handler:
+handler.getNodeTypesSize()
+	get le nombre de contrat node associe aux handler, en loccurence 5 pour nous au debut
+
+handler.getTotalCreatedNodes()
+	get le nombre total de nodes crees, pas opti, cest mieux dappeler totalSupply() via le contrat nft
+
+handler.getNodeTypesBetweenIndexes(uint iStart, uint iEnd)
+	get un array des names des node type contrat entre indexes
+	lappeler avec 0, handler.getNodeTypesSize() donnera tous les noms de contrats associe de maniere dynamique
+
+handler.getNodeTypesAddress(string key)
+	get laddresse associe a un node type contrat en fonction de son nom (key)
+
+handler.getTokenIdsBetweenIndexes(uint iStart, uint iEnd)
+	get un array des tokenIds sans distinction parmis les owner, ca renvoie tout entre les indexes
+	les indexes ne seront pas forcement dans lordre de creation due a literable map
+
+handler.getTokenIdsNodeTypeBetweenIndexes(uint iStart, uint iEnd)
+	get un array des node type name base sur lordre des token ids
+	surtout pour les tests, je pense pas que ca vous servira
+
+handler.getTokenIdNodeTypeName(uint key)
+	get le node type name dun tokenId unique
+	surtout pour les tests
+
+handler.getTotalNodesOf(address user)
+	get le nombre total de node dun user, pas opti, mieux dappeler balanceOf via le contrat nft
+
+handler.getClaimableRewardsOf(address user)
+	get le nombre total de rewards pour un user, si trop de node ca marchera pas, mieux dappeler nodeType.calculateUserRewardsBatch
+	ca return les rewardsTotal et les feesTotal, rewards total sont les vrais reward donc fees deduits
+
+NodeType:
+nodeType.tokenIdToOwner(uint tokenId)
+	get le owner dun token id
+
+nodeType.name()
+	get le name associe a ce contrat nodeType, name is immutable
+
+nodeType.totalCreatedNodes()
+	get le nombre total de nodes crees pour ce nodeType en particulier
+
+une floppe de getters pour acceder aux parametres/bonus rate etc
+
+nodeType.maxLevelUpUser()
+	nombre max de level up par user
+
+nodeType.maxLevelUpTotal()
+	nombre max de level up au total
+
+nodeType.maxCreationPendingUser()
+	nombre max de creation with pending par user
+
+nodeType.maxCreationPendingTotal()
+	nombre max de creation with pending au total
+
+nodeType.maxUser()
+	nombre max de node pour tout le monde, air drop/lucky box doesnt respect it
+
+nodeType.feature(uint index)
+	name de la feature a tel index (gold, diamond etc)
+
+nodetype.featureToBoostRate(string name)
+	boost associe a la feature
+
+nodeType.featureCount(string name)
+	nombre de node qui beneficient actuellement de telle ou telle feature, exemple nombre de diamond
+
+nodeType.nodeOwners(uint index)
+	address classe historiquement par ordre dobtention de toutes les personnes qui sont ou qui fut owner dun des nodes de ce node type
+
+nodeType.nodeOwnersInserted(address owner)
+	boooleen, est ce que cette addresse a deja own un node associe a ce node type ou pas
+
+nodeType.getTotalNodesNumberOf(address user)
+	number of node pour ce node type associe a laddress fournie
+
+nodeType.getNodeFromTokenId(uint id)
+	return la structure node associe au token id
+	a call par json dynamique sur le back
+
+nodeType.getNodesCountLevelUpOf(address user)
+	le nombre de node par level up
+
+nodeType.getNodesCountPendingOf(address user)
+	le nombre de node par pending
+
+nodeType.getTokenIdsOfBetweenIndexes(address user, uint iStart, uint iEnd)
+	return les tokens ids between indexs pour ce type de node appartenent au user
+	ce genre de truc devra etre call par le front
+
+nodeType.getNodesOfBetweenIndexes(address user, uint iStart, uint iEnd)
+	return toutes les structures nodes dun user entre les indexes
+	pareil, faudra appeler ca sur le front
+
+nodeType.getTimeRoiOfBetweenIndexes(address user, uint iStart, uint iEnd)
+	return le time epoch ou le fee du au roi ne sappliquera plus pour un user pour le node associe
+	pas encore teste mais ca devrait aller
+
+nodeType.getTimesBeforeNoClaimRewardOfBetweenIndexes(address user, uint iStart, uint iEnd)
+	return le time epoch ou le flat bonus sappliquera pour un user pour le node associe
+	pas teste mais je vois pas dans quel monde ca marcherait pas
+
+nodeType.getFeaturesSize()
+	return le nombre total de feature pour ce node type, si gold + diamond, ca renverra 2
+
+nodeType.getFeaturesBetweenIndexes(uint iStart, uint iEnd)
+	return le nom des features entre index
+
+nodeType.getNodeOwnersSize()
+	return le nombre total downer ayant existe pour ce type de node
+
+nodeType.getNodeOwnersBetweenIndexes(uint iStart, uint iEnd)
+	return les owners historique entre index
+
+nodeType.calculateUserRewardsBatch(address user, uint[] tokenIds)
+	return les rewards dun user pour les tokenIds fourni en input
+	ca cest le mieux a call par le front pour get les rewards et ne pas etre bloque si trop de nodes
+
+nodeType.calculateUserRewards(address user)
+	return la totalite des pending rewards for un user pour ce type de node
+
+PolarNode Nft:
+nft.tokenIdsToNodeType(uint id)
+	return le node type dun token id
+	a appeler pour le backend lors de la generation du json dynamique
+
+nft.tokensOfOwner(address user)
+	return tous les token ids de user, rapide cest le go to pour choper cette data
+
+nft.tokensOfOwnerByIndexesBetween(address user, uint iStart, uint iEnd)
+	in case le tokensOfOwner plante, tu peux segmenter avec ca
+
+nft.getNodeOwnersSize()
+	return le nombre de node owner, la cest pas par node type mais bien tous les node type confondu, pareil historiquement ordered
+
+nft.getNodeOwnersBetweenIndexes(uint iStart, uint iEnd)
+	return larray avec les addresses de tous les nodes owners historique entre index
+
+PolarLuckyBox:
+polarLuckyBox.tokensOfOwner(address user)
+	comme nft mai pour les lucky
+
+polarLuckyBox.tokensOfOwnerByIndexes(address user, uint iStart, uint iEnd)
+	comme nft mai lucky
+
+polarLuckyBox.getBoxSize()
+	return nombre total de type de box existant
+
+polarLuckyBox.getMapKeysBetweenIndexes(uint iStart, uint iEnd)
+	return les name des lucky box entre index
+
+polarLuckyBox.getMapBetweenIndexes(uint iStart, uint iEnd)
+	return les struct lucky box entre index
+
+polarLuckyBox.getMapForKey(string name)
+	return la struct lucky box correspondant a name
+
+Swapper:
+swapper.allInflus(uint i)
+	return code promo string at index i
+
+swapper.influInserted(string name)
+	boolean si code existe, return true si code a existe mais si outdated
+
+swapper.influData(string name)
+	return la structure influ associe au code name
+
+swapper.getMapPathSize()
+	return la taille des structures contenant les token autorise pour buy les nodes/luckybox (tokenIn)
+		exemple: renvoie 2 si wavax et dai
+
+swapper.getMapPathKeysBetweenIndexes(uint iStart, uint iEnd)
+	return les addresses des tokenIn authorise between indexes
+
+swapper.getMapPathBetweenIndexes(uint iStart, uint iEnd)
+	return les path structures definissant les tokenIn
+
+swapper.getMapPathForKey(address key)
+	return la path structure associe a un tokenIn
+
+swapper.getAllInfluSize()
+	return le nombre total dinflu
+
+swapper.getInfluDataPath(string name)
+	return le path correspondant au token out pour tell code promo name
+
+swapper.getAllInflusBetweenIndexes(uint iStart, uint iEnd)
+	return les codes promos entre indexes

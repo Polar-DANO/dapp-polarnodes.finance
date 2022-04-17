@@ -1,0 +1,15 @@
+version: "3.3"
+
+services:
+  nuxt-app:
+    build: .
+    container_name: polar.financial
+    restart: always
+    ports:
+      - "7500:7500"
+    # command: "npm run start"
+    networks:
+      - nuxt-network
+networks:
+  nuxt-network:
+    driver: bridge
