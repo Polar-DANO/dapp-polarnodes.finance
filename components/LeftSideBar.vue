@@ -9,7 +9,10 @@
   >
     <div>
       <v-list>
+                  <a  href="https://polar.financial">
+
         <img class="w-[64px] h-[63.7px] mt-[44px] mb-[30px] md:mb-[100.3px] mx-[90px] " :src="require('../assets/img/logo.svg')" alt="">
+        </a>
         <v-list-item
           v-for="(item, i) in core"
           :key="i"
