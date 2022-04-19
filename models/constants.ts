@@ -39,7 +39,7 @@ export const NODENAME_TO_VIDEO = {
   [NodeNftNames.Kilimanjaro]: require('../assets/PACK/Kilimandjaro/KILIMANDJARO ANIM.mp4'),
   [NodeNftNames.Ushuaia]: require('../assets/PACK/Ushuaia/USHUAIA ANIM.mp4'),
   [NodeNftNames.Everest]: require('../assets/PACK/Everest/EVEREST ANIM.mp4'),
-  [NodeNftNames.Olympus]: require('../assets/PACK/Everest/EGG MONS OLYMPUS VIDEO.mp4'),
+  [NodeNftNames.Olympus]: require('../assets/PACK/Olympus/EGG MONS OLYMPUS VIDEO.mp4'),
 
 };
 
