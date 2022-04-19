@@ -21,7 +21,7 @@
               v-if="!isDetailsOpen"
               class="inline-block node-video__container"
             >
-              <video class="node-video" autoplay loop muted>
+              <video class="node-video" autoplay loop>
                 <source :src="video" type="video/mp4">
                 Your browser does not support the video tag.
               </video>

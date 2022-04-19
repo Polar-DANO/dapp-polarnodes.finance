@@ -13,7 +13,7 @@
     <div class="bg-[#17171B] rounded-b-[20px] border-solid border-[#00C6ED] border-[2px]">
       <div v-if="video && minimumBid && fixedPrice" class="flex flex-col justify-center items-center md:gap-[107px] md:flex-row flex-wrap md:mt-[64px] md:mr-[104px] md:ml-[64px] md:mb-[89px] p-[20px] md:p-[0px]">
         <div class="flex max-w-[420px] max-h-[325px]">
-          <video class="node-video" autoplay loop muted>
+          <video class="node-video" autoplay loop>
             <source :src="video" type="video/mp4">
             Your browser does not support the video tag.
           </video>
