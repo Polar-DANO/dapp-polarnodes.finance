@@ -1,5 +1,33 @@
 <template>
-  <div class="node-nft" @click="onSelectNode">
+  <div v-if="name == `Olympus`" class="node-nft-Olympus" @click="onSelectNode">
+    <div class="node-nft__title text-[orange]">
+      {{ name }}
+    </div>
+    <div class="node-nft__blue-text_Olympus my-1">
+      Earn {{ dailyEarnings }} $POLAR / day
+    </div>
+    <div class="divider mt-2" />
+
+    <img :src="image" class="node-image">
+
+    <div class="divider" />
+
+    <div class="inline-block text-left">
+      <div class="mt-2">
+        <span class="node-nft__blue-text_Olympus">Cost: </span>
+        {{ cost }} $POLAR
+      </div>
+      <div class="mt-1">
+        <span class="node-nft__blue-text_Olympus">Tax before ROI</span>
+        {{ claimTax }}%
+      </div>
+      <div class="mt-1">
+        <span class="node-nft__blue-text_Olympus">Tax after ROI</span>
+        {{ globalTax }}%
+      </div>
+    </div>
+  </div>
+  <div v-else class="node-nft" @click="onSelectNode">
     <div class="node-nft__title">
       {{ name }}
     </div>
@@ -91,6 +119,9 @@ export default class NodeNft extends Vue {
 .node-nft:hover {
   box-shadow: 0 0 14px 14px rgba(0, 198, 237, 0.5);
 }
+.node-nft-Olympus:hover {
+  box-shadow: 0 0 14px 14px orange;
+}
 
 @media screen and (min-width: 1024px) {
   .node-nft {
@@ -128,6 +159,24 @@ export default class NodeNft extends Vue {
   letter-spacing: normal;
   color: #fff;
 }
+.node-nft-Olympus {
+  min-width: 160px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 12px;
+  height: 253px;
+  padding: 12px 0;
+  border-radius: 14px;
+  border: solid 1px orange;
+  background-color: #17171b;
+  font-family: WorkSans;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #fff;
+}
 
 .node-nft__title {
   font-size: 16px;
@@ -135,5 +184,8 @@ export default class NodeNft extends Vue {
 
 .node-nft__blue-text {
   color: #00c6ed;
+}
+.node-nft__blue-text_Olympus {
+  color: orange;
 }
 </style>

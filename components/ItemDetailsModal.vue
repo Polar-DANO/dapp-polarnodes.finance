@@ -17,7 +17,7 @@
     <div
       class="flex flex-col gap-[20px] bg-[#17171B] rounded-b-[20px] border-solid border-[#00C6ED] border-[2px] p-[20px]"
     >
-      <div class="flex flex-wrap md:gap-[64px] mx-[20px] md:mx-[64px] items-center">
+      <div class="flex flex-col md:flex-row md:gap-[64px] mx-[20px] md:mx-[64px] items-center">
         <div class="flex-1 flex-col gap-[16px]">
           <video
             v-if="video"
@@ -89,7 +89,7 @@
             </div>
           </div>
         </div>
-        <div class="flex-1 flex-col gap-[8px] md:gap-[43px]">
+        <div class="flex-1 flex-col gap-[8px] md:gap-[43px] mt-[12px] md:mt-[0px]">
           <div v-if="isOffer" class="flex flex-initial flex-col gap-[8px] md:gap-[14px]">
             <div>
               <div class="white--text text-right mr-2 node-card__outlined pa-2 text-center">
@@ -116,22 +116,22 @@
             <div class="flex flex-col gap-[4px] md:gap-[8px]">
               <countdown :time="item.end.getTime() - new Date().getTime()">
                 <template slot-scope="props"> 
-                  <div class="text-[white] text-[34px] flex gap-x-[12px] mb-[20px]">
+                  <div class="text-[white] text-[12px] md:text-[34px] flex gap-x-[12px] mb-[20px]">
                     <div class="flex-1 flex flex-col gap-y-4 text-center">
-                      <span class="bg-[#00C6ED] rounded-[8px] px-[12px] py-[12px]">{{ props.days < 10 ? '0'+props.days : props.days }} </span>
-                      <span> Days </span>
+                      <span class="bg-[#00C6ED] rounded-[8px] px-[8px] py-[8px] md:px-[12px] md:py-[12px] ">{{ props.days < 10 ? '0'+props.days : props.days }} </span>
+                      <span class="text-[12px] md:text-[24px]"> Days </span>
                     </div>
                     <div class="flex-1 flex flex-col gap-y-4 text-center">
-                      <span class="bg-[#00C6ED] rounded-[8px] px-[12px] py-[12px]">{{ props.hours < 10 ? '0'+props.hours : props.hours }}</span> 
-                      <span> Hours </span>
+                      <span class="bg-[#00C6ED] rounded-[8px] px-[8px] py-[8px] md:px-[12px] md:py-[12px]">{{ props.hours < 10 ? '0'+props.hours : props.hours }}</span> 
+                      <span class="text-[12px] md:text-[24px]"> Hours </span>
                     </div>
                     <div class="flex-1 flex flex-col gap-y-4 text-center">
-                      <span class="bg-[#00C6ED] rounded-[8px] px-[12px] py-[12px]">{{ props.minutes < 10 ? '0'+props.minutes : props.minutes }}</span> 
-                      <span> Minutes </span>
+                      <span class="bg-[#00C6ED] rounded-[8px] px-[8px] py-[8px] md:px-[12px] md:py-[12px]">{{ props.minutes < 10 ? '0'+props.minutes : props.minutes }}</span> 
+                      <span class="text-[12px] md:text-[24px]"> Minutes </span>
                     </div>
                     <div class="flex-1 flex flex-col gap-y-4 text-center">
-                      <span class="bg-[#00C6ED] rounded-[8px] px-[12px] py-[12px]">{{ props.seconds < 10 ? '0'+props.seconds : props.seconds }}</span>
-                      <span> Seconds </span>
+                      <span class="bg-[#00C6ED] rounded-[8px] px-[8px] py-[8px] md:px-[12px] md:py-[12px]">{{ props.seconds < 10 ? '0'+props.seconds : props.seconds }}</span>
+                      <span class="text-[12px] md:text-[24px]"> Seconds </span>
                     </div>
                   </div>
                   </template>
@@ -147,12 +147,12 @@
 
               <div class="flex flex-initial text-center items-center">
                 <div
-                  class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]"
+                  class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[40%] md:w-[50%] py-[4px] md:py-[8px] font-[600]"
                 >
                   Current Bid:
                 </div>
                 <div
-                  class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]"
+                  class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[60%] md:w-[50%]"
                 >
                   <div class="py-[4px] md:py-[8px]">
                     <span class="text-[white] text-[14px] mr-[16px] font-[500]">{{ formatEther(price) }}</span>
@@ -162,12 +162,12 @@
               </div>
               <div v-if="!isOwner" class="flex flex-initial text-center items-center">
                 <div
-                  class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[50%] py-[4px] md:py-[8px] font-[600]"
+                  class="bg-[#00C6ED] border-solid border-[#00C6ED] border-[2px] rounded-l-[16px] text-[white] text-[14px] w-[40%] md:w-[50%] py-[4px] md:py-[8px] font-[600]"
                 >
                   Enter New Bid:
                 </div>
                 <div
-                  class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[50%]"
+                  class="flex justify-center border-solid border-[#00C6ED] border-[2px] rounded-r-[16px] text-[white] text-[14px] w-[60%] md:w-[50%] "
                 >
                   <div class="py-[4px] md:py-[8px]">
                     <input
