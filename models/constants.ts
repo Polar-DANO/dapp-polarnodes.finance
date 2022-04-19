@@ -8,6 +8,8 @@ export const NAME_TO_URL = {
   [NodeNftNames.Kilimanjaro]: 'kilimanjaro',
   [NodeNftNames.Ushuaia]: 'ushuaia',
   [NodeNftNames.Everest]: 'everest',
+  [NodeNftNames.Olympus]: 'olympus',
+
 };
 
 export const URL_TO_NAME = {
@@ -16,9 +18,10 @@ export const URL_TO_NAME = {
   kilimanjaro: NodeNftNames.Kilimanjaro,
   ushuaia: NodeNftNames.Ushuaia,
   everest: NodeNftNames.Everest,
+  olympus: NodeNftNames.Olympus,
 };
 
-export type Url = 'fuji' | 'mont-blanc' | 'kilimanjaro' | 'ushuaia' | 'everest';
+export type Url = 'fuji' | 'mont-blanc' | 'kilimanjaro' | 'ushuaia' | 'everest' | 'olympus';
 
 export const NODENAME_TO_IMAGE = {
   [NodeNftNames.Fuji]: require('../assets/PACK/Fuji/FUJI FIXE.jpg'),
@@ -26,6 +29,8 @@ export const NODENAME_TO_IMAGE = {
   [NodeNftNames.Kilimanjaro]: require('../assets/PACK/Kilimandjaro/KILIMANDJARO FIXE.jpg'),
   [NodeNftNames.Ushuaia]: require('../assets/PACK/Ushuaia/USHUAIA RENDER0133.jpg'),
   [NodeNftNames.Everest]: require('../assets/PACK/Everest/EVEREST FIXE.jpg'),
+  [NodeNftNames.Olympus]: require('../assets/PACK/Olympus/EGGSNK PIC.jpg'),
+
 };
 
 export const NODENAME_TO_VIDEO = {
@@ -34,6 +39,8 @@ export const NODENAME_TO_VIDEO = {
   [NodeNftNames.Kilimanjaro]: require('../assets/PACK/Kilimandjaro/KILIMANDJARO ANIM.mp4'),
   [NodeNftNames.Ushuaia]: require('../assets/PACK/Ushuaia/USHUAIA ANIM.mp4'),
   [NodeNftNames.Everest]: require('../assets/PACK/Everest/EVEREST ANIM.mp4'),
+  [NodeNftNames.Olympus]: require('../assets/PACK/Everest/EGG MONS OLYMPUS VIDEO.mp4'),
+
 };
 
 export const LUCKYBOX_INDEX_TO_IMAGE = [
