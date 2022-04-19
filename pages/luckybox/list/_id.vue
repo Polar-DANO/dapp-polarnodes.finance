@@ -7,7 +7,7 @@
     </div>
     <div class="flex flex-col justify-center items-center md:gap-[107px] md:flex-row flex-wrap md:mt-[64px] md:mr-[104px] md:ml-[64px] md:mb-[89px] p-[20px] md:p-[0px]">
       <div class="max-w-[420px] max-h-[325px]">
-        <video class="node-video" autoplay loop muted>
+        <video class="node-video" autoplay loop>
           <source
             :src="require('../../../assets/PACK/Lucky Boxes/LUCKY BOX LVL 1 ANIM.mp4')"
             type="video/mp4"

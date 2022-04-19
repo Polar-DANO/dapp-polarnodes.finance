@@ -3,5 +3,6 @@ export enum NodeNftNames {
   MontBlanc = 'Mont Blanc',
   Kilimanjaro = 'Kilimanjaro',
   Ushuaia = 'Ushuaia',
-  Everest = 'Everest'
+  Everest = 'Everest',
+  Olympus = 'Olympus'
 }

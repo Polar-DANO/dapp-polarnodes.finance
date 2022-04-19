@@ -16,7 +16,7 @@
       </div>
       <VRow justify="space-between" class="mt-8">
         <VCol cols="12" md="6" class="d-flex align-center flex-col">
-          <video class="inline-block node-video" autoplay loop muted>
+          <video class="inline-block node-video" autoplay loop>
             <source
               :src="video"
               type="video/mp4"
