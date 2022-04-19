@@ -1,7 +1,7 @@
 <template>
   <div class="overflow-x-auto w-full">
     <div class="flex flex-col">
-      <div class="flex justify-between bg-[#00C6ED]  rounded-t-lg p-[16px] min-w-[420px]">
+      <div class="flex justify-between bg-[#00C6ED]  rounded-t-lg p-[16px] md:min-w-[420px]">
         <div class="text-white text-[16px]">
           My Mountain NFTs
         </div>
@@ -17,7 +17,7 @@
         </v-btn>
       </div>
       <table
-        class="mx-auto w-[100%] min-w-[420px] rounded-b-lg bg-[#17171B]"
+        class="mx-auto w-[100%] md:min-w-[420px] rounded-b-lg bg-[#17171B]"
       >
         <thead>
           <tr>
