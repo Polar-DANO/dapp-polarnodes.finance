@@ -29,7 +29,7 @@ export const NODENAME_TO_IMAGE = {
   [NodeNftNames.Kilimanjaro]: require('../assets/PACK/Kilimandjaro/KILIMANDJARO FIXE.jpg'),
   [NodeNftNames.Ushuaia]: require('../assets/PACK/Ushuaia/USHUAIA RENDER0133.jpg'),
   [NodeNftNames.Everest]: require('../assets/PACK/Everest/EVEREST FIXE.jpg'),
-  [NodeNftNames.Olympus]: require('../assets/PACK/Olympus/EGGSNK PIC.jpg'),
+  [NodeNftNames.Olympus]: require('../assets/PACK/Olympus/olympus.png'),
 
 };
 
@@ -39,7 +39,7 @@ export const NODENAME_TO_VIDEO = {
   [NodeNftNames.Kilimanjaro]: require('../assets/PACK/Kilimandjaro/KILIMANDJARO ANIM.mp4'),
   [NodeNftNames.Ushuaia]: require('../assets/PACK/Ushuaia/USHUAIA ANIM.mp4'),
   [NodeNftNames.Everest]: require('../assets/PACK/Everest/EVEREST ANIM.mp4'),
-  [NodeNftNames.Olympus]: require('../assets/PACK/Olympus/EGG MONS OLYMPUS VIDEO.mp4'),
+  [NodeNftNames.Olympus]: require('../assets/PACK/Olympus/Olympus Render.mp4'),
 
 };
 
@@ -48,6 +48,7 @@ export const LUCKYBOX_INDEX_TO_IMAGE = [
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 2.jpg'),
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 3.jpg'),
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 4.jpg'),
+  require('../assets/PACK/Lucky Boxes/olympuslucky.jpg'),
 ];
 
 export const LUCKYBOX_INDEX_TO_VIDEO = [
@@ -55,6 +56,7 @@ export const LUCKYBOX_INDEX_TO_VIDEO = [
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 2 ANIM.mp4'),
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 3 ANIM.mp4'),
   require('../assets/PACK/Lucky Boxes/LUCKY BOX LVL 4 ANIM.mp4'),
+  require('../assets/PACK/Lucky Boxes/LUCKY BOX WAITING.mp4'),
 ];
 
 export const LUCKYBOX_VIDEO_BY_TYPE: Record<string, string> = {
@@ -62,4 +64,5 @@ export const LUCKYBOX_VIDEO_BY_TYPE: Record<string, string> = {
   'Fresh Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OPENING LVL 2.mp4'),
   'Icy Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OPENING LVL 3.mp4'),
   'Placeholder Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OPENING LVL 4.mp4'),
+  'Olympus Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OLYMPUS OPENING.mp4')
 };

@@ -1,5 +1,23 @@
 <template>
-  <div class="node-nft" @click="onSelectNode">
+  <div v-if="name == `Olympus Lucky Box`" class="node-nft-Olympus" @click="onSelectNode">
+    <div class="node-nft__title text-[orange] d-flex align-center justify-center">
+      {{ name }}
+    </div>
+    <div class="divider" />
+
+    <img
+      :src="image"
+      class="node-image"
+    >
+
+    <div class="divider" />
+
+    <div class="node-nft__footer d-flex align-center justify-center">
+      <span class="node-nft__blue-text_Olympus text-[orange] mr-1">Cost: </span>
+      {{ price ? `${price} $POLAR` : "-" }}
+    </div>
+  </div>
+  <div v-else class="node-nft" @click="onSelectNode">
     <div class="node-nft__title d-flex align-center justify-center">
       {{ name }}
     </div>
@@ -90,6 +108,29 @@ export default class NodeNft extends Vue {
   color: #fff;
 }
 
+.node-nft-Olympus {
+  min-width: 180px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 12px;
+  height: 242px;
+  border-radius: 14px;
+  border: solid 1px orange;
+  background-color: #17171b;
+  font-family: WorkSans;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #fff;
+}
+.node-nft__blue-text_Olympus {
+  color: orange;
+}
+.node-nft-Olympus:hover {
+  box-shadow: 0 0 14px 14px orange;
+}
 .node-nft__title {
   font-size: 16px;
   height: 58px;
