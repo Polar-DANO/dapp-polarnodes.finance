@@ -1,23 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
-import * as ethers from 'ethers'
-import detectEthereumProvider from '@metamask/detect-provider'
+import * as ethers from 'ethers';
+import detectEthereumProvider from '@metamask/detect-provider';
 
-import { Store } from 'vuex'
-import { Plugin } from '@nuxt/types'
-import WalletConnectProvider from '@walletconnect/web3-provider'
-import addresses from '~/config/addresses'
-import { abi as HANDLER_ABI } from '~/hardhat/artifacts/contracts/Handler.sol/Handler.json'
-import { abi as SWAPPER_ABI } from '~/hardhat/artifacts/contracts/Swapper.sol/Swapper.json'
-import { abi as POLAR_ABI } from '~/hardhat/artifacts/contracts/Polar.sol/Polar.json'
-import { abi as NODE_TYPE_ABI } from '~/hardhat/artifacts/contracts/NodeType.sol/NodeType.json'
-import { abi as POLAR_LUCKY_BOX_ABI } from '~/hardhat/artifacts/contracts/PolarLuckyBox.sol/PolarLuckyBox.json'
-import { abi as POLAR_MARKETPLACE_ABI } from '~/hardhat/artifacts/contracts/PolarMarketPlace.sol/PolarMarketPlace.json'
-import { abi as POLAR_NODE_ABI } from '~/hardhat/artifacts/contracts/PolarNode.sol/PolarNode.json'
-import { abi as ERC_721_ABI } from '~/hardhat/artifacts/@openzeppelin/contracts/token/ERC721/ERC721.sol/ERC721.json'
+import { Store } from 'vuex';
+import { Plugin } from '@nuxt/types';
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import addresses from '~/config/addresses';
+import { abi as HANDLER_ABI } from '~/hardhat/artifacts/contracts/Handler.sol/Handler.json';
+import { abi as SWAPPER_ABI } from '~/hardhat/artifacts/contracts/Swapper.sol/Swapper.json';
+import { abi as POLAR_ABI } from '~/hardhat/artifacts/contracts/Polar.sol/Polar.json';
+import { abi as NODE_TYPE_ABI } from '~/hardhat/artifacts/contracts/NodeType.sol/NodeType.json';
+import { abi as POLAR_LUCKY_BOX_ABI } from '~/hardhat/artifacts/contracts/PolarLuckyBox.sol/PolarLuckyBox.json';
+import { abi as POLAR_MARKETPLACE_ABI } from '~/hardhat/artifacts/contracts/PolarMarketPlace.sol/PolarMarketPlace.json';
+import { abi as POLAR_NODE_ABI } from '~/hardhat/artifacts/contracts/PolarNode.sol/PolarNode.json';
+import { abi as ERC_721_ABI } from '~/hardhat/artifacts/@openzeppelin/contracts/token/ERC721/ERC721.sol/ERC721.json';
 // import { abi as ERC_20_ABI } from '~/hardhat/artifacts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json'
-import {abi as ERC_20_ABI} from '~/hardhat/artifacts/contracts/ERC20.sol/ERC20.json'
-import {abi as OLD_ABI} from '~/hardhat/artifacts/contracts/Old.sol/Old.json'
+import { abi as ERC_20_ABI } from '~/hardhat/artifacts/contracts/ERC20.sol/ERC20.json';
+import { abi as OLD_ABI } from '~/hardhat/artifacts/contracts/Old.sol/Old.json';
+import POLAR_LOTTERY_ABI from '~/hardhat/artifacts/contracts/Lottery.sol/Lottery.json';
 export interface ContractsPlugin {
   $contracts?: {
     old: ethers.Contract;
@@ -27,6 +28,7 @@ export interface ContractsPlugin {
     luckyBoxes: ethers.Contract;
     marketplace: ethers.Contract;
     polarNodeNft: ethers.Contract;
+    lottery: ethers.Contract;
     nodeTypeByName: (name: string) => Promise<ethers.Contract>;
     erc721: (address: string) => ethers.Contract;
     erc20: (address: string) => ethers.Contract;
@@ -178,6 +180,7 @@ const ethersPlugin: Plugin = ({ store, env }, inject) => {
       luckyBoxes: new ethers.Contract(addresses.PolarLuckyBox, POLAR_LUCKY_BOX_ABI, signer),
       polarNodeNft: new ethers.Contract(addresses.PolarNode, POLAR_NODE_ABI, signer),
       marketplace: new ethers.Contract(addresses.MarketPlace, POLAR_MARKETPLACE_ABI, signer),
+      lottery: new ethers.Contract(addresses.Lottery, POLAR_LOTTERY_ABI, signer),
       async nodeTypeByName (name: string) {
         if (!nameContractsMap[name]) {
           const address = await this.handler.getNodeTypesAddress(name);

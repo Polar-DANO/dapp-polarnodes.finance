@@ -1,0 +1,202 @@
+<template>
+  <div class="flex flex-col md:mx-[164px] mx-[10%] mt-[30px] md:mt-[84px] text-white">
+    <div class="text-[24px] text-white">
+      Lottery 🃏
+    </div>
+    <v-data-table
+      dark
+      disable-sort
+      :loading="draws.length === 0"
+      :headers="tableHeader"
+      :items="draws"
+      :items-per-page="5"
+      class="elevation-1 mt-8"
+    >
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template #item.id="{ item }">
+        #{{ item.id }}
+      </template>
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template #item.options="{ item }">
+        <div>
+          <v-chip v-if="item.withTokens" x-small label color="primary" class="ma-1">
+            Tokens
+          </v-chip>
+          <v-chip v-if="item.withPending" x-small label color="secondary" class="ma-1">
+            Pending
+          </v-chip>
+          <v-chip v-if="item.withBurning" x-small label color="error" class="ma-1">
+            Burning
+          </v-chip>
+        </div>
+      </template>
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template #item.price="{ item }">
+        {{ item.price }} $POLAR
+      </template>
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template #item.executed="{ item }">
+        <v-btn :disabled="item.executed" class="text-none" color="primary" small @click="play(item)">
+          Play
+        </v-btn>
+      </template>
+    </v-data-table>
+  </div>
+</template>
+
+<script lang="ts">
+import { Component } from 'nuxt-property-decorator';
+import { Contract, utils } from 'ethers';
+import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
+
+type Draw = {
+  id: number;
+  description: string;
+  price: number;
+  winnersNb: number;
+  value: number;
+  iStart: number;
+  to: string;
+  executed: boolean;
+  withTokens: boolean;
+  withPending: boolean;
+  withBurning: boolean;
+  participants: string[];
+  winners: string[];
+};
+
+@Component
+export default class Market extends WalletReactiveFetch implements IReactiveFetch {
+  public tableHeader = [
+    { width: '50px', text: 'ID', value: 'id' },
+    { width: '200px', text: 'Prize', value: 'description' },
+    { width: '100px', text: 'Participants Nb', value: 'participantsNb' },
+    { width: '100px', text: 'My Tickets Nb', value: 'myTickets' },
+    { width: '100px', text: 'Price', value: 'price' },
+    { width: '100px', text: 'Remaining Winners', value: 'winnersNb' },
+    { width: '100px', text: 'Buy with', value: 'options' },
+    { width: '100px', value: 'executed' },
+  ];
+
+  public draws: Draw[] = [];
+  private lottery: Contract | null = null;
+
+  constructor () {
+    super();
+    const { $contracts: { lottery } } = this;
+
+    this.lottery = lottery;
+  }
+
+  async mounted () {
+    const { lottery, translateDraw } = this;
+    const drawsSize = await lottery.getDrawsSize();
+
+    for (let i = drawsSize.toNumber() - 1; i >= 0; i--) {
+      const rawDraw = await lottery.draws(i);
+      const draw = await translateDraw(i, rawDraw);
+
+      this.draws.push(draw);
+    }
+  }
+
+  async translateDraw (id: number, raw: any): Draw {
+    const { getParticipantsSize, getMyTicketsSize } = this;
+
+    return {
+      id,
+      description: raw.description,
+      price: utils.formatEther(raw.price),
+      winnersNb: raw.winnersNb.toNumber(),
+      participantsNb: await getParticipantsSize(id),
+      myTickets: await getMyTicketsSize(id),
+      executed: raw.executed,
+      value: raw.value.toNumber(),
+      iStart: raw.iStart.toNumber(),
+      to: raw.to,
+      withTokens: raw.withTokens,
+      withPending: raw.withPending,
+      withBurning: raw.withBurning,
+      participants: raw.participants,
+      winners: raw.winners,
+    };
+  };
+
+  async getParticipantsSize (id: number): Promise<number> {
+    const { lottery } = this;
+
+    const rawNumber = await lottery.getParticipantsSize(id);
+    return rawNumber.toNumber();
+  }
+
+  async getMyTicketsSize (id: number): Promise<number> {
+    const { lottery, walletAddress } = this;
+
+    const rawNumber = await lottery.userNbTickets(id, walletAddress);
+    return rawNumber.toNumber();
+  }
+
+  buyTicketsWithTokens (
+    id: number,
+    tokenAddress: string,
+    inputUserWallet: string | null,
+    ticketAmountToBuy: number
+  ) {
+    const { lottery, walletAddress } = this;
+
+    lottery.buyTicketsWithTokens(
+      id,
+      tokenAddress,
+      inputUserWallet || walletAddress,
+      ticketAmountToBuy,
+      'string sponso???'
+    );
+  }
+
+  buyTicketsWithPending (
+    id: number,
+    tokenOut: string,
+    nameFrom: string[],
+    tokenIdsToClaim: number[][],
+    ticketAmountToBuy: number
+  ) {
+    const { lottery } = this;
+
+    lottery.buyTicketsWithPending(
+      id,
+      tokenOut,
+      nameFrom,
+      tokenIdsToClaim,
+      ticketAmountToBuy
+    );
+  }
+
+  buyTicketsWithBurning (
+    id: number,
+    tokenOut: string,
+    nameFrom: string[],
+    tokenIdsToClaim: number[][],
+    ticketAmountToBuy: number
+  ) {
+    const { lottery } = this;
+
+    lottery.buyTicketsWithBurning(
+      id,
+      tokenOut,
+      nameFrom,
+      tokenIdsToClaim,
+      ticketAmountToBuy
+    );
+  }
+
+  async reactiveFetch () {
+    if (this.isLoggedIn) {
+      await this.$store.dispatch('tokens/fetchGotToken');
+    }
+  }
+
+  get walletAddress () {
+    return this.$store.getters['wallet/address'];
+  }
+}
+</script>
