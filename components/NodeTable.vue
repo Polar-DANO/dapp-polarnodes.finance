@@ -13,7 +13,7 @@
           :disabled="isClaimAllBtnLoading"
           @click="onClaimSelected"
         >
-          Claim Selected <span class="text-[black] font-bold">({{this.selectedNFTs.length}}/{{this.$props.items.length}})</span> NFTs
+          Claim Selected <span class="text-[black] font-bold">({{ selectedNFTs.length }}/{{ $props.items.length }})</span> NFTs
         </v-btn>
       </div>
       <table
@@ -23,9 +23,9 @@
           <tr>
             <th class="w-[5%] pt-[12px] pl-[16px] text-left text-[12px]">
               <v-checkbox
-              class="mt-5"              
-              color="#00C6ED"
-              @change="onSelectAllNFT"
+                class="mt-5"
+                color="#00C6ED"
+                @change="onSelectAllNFT"
               />
             </th>
             <th class="w-[10%] pt-[6px] pl-[12px] text-left text-[12px]">
@@ -77,11 +77,11 @@
               class="py-[6px] pl-[12px] text-left text-[12px] text-white"
             >
               <v-checkbox
-              class="mt-5"
-              v-model="selectedNFTs"
-              :value="nft.tokenId.toNumber()"
-              color="#00C6ED"              
-            />
+                v-model="selectedNFTs"
+                class="mt-5"
+                :value="nft.tokenId.toNumber()"
+                color="#00C6ED"
+              />
             </td>
             <td
               class="py-[6px] pl-[12px] text-left text-[12px] text-white"
@@ -128,6 +128,7 @@
     </div>
   </div>
 </template>
+
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator';
 import * as ethers from 'ethers';
@@ -156,11 +157,11 @@ export default class NodeTable extends Vue {
 
   async openSellModal (nft: NFT) {
     this.selectedNft = nft;
-    
-    await this.$store.dispatch('nft/loadSpecialROI', nft.tokenId).then(res => {
+
+    await this.$store.dispatch('nft/loadSpecialROI', nft.tokenId).then((res) => {
       this.nftSellModal = true;
       this.nftSellSectionModal = false;
-    })    
+    });
   }
 
   async onClaimAll () {
@@ -172,28 +173,28 @@ export default class NodeTable extends Vue {
     }
   }
 
-  async onClaimSelected() {
+  async onClaimSelected () {
     try {
-      this.isClaimAllBtnLoading = true
-      let selNFTs = []
+      this.isClaimAllBtnLoading = true;
+      const selNFTs = [];
 
-      for(let i = 0 ; i < this.$props.items.length ; i++) {
-        if(this.selectedNFTs.includes(this.$props.items[i].tokenId.toNumber())){
-          selNFTs.push(this.$props.items[i] as never)
+      for (let i = 0; i < this.$props.items.length; i++) {
+        if (this.selectedNFTs.includes(this.$props.items[i].tokenId.toNumber())) {
+          selNFTs.push(this.$props.items[i] as never);
         }
       }
-      await this.$store.dispatch('nft/claimRewards',selNFTs)
+      await this.$store.dispatch('nft/claimRewards', selNFTs);
     } finally {
-      this.isClaimAllBtnLoading = false
+      this.isClaimAllBtnLoading = false;
     }
   }
 
   onSelectAllNFT (value : any) {
-    if(value) {
-      this.selectedNFTs = []
-      this.$props.items.map((item:NFT,id:any) => this.selectedNFTs.push(item.tokenId.toNumber()));      
+    if (value) {
+      this.selectedNFTs = [];
+      this.$props.items.map((item:NFT, id:any) => this.selectedNFTs.push(item.tokenId.toNumber()));
     } else {
-      this.selectedNFTs = []      
+      this.selectedNFTs = [];
     }
   }
 

@@ -36,11 +36,12 @@
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template #item.executed="{ item }">
-        <v-btn :disabled="item.executed" class="text-none" color="primary" small @click="play(item)">
+        <v-btn :disabled="item.executed" class="text-none" color="primary" small @click="onOpenDialog(item)">
           Play
         </v-btn>
       </template>
     </v-data-table>
+    <PlayLotteryDialog v-if="isDialogOpen" @play="onPlay" @close="onCloseDialog" />
   </div>
 </template>
 
@@ -49,7 +50,7 @@ import { Component } from 'nuxt-property-decorator';
 import { Contract, utils } from 'ethers';
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
 
-type Draw = {
+export type Draw = {
   id: number;
   description: string;
   price: number;
@@ -67,7 +68,13 @@ type Draw = {
   winners: string[];
 };
 
-@Component
+export enum BuyOption {
+  Tokens = 'tokens',
+  Pending = 'pending',
+  Burning = 'burning'
+}
+
+@Component({})
 export default class Market extends WalletReactiveFetch implements IReactiveFetch {
   public tableHeader = [
     { width: '50px', text: 'ID', value: 'id' },
@@ -81,6 +88,9 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
   ];
 
   public draws: Draw[] = [];
+  public currentDraw: Draw | null = null;
+  public isDialogOpen: boolean = false;
+
   private lottery: Contract;
 
   constructor () {
@@ -100,6 +110,16 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
 
       this.draws.push(draw);
     }
+  }
+
+  onOpenDialog (draw: Draw) {
+    this.isDialogOpen = true;
+    this.currentDraw = draw;
+  }
+
+  onCloseDialog () {
+    this.isDialogOpen = false;
+    this.currentDraw = null;
   }
 
   async translateDraw (id: number, raw: any): Promise<Draw> {
@@ -189,6 +209,48 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
       tokenIdsToClaim,
       ticketAmountToBuy
     );
+  }
+
+  onPlay (
+    buyOption: BuyOption,
+    ticketsNb: number,
+    options: Record<string, string & string[] & number[][]>
+  ) {
+    const { currentDraw } = this;
+
+    if (!currentDraw) {
+      return;
+    }
+
+    switch (buyOption) {
+      case BuyOption.Tokens:
+        this.buyTicketsWithTokens(
+          currentDraw.id,
+          options.tokenContractAddress,
+          options.inputUserWallet,
+          ticketsNb
+        );
+        break;
+      case BuyOption.Pending:
+        this.buyTicketsWithPending(
+          currentDraw.id,
+          options.tokenOut,
+          options.nameFrom,
+          options.tokenIdsToClaim,
+          ticketsNb
+        );
+        break;
+      case BuyOption.Burning:
+        this.buyTicketsWithBurning(
+          currentDraw.id,
+          options.tokenOut,
+          options.nameFrom,
+          options.tokenIdsToClaim,
+          ticketsNb
+        );
+        break;
+    }
+    this.onCloseDialog();
   }
 
   async reactiveFetch () {
