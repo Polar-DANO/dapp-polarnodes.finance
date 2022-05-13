@@ -54,6 +54,8 @@ type Draw = {
   description: string;
   price: number;
   winnersNb: number;
+  participantsNb: number;
+  myTickets: number;
   value: number;
   iStart: number;
   to: string;
@@ -79,13 +81,13 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
   ];
 
   public draws: Draw[] = [];
-  private lottery: Contract | null = null;
+  private lottery: Contract;
 
   constructor () {
     super();
-    const { $contracts: { lottery } } = this;
+    const { $contracts } = this;
 
-    this.lottery = lottery;
+    this.lottery = $contracts!.lottery;
   }
 
   async mounted () {
@@ -100,13 +102,13 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
     }
   }
 
-  async translateDraw (id: number, raw: any): Draw {
+  async translateDraw (id: number, raw: any): Promise<Draw> {
     const { getParticipantsSize, getMyTicketsSize } = this;
 
     return {
       id,
       description: raw.description,
-      price: utils.formatEther(raw.price),
+      price: parseFloat(utils.formatEther(raw.price)),
       winnersNb: raw.winnersNb.toNumber(),
       participantsNb: await getParticipantsSize(id),
       myTickets: await getMyTicketsSize(id),
