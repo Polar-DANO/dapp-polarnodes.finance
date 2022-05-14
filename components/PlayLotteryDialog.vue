@@ -101,7 +101,42 @@
           </div>
         </div>
         <div v-else class="text-h6">
-          Coming soon...
+          <div class="d-flex align-center mt-4">
+            <div class="text-h6">
+              Node
+            </div>
+            <v-spacer />
+            <v-select
+              dense
+              outlined
+              multiple
+              chips
+              deletable-chips
+              item-text="nodeType"
+              return-object
+              :items="myNodeNfts"
+              hide-details
+              @change="onNodeNftsSelect"
+            >
+              <template #item="{ item }">
+                <v-checkbox
+                  :key="item.nodeType"
+                  class="mr-2"
+                  :value="options.tokenIdsToClaim.flat().includes(item.tokenId)"
+                  color="primary"
+                  hide-details
+                />
+                <div class="d-flex align-center">
+                  <div>
+                    #{{ item.tokenId }} {{ item.nodeType }}
+                  </div>
+                  <div class="ml-2">
+                    ({{ item.userPendingRewards.toFixed(3) }} $POLAR pending rewards)
+                  </div>
+                </div>
+              </template>
+            </v-select>
+          </div>
         </div>
       </v-card-text>
 
@@ -122,7 +157,7 @@
           color="primary"
           @click="onPlay"
         >
-          Play
+          Buy Tickets
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -131,12 +166,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator';
-import { BuyOption } from '@/pages/lottery.vue';
+import { utils } from 'ethers';
+import { Draw, BuyOption } from '@/pages/lottery.vue';
 import addresses from '@/config/addresses';
 
 @Component({
   props: {
-    availableBuyOptions: Array as () => BuyOption[],
+    draw: Object as () => Draw,
   },
 })
 export default class PlayLotteryDialog extends Vue {
@@ -168,6 +204,44 @@ export default class PlayLotteryDialog extends Vue {
   onPlay () {
     const { ticketsNb, buyOption, options } = this;
     this.$emit('play', buyOption, ticketsNb, options);
+  }
+
+  onNodeNftsSelect (nodes: { nodeType: string, tokenId: number }[]) {
+    const { nameFrom, tokenIdsToClaim } = nodes.reduce((acc, node) => {
+      const index = acc.nameFrom.indexOf(node.nodeType);
+      if (index === -1) {
+        acc.nameFrom.push(node.nodeType);
+        acc.tokenIdsToClaim.push([node.tokenId]);
+      } else {
+        acc.tokenIdsToClaim[index](node.tokenId);
+      }
+      return acc;
+    }, { nameFrom: [], tokenIdsToClaim: [] });
+
+    this.options.nameFrom = nameFrom;
+    this.options.tokenIdsToClaim = tokenIdsToClaim;
+  }
+
+  get availableBuyOptions (): BuyOption[] {
+    const { draw } = this;
+
+    if (!draw) {
+      return [];
+    }
+    return [
+      ...(draw.withTokens ? [BuyOption.Tokens] : []),
+      ...(draw.withPending ? [BuyOption.Pending] : []),
+      ...(draw.withBurning ? [BuyOption.Burning] : []),
+    ];
+  }
+
+  get myNodeNfts () {
+    const nodeNfts = this.$store.getters['nft/myNFTsByCreationDateDesc'];
+    return nodeNfts.map(nft => ({
+      ...nft,
+      tokenId: nft.tokenId.toNumber(),
+      userPendingRewards: parseFloat(utils.formatEther(nft.userPendingRewards)),
+    }));
   }
 }
 </script>

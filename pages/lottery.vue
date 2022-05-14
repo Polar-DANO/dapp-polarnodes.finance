@@ -50,7 +50,7 @@
 
     <PlayLotteryDialog
       v-if="isDialogOpen"
-      :available-buy-options="availableBuyOptions"
+      :draw="currentDraw"
       @play="onPlay"
       @close="onCloseDialog"
     />
@@ -122,19 +122,6 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
 
       this.draws.push(draw);
     }
-  }
-
-  get availableBuyOptions (): BuyOption[] {
-    const { currentDraw } = this;
-
-    if (!currentDraw) {
-      return [];
-    }
-    return [
-      ...(currentDraw.withTokens ? [BuyOption.Tokens] : []),
-      ...(currentDraw.withPending ? [BuyOption.Pending] : []),
-      ...(currentDraw.withBurning ? [BuyOption.Burning] : []),
-    ];
   }
 
   onOpenDialog (draw: Draw) {
