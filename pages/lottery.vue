@@ -36,12 +36,24 @@
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template #item.executed="{ item }">
-        <v-btn :disabled="item.executed" class="text-none" color="primary" small @click="onOpenDialog(item)">
+        <v-btn
+          :disabled="item.executed"
+          class="text-none"
+          color="primary"
+          small
+          @click="onOpenDialog(item)"
+        >
           Play
         </v-btn>
       </template>
     </v-data-table>
-    <PlayLotteryDialog v-if="isDialogOpen" @play="onPlay" @close="onCloseDialog" />
+
+    <PlayLotteryDialog
+      v-if="isDialogOpen"
+      :available-buy-options="availableBuyOptions"
+      @play="onPlay"
+      @close="onCloseDialog"
+    />
   </div>
 </template>
 
@@ -110,6 +122,19 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
 
       this.draws.push(draw);
     }
+  }
+
+  get availableBuyOptions (): BuyOption[] {
+    const { currentDraw } = this;
+
+    if (!currentDraw) {
+      return [];
+    }
+    return [
+      ...(currentDraw.withTokens ? [BuyOption.Tokens] : []),
+      ...(currentDraw.withPending ? [BuyOption.Pending] : []),
+      ...(currentDraw.withBurning ? [BuyOption.Burning] : []),
+    ];
   }
 
   onOpenDialog (draw: Draw) {

@@ -134,15 +134,14 @@ import { Component, Vue } from 'nuxt-property-decorator';
 import { BuyOption } from '@/pages/lottery.vue';
 import addresses from '@/config/addresses';
 
-@Component({})
+@Component({
+  props: {
+    availableBuyOptions: Array as () => BuyOption[],
+  },
+})
 export default class PlayLotteryDialog extends Vue {
   public ticketsNb: number = 1;
   public buyOption: BuyOption = BuyOption.Tokens;
-  public availableBuyOptions = [
-    BuyOption.Tokens,
-    BuyOption.Pending,
-    BuyOption.Burning,
-  ];
 
   public availableTokens = [
     { name: 'POLAR', contract: addresses.Token },
@@ -155,7 +154,7 @@ export default class PlayLotteryDialog extends Vue {
   public options = {
     tokenContractAddress: addresses.Token,
     inputUserWallet: null,
-    tokenOut: '',
+    tokenOut: addresses.Token,
     nameFrom: [],
     tokenIdsToClaim: [],
   };
