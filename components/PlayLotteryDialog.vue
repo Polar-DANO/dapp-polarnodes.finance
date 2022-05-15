@@ -170,9 +170,20 @@ import { utils } from 'ethers';
 import { Draw, BuyOption } from '@/pages/lottery.vue';
 import addresses from '@/config/addresses';
 
+type DrawOptions = {
+    tokenContractAddress: string,
+    inputUserWallet: string | null,
+    tokenOut: string,
+    nameFrom: string[],
+    tokenIdsToClaim: number[][],
+};
+
 @Component({
   props: {
-    draw: Object as () => Draw,
+    draw: {
+      type: Object as () => Draw,
+      required: true,
+    },
   },
 })
 export default class PlayLotteryDialog extends Vue {
@@ -187,7 +198,7 @@ export default class PlayLotteryDialog extends Vue {
   public BuyOption = BuyOption;
   public isBuyForSomeoneElseActive: boolean = false;
 
-  public options = {
+  public options: DrawOptions = {
     tokenContractAddress: addresses.Token,
     inputUserWallet: null,
     tokenOut: addresses.Token,
@@ -213,17 +224,17 @@ export default class PlayLotteryDialog extends Vue {
         acc.nameFrom.push(node.nodeType);
         acc.tokenIdsToClaim.push([node.tokenId]);
       } else {
-        acc.tokenIdsToClaim[index](node.tokenId);
+        acc.tokenIdsToClaim[index].push(node.tokenId);
       }
       return acc;
-    }, { nameFrom: [], tokenIdsToClaim: [] });
+    }, { nameFrom: [], tokenIdsToClaim: [] } as { nameFrom: string[], tokenIdsToClaim: number[][] });
 
     this.options.nameFrom = nameFrom;
     this.options.tokenIdsToClaim = tokenIdsToClaim;
   }
 
   get availableBuyOptions (): BuyOption[] {
-    const { draw } = this;
+    const { draw } = this.$props;
 
     if (!draw) {
       return [];
