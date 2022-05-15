@@ -104,6 +104,7 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
   public isDialogOpen: boolean = false;
 
   private lottery: Contract;
+  private interval: any;
 
   constructor () {
     super();
@@ -122,6 +123,12 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
 
       this.draws.push(draw);
     }
+
+    this.interval = setInterval(this.reloadLottery, 1000);
+  }
+
+  destroyed () {
+    clearInterval(this.interval);
   }
 
   onOpenDialog (draw: Draw) {
@@ -183,7 +190,7 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
       tokenAddress,
       inputUserWallet || walletAddress,
       ticketAmountToBuy,
-      'string sponso???'
+      ''
     );
   }
 
@@ -223,7 +230,22 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
     );
   }
 
-  onPlay (
+  async reloadLottery () {
+    const { lottery, translateDraw } = this;
+    const drawsSize = await lottery.getDrawsSize();
+    const draws: Draw[] = [];
+
+    for (let i = drawsSize.toNumber() - 1; i >= 0; i--) {
+      const rawDraw = await lottery.draws(i);
+      const draw = await translateDraw(i, rawDraw);
+
+      draws.push(draw);
+    }
+
+    this.draws = draws;
+  }
+
+  async onPlay (
     buyOption: BuyOption,
     ticketsNb: number,
     options: Record<string, string & string[] & number[][]>
@@ -236,7 +258,7 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
 
     switch (buyOption) {
       case BuyOption.Tokens:
-        this.buyTicketsWithTokens(
+        await this.buyTicketsWithTokens(
           currentDraw.id,
           options.tokenContractAddress,
           options.inputUserWallet,
@@ -244,7 +266,7 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
         );
         break;
       case BuyOption.Pending:
-        this.buyTicketsWithPending(
+        await this.buyTicketsWithPending(
           currentDraw.id,
           options.tokenOut,
           options.nameFrom,
@@ -253,7 +275,7 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
         );
         break;
       case BuyOption.Burning:
-        this.buyTicketsWithBurning(
+        await this.buyTicketsWithBurning(
           currentDraw.id,
           options.tokenOut,
           options.nameFrom,

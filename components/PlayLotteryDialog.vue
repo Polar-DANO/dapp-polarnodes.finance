@@ -153,6 +153,7 @@
           Cancel
         </v-btn>
         <v-btn
+          :loading="isBuyButtonLoading"
           class="text-none"
           color="primary"
           @click="onPlay"
@@ -189,6 +190,7 @@ type DrawOptions = {
 export default class PlayLotteryDialog extends Vue {
   public ticketsNb: number = 1;
   public buyOption: BuyOption = BuyOption.Tokens;
+  public isBuyButtonLoading: boolean = false;
 
   public availableTokens = [
     { name: 'POLAR', contract: addresses.Token },
@@ -215,6 +217,7 @@ export default class PlayLotteryDialog extends Vue {
   onPlay () {
     const { ticketsNb, buyOption, options } = this;
     this.$emit('play', buyOption, ticketsNb, options);
+    this.isBuyButtonLoading = true;
   }
 
   onNodeNftsSelect (nodes: { nodeType: string, tokenId: number }[]) {
