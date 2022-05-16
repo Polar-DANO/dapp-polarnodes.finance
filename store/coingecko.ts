@@ -5,7 +5,7 @@ export const state = () => ({
   price: null as (number | null),
   percentage24h: null as (number | null),
   marketCap: null as (number | null),
-  totalSupply: 1000000 as (number | null),
+  totalSupply: 2125000 as (number | null),
 });
 
 type State = ReturnType<typeof state>;
