@@ -1,7 +1,7 @@
 {
   "extends": ["@nuxtjs/eslint-config-typescript"],
   "rules": {
-    "vue/html-self-closing": "off",
+    "vue/html-self-closing": "warn",
     "no-unused-vars": "off",
     "semi": [2, "always"],
     "@typescript-eslint/semi": [2, "always"],

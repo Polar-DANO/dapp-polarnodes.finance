@@ -36,7 +36,8 @@
 import { Component } from 'nuxt-property-decorator';
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
 import { Item } from '~/models/marketplace';
-import addresses from '~/config/addresses'
+import addresses from '~/config/addresses';
+
 @Component
 export default class Market extends WalletReactiveFetch implements IReactiveFetch {
   private selectedItem: Item | null = null;
@@ -50,9 +51,9 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
   }
 
   async onClick (item: Item) {
-    await this.$store.dispatch('nft/loadSpecialROI', item.nft.tokenId).then(res => {
+    await this.$store.dispatch('nft/loadSpecialROI', item.nft.tokenId).then((_res) => {
       this.selectedItem = item;
-    })    
+    });
   }
 
   async reactiveFetch () {
