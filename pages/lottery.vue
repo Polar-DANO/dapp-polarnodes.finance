@@ -181,7 +181,8 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
     id: number,
     tokenAddress: string,
     inputUserWallet: string | null,
-    ticketAmountToBuy: number
+    ticketAmountToBuy: number,
+    userCode: string | null
   ) {
     const { lottery, walletAddress } = this;
 
@@ -190,7 +191,7 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
       tokenAddress,
       inputUserWallet || walletAddress,
       ticketAmountToBuy,
-      ''
+      userCode
     );
   }
 
@@ -255,14 +256,14 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
     if (!currentDraw) {
       return;
     }
-
     switch (buyOption) {
       case BuyOption.Tokens:
         await this.buyTicketsWithTokens(
           currentDraw.id,
           options.tokenContractAddress,
           options.inputUserWallet,
-          ticketsNb
+          ticketsNb,
+          options.userCode
         );
         break;
       case BuyOption.Pending:
@@ -290,6 +291,14 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
   async reactiveFetch () {
     if (this.isLoggedIn) {
       await this.$store.dispatch('tokens/fetchGotToken');
+      await this.$store.dispatch('nft/myNFTsByCreationDateDesc');
+      await {
+          myNFTs: await (async () => {
+            await this.$store.dispatch('nodes/loadNodeTypes');
+            await this.$store.dispatch('nft/loadMyNFTs');
+          })(),
+        };
+     
     }
   }
 

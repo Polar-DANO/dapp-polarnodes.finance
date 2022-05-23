@@ -99,6 +99,30 @@
               hide-details
             />
           </div>
+          <div class="d-flex align-center mt-4">
+            <div class="text-h6">
+              Use Creator code
+            </div>
+            <v-spacer />
+            <v-checkbox
+              v-model="isUseCreatorCode"
+              dense
+              outlined
+              hide-details
+            />
+          </div>
+          <div v-if="isUseCreatorCode" class="d-flex align-center mt-4">
+            <div class="text-h6">
+              Creator Code
+            </div>
+            <v-spacer />
+            <VTextField
+              v-model="options.userCode"
+              dense
+              outlined
+              hide-details
+            />
+          </div>
         </div>
         <div v-else class="text-h6">
           <div class="d-flex align-center mt-4">
@@ -112,7 +136,7 @@
               multiple
               chips
               deletable-chips
-              item-text="nodeType"
+              item-text="tokenName"
               return-object
               :items="myNodeNfts"
               hide-details
@@ -174,6 +198,7 @@ import addresses from '@/config/addresses';
 type DrawOptions = {
     tokenContractAddress: string,
     inputUserWallet: string | null,
+    userCode: string | null,
     tokenOut: string,
     nameFrom: string[],
     tokenIdsToClaim: number[][],
@@ -199,10 +224,12 @@ export default class PlayLotteryDialog extends Vue {
 
   public BuyOption = BuyOption;
   public isBuyForSomeoneElseActive: boolean = false;
+  public isUseCreatorCode : boolean = false;
 
   public options: DrawOptions = {
     tokenContractAddress: addresses.Token,
     inputUserWallet: null,
+    userCode: null,
     tokenOut: addresses.Token,
     nameFrom: [],
     tokenIdsToClaim: [],
@@ -254,6 +281,7 @@ export default class PlayLotteryDialog extends Vue {
     return nodeNfts.map(nft => ({
       ...nft,
       tokenId: nft.tokenId.toNumber(),
+      tokenName: nft.tokenId + " " + nft.nodeType,
       userPendingRewards: parseFloat(utils.formatEther(nft.userPendingRewards)),
     }));
   }
