@@ -9,9 +9,8 @@
   >
     <div>
       <v-list>
-                  <a  href="https://polar.financial">
-
-        <img class="w-[64px] h-[63.7px] mt-[44px] mb-[30px] md:mb-[100.3px] mx-[90px] " :src="require('../assets/img/logo.svg')" alt="">
+        <a href="https://polar.financial">
+          <img class="w-[64px] h-[63.7px] mt-[44px] mb-[30px] md:mb-[100.3px] mx-[90px] " :src="require('../assets/img/logo.svg')" alt="">
         </a>
         <v-list-item
           v-for="(item, i) in core"
@@ -101,6 +100,11 @@ export default class LeftSideBar extends Vue {
       url: require('../assets/img/mynft.svg'),
       title: 'My NFTs',
       to: '/mynft',
+    },
+    {
+      url: require('../assets/img/mynft.svg'),
+      title: 'Lottery',
+      to: '/lottery',
     },
   ];
 

@@ -29,7 +29,8 @@
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator';
 import WalletReactiveFetch, { IReactiveFetch } from '~/mixins/wallet-reactive-fetch';
-import addresses from '~/config/addresses'
+import addresses from '~/config/addresses';
+
 @Component({
   layout: 'page',
 })
