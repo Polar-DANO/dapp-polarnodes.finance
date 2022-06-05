@@ -67,5 +67,5 @@ export const LUCKYBOX_VIDEO_BY_TYPE: Record<string, string> = {
   'Icy Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OPENING LVL 3.mp4'),
   'Placeholder Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OPENING LVL 4.mp4'),
   'Olympus Lucky Box': require('../assets/PACK/Reveal/LUCKY BOX OLYMPUS OPENING.mp4'),
-  "Degen' Lucky Box": require('../assets/PACK/Lucky Boxes/LUCKY BOX DEGEN OPENING.mp4')
+  "Degen Lucky Box": require('../assets/PACK/Lucky Boxes/LUCKY BOX DEGEN OPENING.mp4')
 };
