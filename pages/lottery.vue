@@ -251,7 +251,7 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
     ticketsNb: number,
     options: Record<string, string & string[] & number[][]>
   ) {
-    const { currentDraw } = this;
+    const { currentDraw, walletAddress } = this;
 
     if (!currentDraw) {
       return;
@@ -261,9 +261,9 @@ export default class Market extends WalletReactiveFetch implements IReactiveFetc
         await this.buyTicketsWithTokens(
           currentDraw.id,
           options.tokenContractAddress,
-          options.inputUserWallet,
+          options.inputUserWallet || walletAddress,
           ticketsNb,
-          options.userCode
+          options.userCode || ""
         );
         break;
       case BuyOption.Pending:
