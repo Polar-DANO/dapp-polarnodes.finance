@@ -10,6 +10,7 @@
       :headers="tableHeader"
       :items="draws"
       :items-per-page="5"
+      :mobile-breakpoint="1455"
       class="elevation-1 mt-8"
     >
       <!-- eslint-disable-next-line vue/valid-v-slot -->

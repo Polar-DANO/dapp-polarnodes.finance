@@ -12,13 +12,13 @@
       />
     </div>
     <div class="md:mt-[40px]">
-      <MigrationTable />
-    </div>
-    <div class="md:mt-[40px]">
       <MyLuckyBoxesTable :items="luckyBoxes" @scroll-to-table="onScrollToTable" />
       <div ref="table">
         <NodeTable :items="nfts" />
       </div>
+    </div>
+    <div class="md:mt-[40px]">
+      <MigrationTable />
     </div>
   </div>
 </template>
@@ -94,3 +94,8 @@ export default class Mynft extends WalletReactiveFetch implements IReactiveFetch
   }
 }
 </script>
+<style>
+  .flex1 {
+    height: 9rem !important;
+  }
+</style>
